@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ዘመን ገበያ | Zemen Gebeya — Marketplace</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+Ethiopic:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { sans: ['Inter', 'Noto Sans Ethiopic', 'system-ui', 'sans-serif'] },
+      },
+    },
+  };
+</script>
+
+<style>
+  :root { color-scheme: dark; }
+  html { scroll-behavior: smooth; }
+  body { -webkit-font-smoothing: antialiased; }
+
+  /* ---------- Glassmorphism ---------- */
+  .glass {
+    background: rgba(255, 255, 255, 0.035);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .glass-strong {
+    background: rgba(15, 23, 42, 0.82);
+    backdrop-filter: blur(26px);
+    -webkit-backdrop-filter: blur(26px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* ---------- Animations ---------- */
+  @keyframes floatY {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-34px) scale(1.05); }
+  }
+  .animate-float { animation: floatY 14s ease-in-out infinite; }
+  .animate-float-slow { animation: floatY 22s ease-in-out infinite; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up { animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+  @keyframes popIn {
+    0% { opacity: 0; transform: scale(0.9) translateY(18px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .pop-in { animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(40px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .slide-in-right { animation: slideInRight 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.45); }
+    50% { box-shadow: 0 0 28px 6px rgba(168, 85, 247, 0.18); }
+  }
+  .pulse-glow { animation: pulseGlow 3s ease-in-out infinite; }
+
+  @keyframes shimmer {
+    0% { background-position: -600px 0; }
+    100% { background-position: 600px 0; }
+  }
+
+  @keyframes ring {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* ---------- Gradient text ---------- */
+  .grad-text {
+    background: linear-gradient(100deg, #c084fc 0%, #818cf8 45%, #38bdf8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* ---------- Scrollbar ---------- */
+  ::-webkit-scrollbar { width: 9px; height: 9px; }
+  ::-webkit-scrollbar-track { background: #020617; }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #7c3aed, #2563eb);
+    border-radius: 999px;
+    border: 2px solid #020617;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #a855f7, #3b82f6); }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* ---------- Custom radio ---------- */
+  .pay-option input:checked + label {
+    border-color: rgba(168, 85, 247, 0.8);
+    background: rgba(168, 85, 247, 0.12);
+    box-shadow: 0 0 26px -8px rgba(168, 85, 247, 0.75);
+  }
+  .pay-option input:checked + label .tick {
+    opacity: 1; transform: scale(1);
+  }
+  .tick { opacity: 0; transform: scale(0.5); transition: all 0.22s ease; }
+
+  /* ---------- Card hover glow ---------- */
+  .card-hover { transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, border-color 0.35s ease; }
+  .card-hover:hover {
+    transform: translateY(-7px);
+    border-color: rgba(168, 85, 247, 0.45);
+    box-shadow: 0 26px 60px -26px rgba(139, 92, 246, 0.85);
+  }
+
+  /* ---------- Buttons ---------- */
+  .btn-grad {
+    background-image: linear-gradient(100deg, #7c3aed 0%, #6366f1 50%, #2563eb 100%);
+    background-size: 200% auto;
+    transition: background-position 0.5s ease, transform 0.18s ease, box-shadow 0.3s ease;
+  }
+  .btn-grad:hover {
+    background-position: right center;
+    box-shadow: 0 12px 32px -12px rgba(124, 58, 237, 0.95);
+  }
+  .btn-grad:active { transform: scale(0.97); }
+
+  input, select, textarea { outline: none; }
+  input:focus, select:focus, textarea:focus {
+    border-color: rgba(168, 85, 247, 0.7) !important;
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.14);
+  }
+  select option { background: #0f172a; }
+</style>
+</head>
+
+<body class="bg-slate-950 text-slate-200 font-sans min-h-screen antialiased selection:bg-purple-500/40">
+
+<!-- ================= AMBIENT BACKGROUND ================= -->
+<div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+  <div class="absolute -top-52 -left-44 w-[38rem] h-[38rem] rounded-full bg-purple-600/20 blur-[130px] animate-float"></div>
+  <div class="absolute top-1/4 -right-52 w-[34rem] h-[34rem] rounded-full bg-blue-600/20 blur-[130px] animate-float-slow"></div>
+  <div class="absolute bottom-0 left-1/3 w-[30rem] h-[30rem] rounded-full bg-fuchsia-600/10 blur-[130px] animate-float"></div>
+  <div class="absolute inset-0 opacity-[0.035]"
+       style="background-image:linear-gradient(rgba(255,255,255,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.6) 1px,transparent 1px);background-size:56px 56px;"></div>
+</div>
+
+<!-- ================= HEADER ================= -->
+<header class="sticky top-0 z-40 glass-strong border-b border-white/10">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-2.5 flex-wrap">
+
+    <!-- Back to Super App -->
+    <a href="index.html"
+       class="group flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-purple-400/60 hover:bg-purple-500/10 transition-all duration-300 text-[13px] font-semibold text-slate-200 hover:text-white">
+      <i class="fa-solid fa-arrow-left transition-transform duration-300 group-hover:-translate-x-1"></i>
+      <span>ወደ Zemen Super App</span>
+    </a>
+
+    <!-- Brand -->
+    <div class="flex items-center gap-2.5 mr-auto">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 via-indigo-500 to-blue-500 grid place-items-center shadow-lg shadow-purple-600/40 pulse-glow">
+        <i class="fa-solid fa-bag-shopping text-white text-[15px]"></i>
+      </div>
+      <div class="leading-tight">
+        <h1 class="font-extrabold text-white text-[15px] tracking-tight">ዘመን ገበያ</h1>
+        <p class="text-[10px] text-slate-400 font-medium tracking-wide">ZEMEN GEBEYA · MARKETPLACE</p>
+      </div>
+    </div>
+
+    <!-- Wallet chip -->
+    <div class="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-500/10 border border-emerald-400/30">
+      <i class="fa-solid fa-wallet text-emerald-400 text-[13px]"></i>
+      <span class="text-[13px] font-bold text-emerald-300" data-wallet-chip>10,000 ETB</span>
+    </div>
+
+    <!-- Wishlist -->
+    <button id="wishlistBtn" onclick="toggleWishFilter()"
+      class="relative w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:border-rose-400/60 hover:bg-rose-500/10 transition-all duration-300 grid place-items-center">
+      <i class="fa-solid fa-heart text-rose-400 text-[14px]"></i>
+      <span id="wishCount"
+        class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold grid place-items-center shadow-lg shadow-rose-500/50 hidden">0</span>
+    </button>
+
+    <!-- Cart -->
+    <button onclick="openCart()"
+      class="relative w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:border-purple-400/60 hover:bg-purple-500/10 transition-all duration-300 grid place-items-center">
+      <i class="fa-solid fa-cart-shopping text-purple-300 text-[14px]"></i>
+      <span id="cartCount"
+        class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 text-white text-[10px] font-bold grid place-items-center shadow-lg shadow-purple-500/50 hidden">0</span>
+    </button>
+  </div>
+</header>
+
+<!-- ================= MAIN ================= -->
+<main class="max-w-7xl mx-auto px-4 py-7 space-y-9">
+
+  <!-- ---------- WALLET HERO + TRUST ---------- -->
+  <section class="grid lg:grid-cols-3 gap-4">
+
+    <!-- Wallet card -->
+    <div class="lg:col-span-2 relative overflow-hidden rounded-3xl glass p-6 sm:p-7 fade-up">
+      <div class="absolute -top-24 -right-16 w-72 h-72 rounded-full bg-purple-600/25 blur-[90px] pointer-events-none"></div>
+      <div class="absolute -bottom-28 -left-10 w-64 h-64 rounded-full bg-blue-600/20 blur-[90px] pointer-events-none"></div>
+
+      <div class="relative flex flex-wrap items-start justify-between gap-5">
+        <div>
+          <div class="flex items-center gap-2 text-[11px] font-bold tracking-[0.18em] text-purple-300/90 uppercase">
+            <i class="fa-solid fa-shield-halved"></i> Zemen Demo Wallet
+          </div>
+          <div class="mt-3 flex items-end gap-3 flex-wrap">
+            <span class="text-4xl sm:text-5xl font-black text-white tracking-tight grad-text" data-wallet-big>10,000</span>
+            <span class="text-lg font-bold text-slate-400 mb-1">ETB</span>
+          </div>
+          <p class="mt-2 text-[13px] text-slate-400 flex items-center gap-2">
+            <i class="fa-solid fa-lock text-emerald-400 text-[11px]"></i>
+            Escrow-protected · ገንዘብዎ እስኪደርስ ድረስ ደህንነቱ የተጠበቀ ነው
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <span class="text-[11px] font-semibold text-slate-400 text-right">Demo Top-Up</span>
+          <div class="flex gap-2">
+            <button onclick="topUp(5000)"
+              class="px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-emerald-400/60 hover:bg-emerald-500/10 transition text-[12px] font-bold text-emerald-300">
+              + 5,000
+            </button>
+            <button onclick="topUp(50000)"
+              class="px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-emerald-400/60 hover:bg-emerald-500/10 transition text-[12px] font-bold text-emerald-300">
+              + 50,000
+            </button>
+          </div>
+          <button onclick="resetWallet()"
+            class="px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 hover:border-rose-400/50 hover:bg-rose-500/10 transition text-[11px] font-semibold text-slate-400 hover:text-rose-300">
+            <i class="fa-solid fa-rotate-left mr-1"></i> Reset Demo
+          </button>
+        </div>
+      </div>
+
+      <!-- Mini stats -->
+      <div class="relative mt-6 grid grid-cols-3 gap-3">
+        <div class="rounded-2xl bg-white/5 border border-white/10 px-3.5 py-3">
+          <p class="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Orders</p>
+          <p class="text-lg font-extrabold text-white mt-0.5" data-stat-orders>0</p>
+        </div>
+        <div class="rounded-2xl bg-white/5 border border-white/10 px-3.5 py-3">
+          <p class="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Spent</p>
+          <p class="text-lg font-extrabold text-white mt-0.5" data-stat-spent>0</p>
+        </div>
+        <div class="rounded-2xl bg-white/5 border border-white/10 px-3.5 py-3">
+          <p class="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Cart</p>
+          <p class="text-lg font-extrabold text-white mt-0.5" data-stat-cart>0</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trust panel -->
+    <div class="rounded-3xl glass p-6 fade-up" style="animation-delay:80ms">
+      <h3 class="text-[13px] font-extrabold text-white uppercase tracking-wider flex items-center gap-2">
+        <i class="fa-solid fa-circle-check text-emerald-400"></i> Why trust Zemen?
+      </h3>
+      <ul class="mt-4 space-y-3.5">
+        <li class="flex gap-3">
+          <div class="w-9 h-9 shrink-0 rounded-xl bg-emerald-500/12 border border-emerald-400/25 grid place-items-center">
+            <i class="fa-solid fa-user-shield text-emerald-400 text-[13px]"></i>
+          </div>
+          <div>
+            <p class="text-[13px] font-bold text-slate-100">Verified Merchants</p>
+            <p class="text-[11px] text-slate-400 leading-snug">Every seller is ID-verified & rated by real buyers.</p>
+          </div>
+        </li>
+        <li class="flex gap-3">
+          <div class="w-9 h-9 shrink-0 rounded-xl bg-purple-500/12 border border-purple-400/25 grid place-items-center">
+            <i class="fa-solid fa-hand-holding-dollar text-purple-300 text-[13px]"></i>
+          </div>
+          <div>
+            <p class="text-[13px] font-bold text-slate-100">Transparent Pricing</p>
+            <p class="text-[11px] text-slate-400 leading-snug">No hidden fees — delivery cost shown before you pay.</p>
+          </div>
+        </li>
+        <li class="flex gap-3">
+          <div class="w-9 h-9 shrink-0 rounded-xl bg-blue-500/12 border border-blue-400/25 grid place-items-center">
+            <i class="fa-solid fa-location-dot text-blue-300 text-[13px]"></i>
+          </div>
+          <div>
+            <p class="text-[13px] font-bold text-slate-100">Precise Address Capture</p>
+            <p class="text-[11px] text-slate-400 leading-snug">City · Sub-city/Woreda · Landmark — riders never get lost.</p>
+          </div>
+        </li>
+        <li class="flex gap-3">
+          <div class="w-9 h-9 shrink-0 rounded-xl bg-amber-500/12 border border-amber-400/25 grid place-items-center">
+            <i class="fa-solid fa-truck-fast text-amber-300 text-[13px]"></i>
+          </div>
+          <div>
+            <p class="text-[13px] font-bold text-slate-100">Live Order Tracking</p>
+            <p class="text-[11px] text-slate-400 leading-snug">Watch your package move from warehouse to doorstep.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ---------- SEARCH + FILTERS ---------- -->
+  <section class="fade-up" style="animation-delay:140ms">
+    <div class="rounded-3xl glass p-4 sm:p-5">
+      <div class="flex flex-col lg:flex-row lg:items-center gap-4">
+
+        <!-- Search -->
+        <div class="relative flex-1 min-w-0">
+          <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-[14px]"></i>
+          <input id="searchInput" type="text" oninput="onSearch(this.value)"
+            placeholder="ፈልግ... Search sneakers, phones, Habesha Kemis, sellers…"
+            class="w-full pl-11 pr-11 py-3.5 rounded-2xl bg-slate-900/70 border border-white/10 text-[14px] text-slate-100 placeholder:text-slate-500 transition" />
+          <button onclick="clearSearch()" id="clearSearchBtn"
+            class="hidden absolute right-3.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 grid place-items-center text-slate-400 hover:text-white transition">
+            <i class="fa-solid fa-xmark text-[12px]"></i>
+          </button>
+        </div>
+
+        <!-- Category filters -->
+        <div id="categoryBar" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-0.5"></div>
+      </div>
+
+      <!-- Result meta -->
+      <div class="mt-4 flex items-center justify-between flex-wrap gap-2">
+        <p class="text-[12px] text-slate-400">
+          <span id="resultCount" class="font-bold text-slate-200">0</span> products
+          <span id="filterLabel" class="text-slate-500"></span>
+        </p>
+        <button id="clearFiltersBtn" onclick="clearFilters()"
+          class="hidden text-[12px] font-semibold text-purple-300 hover:text-purple-200 transition">
+          <i class="fa-solid fa-filter-circle-xmark mr-1"></i> Clear all filters
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- PRODUCT GRID ---------- -->
+  <section>
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
+        <span class="w-1.5 h-7 rounded-full bg-gradient-to-b from-purple-400 to-blue-500"></span>
+        የገበያ ቦታ <span class="text-slate-500 font-semibold text-base hidden sm:inline">/ Featured Listings</span>
+      </h2>
+    </div>
+    <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+  </section>
+
+  <!-- ---------- ORDER TRACKING ---------- -->
+  <section id="ordersSection">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
+        <span class="w-1.5 h-7 rounded-full bg-gradient-to-b from-emerald-400 to-blue-500"></span>
+        የትዕዛዝ መከታተያ <span class="text-slate-500 font-semibold text-base hidden sm:inline">/ Order Tracking</span>
+      </h2>
+      <span class="text-[11px] font-bold px-3 py-1.5 rounded-full bg-blue-500/12 border border-blue-400/30 text-blue-300">
+        <i class="fa-solid fa-satellite-dish mr-1"></i> LIVE
+      </span>
+    </div>
+    <div id="ordersList" class="space-y-4"></div>
+  </section>
+
+  <!-- ---------- FOOTER ---------- -->
+  <footer class="pt-6 pb-10 border-t border-white/5">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p class="text-[12px] text-slate-500">
+        © 2025 <span class="font-bold text-slate-300">Zemen Super App</span> · ዘመን ገበያ Marketplace — Demo Environment
+      </p>
+      <div class="flex items-center gap-4 text-[12px] text-slate-500">
+        <span><i class="fa-solid fa-shield-halved text-emerald-400/70 mr-1"></i> Secure Payments</span>
+        <span><i class="fa-solid fa-headset text-purple-400/70 mr-1"></i> 24/7 Support</span>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<!-- ================= CART DRAWER ================= -->
+<div id="cartOverlay" onclick="closeCart()" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+<aside id="cartDrawer"
+  class="fixed top-0 right-0 h-full w-full sm:w-[420px] z-[60] glass-strong border-l border-white/10 translate-x-full transition-transform duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] flex flex-col">
+
+  <div class="flex items-center justify-between px-5 py-4 border-b border-white/10">
+    <div class="flex items-center gap-2.5">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 grid place-items-center">
+        <i class="fa-solid fa-cart-shopping text-white text-[13px]"></i>
+      </div>
+      <div>
+        <h3 class="font-extrabold text-white text-[15px] leading-none">የግዢ ቅርጫት</h3>
+        <p class="text-[11px] text-slate-400 mt-0.5">Your Cart</p>
+      </div>
+    </div>
+    <button onclick="closeCart()" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 grid place-items-center text-slate-400 hover:text-white transition">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <div id="cartItems" class="flex-1 overflow-y-auto px-5 py-4 space-y-3"></div>
+
+  <div class="border-t border-white/10 px-5 py-4 space-y-3 bg-slate-950/40">
+    <div class="flex items-center justify-between text-[13px]">
+      <span class="text-slate-400">Subtotal</span>
+      <span id="cartSubtotal" class="font-bold text-slate-100">0 ETB</span>
+    </div>
+    <div class="flex items-center justify-between text-[13px]">
+      <span class="text-slate-400">Delivery</span>
+      <span class="text-slate-400 italic">Calculated at checkout</span>
+    </div>
+    <button onclick="checkoutCart()" id="cartCheckoutBtn"
+      class="btn-grad w-full py-3.5 rounded-2xl text-white font-extrabold text-[14px] flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none">
+      <i class="fa-solid fa-lock text-[12px]"></i> Checkout Securely
+    </button>
+  </div>
+</aside>
+
+<!-- ================= CHECKOUT MODAL ================= -->
+<div id="checkoutModal" class="fixed inset-0 z-[70] hidden">
+  <div class="absolute inset-0 bg-slate-950/85 backdrop-blur-md" onclick="closeCheckout()"></div>
+
+  <div class="relative h-full overflow-y-auto py-6 px-3 sm:px-4 flex items-start sm:items-center justify-center">
+    <div class="w-full max-w-4xl glass-strong rounded-3xl border border-white/12 shadow-2xl shadow-purple-900/40 pop-in overflow-hidden">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between px-5 sm:px-7 py-4 border-b border-white/10 bg-gradient-to-r from-purple-600/12 to-blue-600/12">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 grid place-items-center shadow-lg shadow-purple-600/40">
+            <i class="fa-solid fa-receipt text-white text-[14px]"></i>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-white text-[16px] leading-none">የግዢ ማረጋገጫ</h3>
+            <p class="text-[11px] text-slate-400 mt-1">Checkout & Delivery Details</p>
+          </div>
+        </div>
+        <button onclick="closeCheckout()" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 grid place-items-center text-slate-400 hover:text-white transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="checkoutForm" onsubmit="event.preventDefault(); confirmOrder();" class="p-5 sm:p-7">
+        <div class="grid lg:grid-cols-5 gap-6">
+
+          <!-- LEFT: delivery form -->
+          <div class="lg:col-span-3 space-y-5">
+
+            <!-- Delivery address -->
+            <div>
+              <h4 class="text-[12px] font-extrabold uppercase tracking-wider text-purple-300 flex items-center gap-2 mb-3">
+                <i class="fa-solid fa-location-dot"></i> Delivery Location
+              </h4>
+              <div class="grid sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-400 mb-1.5">City / Region <span class="text-rose-400">*</span></label>
+                  <select id="coCity" class="w-full px-3.5 py-3 rounded-xl bg-slate-900/70 border border-white/10 text-[13px] text-slate-100 transition">
+                    <option value="">— ይምረጡ —</option>
+                    <option>Addis Ababa</option>
+                    <option>Adama</option>
+                    <option>Bahir Dar</option>
+                    <option>Dire Dawa</option>
+                    <option>Gondar</option>
+                    <option>Hawassa</option>
+                    <option>Jimma</option>
+                    <option>Mekelle</option>
+                    <option>Moyale</option>
+                    <option>Shashemene</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-400 mb-1.5">Sub-city / Woreda <span class="text-rose-400">*</span></label>
+                  <input id="coWoreda" type="text" placeholder="e.g. Bole Sub-city, Woreda 03"
+                    class="w-full px-3.5 py-3 rounded-xl bg-slate-900/70 border border-white/10 text-[13px] text-slate-100 placeholder:text-slate-500 transition" />
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="block text-[11px] font-semibold text-slate-400 mb-1.5">Specific Place / Landmark <span class="text-rose-400">*</span></label>
+                  <input id="coLandmark" type="text" placeholder="e.g. Behind Edna Mall, Blue building 3rd floor"
+                    class="w-full px-3.5 py-3 rounded-xl bg-slate-900/70 border border-white/10 text-[13px] text-slate-100 placeholder:text-slate-500 transition" />
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="block text-[11px] font-semibold text-slate-400 mb-1.5">Phone Number <span class="text-rose-400">*</span></label>
+                  <div class="relative">
+                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-[13px] text-slate-500 font-semibold pointer-events-none">
+                      <i class="fa-solid fa-phone text-[11px] mr-1"></i> +251
+                    </span>
+                    <input id="coPhone" type="tel" placeholder="0912 345 678"
+                      class="w-full pl-[86px] pr-3.5 py-3 rounded-xl bg-slate-900/70 border border-white/10 text-[13px] text-slate-100 placeholder:text-slate-500 transition" />
+                  </div>
+                  <p class="text-[10px] text-slate-500 mt-1.5"><i class="fa-solid fa-circle-info mr-1"></i> Rider will call this number before arrival.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Delivery method -->
+            <div>
+              <h4 class="text-[12px] font-extrabold uppercase tracking-wider text-purple-300 flex items-center gap-2 mb-3">
+                <i class="fa-solid fa-truck-fast"></i> Delivery Method
+              </h4>
+              <div id="deliveryOptions" class="space-y-2.5"></div>
+            </div>
+
+            <!-- Error box -->
+            <div id="coError" class="hidden items-start gap-2.5 rounded-2xl bg-rose-500/10 border border-rose-400/35 px-4 py-3">
+              <i class="fa-solid fa-triangle-exclamation text-rose-400 mt-0.5"></i>
+              <p class="text-[12px] text-rose-200 font-medium leading-snug" id="coErrorText"></p>
+            </div>
+          </div>
+
+          <!-- RIGHT: summary -->
+          <div class="lg:col-span-2">
+            <div class="rounded-2xl bg-slate-900/60 border border-white/10 p-5 lg:sticky lg:top-4">
+              <h4 class="text-[12px] font-extrabold uppercase tracking-wider text-slate-300 mb-3.5 flex items-center gap-2">
+                <i class="fa-solid fa-bag-shopping text-purple-300"></i> Order Summary
+              </h4>
+
+              <div id="checkoutItems" class="space-y-3 max-h-56 overflow-y-auto pr-1 mb-4"></div>
+
+              <div class="space-y-2 pt-4 border-t border-white/10">
+                <div class="flex justify-between text-[13px]">
+                  <span class="text-slate-400">Subtotal</span>
+                  <span id="coSubtotal" class="font-bold text-slate-100">0 ETB</span>
+                </div>
+                <div class="flex justify-between text-[13px]">
+                  <span class="text-slate-400">Delivery Fee</span>
+                  <span id="coFee" class="font-bold text-slate-100">0 ETB</span>
+                </div>
+                <div class="flex justify-between items-end pt-3 mt-1 border-t border-white/10">
+                  <span class="text-[13px] font-bold text-slate-300">Total</span>
+                  <span id="coTotal" class="text-2xl font-black grad-text">0 ETB</span>
+                </div>
+              </div>
+
+              <!-- Wallet status -->
+              <div class="mt-4 rounded-xl bg-emerald-500/8 border border-emerald-400/25 px-3.5 py-3 space-y-1.5">
+                <div class="flex justify-between text-[12px]">
+                  <span class="text-slate-400">Wallet Balance</span>
+                  <span class="font-bold text-emerald-300" data-wallet-chip>10,000 ETB</span>
+                </div>
+                <div class="flex justify-between text-[12px]">
+                  <span class="text-slate-400">Balance After</span>
+                  <span id="coAfter" class="font-bold text-slate-200">—</span>
+                </div>
+              </div>
+
+              <button type="submit" id="coConfirmBtn"
+                class="btn-grad w-full mt-4 py-3.5 rounded-2xl text-white font-extrabold text-[14px] flex items-center justify-center gap-2">
+                <i class="fa-solid fa-shield-halved text-[12px]"></i> Confirm & Pay
+              </button>
+              <p class="text-[10px] text-slate-500 text-center mt-2.5 leading-snug">
+                By confirming you agree to Zemen Gebeya's escrow terms.<br/>Demo transaction — no real money involved.
+              </p>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ================= SUCCESS MODAL ================= -->
+<div id="successModal" class="fixed inset-0 z-[80] hidden">
+  <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-md" onclick="closeSuccess()"></div>
+  <div class="relative h-full flex items-center justify-center p-4">
+    <div class="w-full max-w-md glass-strong rounded-3xl border border-emerald-400/25 p-7 text-center pop-in shadow-2xl shadow-emerald-900/30">
+      <div class="relative w-20 h-20 mx-auto">
+        <div class="absolute inset-0 rounded-full bg-emerald-500/25 blur-xl"></div>
+        <div class="relative w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 grid place-items-center shadow-lg shadow-emerald-500/50">
+          <i class="fa-solid fa-check text-white text-3xl"></i>
+        </div>
+      </div>
+
+      <h3 class="mt-5 text-2xl font-black text-white">ትዕዛዝዎ ተሳክቷል! 🎉</h3>
+      <p class="mt-1.5 text-[13px] text-slate-400">Your order has been placed successfully.</p>
+
+      <div class="mt-5 rounded-2xl bg-white/5 border border-white/10 p-4 space-y-2.5 text-left">
+        <div class="flex justify-between text-[12px]">
+          <span class="text-slate-400">Order ID</span>
+          <span id="succOrderId" class="font-bold text-purple-300">—</span>
+        </div>
+        <div class="flex justify-between text-[12px]">
+          <span class="text-slate-400">Total Paid</span>
+          <span id="succTotal" class="font-bold text-white">—</span>
+        </div>
+        <div class="flex justify-between text-[12px]">
+          <span class="text-slate-400">Remaining Balance</span>
+          <span id="succBalance" class="font-bold text-emerald-300">—</span>
+        </div>
+        <div class="flex justify-between text-[12px]">
+          <span class="text-slate-400">Delivery To</span>
+          <span id="succAddress" class="font-semibold text-slate-200 text-right max-w-[58%]">—</span>
+        </div>
+        <div class="flex justify-between text-[12px]">
+          <span class="text-slate-400">Est. Arrival</span>
+          <span id="succEta" class="font-bold text-blue-300">—</span>
+        </div>
+      </div>
+
+      <div class="mt-5 flex gap-2.5">
+        <button onclick="closeSuccess(); scrollToOrders();"
+          class="btn-grad flex-1 py-3 rounded-2xl text-white font-extrabold text-[13px]">
+          <i class="fa-solid fa-route mr-1.5"></i> Track Order
+        </button>
+        <button onclick="closeSuccess()"
+          class="flex-1 py-3 rounded-2xl bg-white/5 border border-white/12 hover:bg-white/10 text-slate-200 font-bold text-[13px] transition">
+          Continue Shopping
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= TOASTS ================= -->
+<div id="toastContainer" class="fixed top-20 right-4 z-[100] space-y-2.5 w-[calc(100%-2rem)] max-w-sm pointer-events-none"></div>
+
+<script>
+/* =========================================================
+   ZEMEN GEBEYA — MARKETPLACE MODULE
+   Vanilla JS · localStorage-backed demo commerce engine
+   ========================================================= */
+
+/* ---------------- STORAGE KEYS ---------------- */
+const WALLET_KEY  = 'zemen_wallet_balance';
+const CART_KEY    = 'zemen_gebeya_cart';
+const ORDERS_KEY  = 'zemen_gebeya_orders';
+const WISH_KEY    = 'zemen_gebeya_wishlist';
+const START_BALANCE = 10000;
+
+/* ---------------- SAFE STORAGE ---------------- */
+function storeGet(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw === null) return fallback;
+    return JSON.parse(raw);
+  } catch (e) { return fallback; }
+}
+function storeSet(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+}
+
+/* ---------------- WALLET ---------------- */
+function getWallet() {
+  try {
+    const raw = localStorage.getItem(WALLET_KEY);
+    if (raw === null) {
+      localStorage.setItem(WALLET_KEY, String(START_BALANCE));
+      return START_BALANCE;
+    }
+    const n = parseFloat(raw);
+    return isNaN(n) ? START_BALANCE : n;
+  } catch (e) { return START_BALANCE; }
+}
+function setWallet(amount) {
+  const v = Math.max(0, Math.round(amount * 100) / 100);
+  try { localStorage.setItem(WALLET_KEY, String(v)); } catch (e) {}
+  renderWallet();
+}
+
+/* ---------------- FORMATTING ---------------- */
+const fmt = (n) => new Intl.NumberFormat('en-US').format(Math.round(n)) + ' ETB';
+const fmtShort = (n) => new Intl.NumberFormat('en-US').format(Math.round(n));
+
+/* =========================================================
+   PRODUCT CATALOG  (realistic Ethiopian market pricing)
+   ========================================================= */
+const PRODUCTS = [
+  {
+    id: 'p01', title: 'Nike Air Zoom Pegasus 40', cat: 'Shoes', price: 6500, old: 8200,
+    seller: 'Addis Kicks', rating: 4.9, verified: true, tag: 'HOT',
+    img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=700&q=80'
+  },
+  {
+    id: 'p02', title: 'Adidas Ultraboost Light', cat: 'Shoes', price: 7800, old: 9500,
+    seller: 'Addis Kicks', rating: 4.8, verified: true, tag: '',
+    img: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=700&q=80'
+  },
+  {
+    id: 'p03', title: 'New Balance 550 Classic', cat: 'Shoes', price: 5400, old: 0,
+    seller: 'Sole House', rating: 4.7, verified: true, tag: '',
+    img: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=700&q=80'
+  },
+  {
+    id: 'p04', title: 'iPhone 13 · 128GB', cat: 'Tech', price: 62000, old: 71000,
+    seller: 'Bole Tech Hub', rating: 4.9, verified: true, tag: 'DEAL',
+    img: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=700&q=80'
+  },
+  {
+    id: 'p05', title: 'Samsung Galaxy A54 5G', cat: 'Tech', price: 38500, old: 44000,
+    seller: 'Merkato Electronics', rating: 4.6, verified: true, tag: '',
+    img: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=700&q=80'
+  },
+  {
+    id: 'p06', title: 'Sony WH-1000XM4 Headphones', cat: 'Tech', price: 24000, old: 28500,
+    seller: 'Zemen Digital', rating: 4.9, verified: true, tag: 'HOT',
+    img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=700&q=80'
+  },
+  {
+    id: 'p07', title: 'JBL Tune 510BT Wireless', cat: 'Tech', price: 3200, old: 4100,
+    seller: 'Zemen Digital', rating: 4.5, verified: true, tag: '',
+    img: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=700&q=80'
+  },
+  {
+    id: 'p08', title: 'MacBook Air M2 · 13"', cat: 'Electronics', price: 89000, old: 0,
+    seller: 'Bole Tech Hub', rating: 5.0, verified: true, tag: 'PREMIUM',
+    img: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=700&q=80'
+  },
+  {
+    id: 'p09', title: 'Apple Watch SE (2nd Gen)', cat: 'Electronics', price: 21500, old: 25000,
+    seller: 'Zemen Digital', rating: 4.8, verified: true, tag: '',
+    img: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=700&q=80'
+  },
+  {
+    id: 'p10', title: 'Habesha Kemis · Handwoven', cat: 'Fashion', price: 4800, old: 6200,
+    seller: 'Sheba Threads', rating: 4.9, verified: true, tag: 'LOCAL',
+    img: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=700&q=80'
+  },
+  {
+    id: 'p11', title: 'Zemen Premium Cotton Tee', cat: 'Fashion', price: 850, old: 1200,
+    seller: 'Sheba Threads', rating: 4.6, verified: true, tag: 'BUDGET',
+    img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=700&q=80'
+  },
+  {
+    id: 'p12', title: 'Ray-Ban Aviator Classic', cat: 'Fashion', price: 5900, old: 7300,
+    seller: 'Sheba Threads', rating: 4.7, verified: true, tag: '',
+    img: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=700&q=80'
+  }
+];
+
+const CATEGORIES = ['All', 'Shoes', 'Tech', 'Electronics', 'Fashion'];
+
+/* ---------------- DELIVERY OPTIONS ---------------- */
+const DELIVERY = {
+  standard: { label: 'Standard Delivery', am: 'መደበኛ ማድረሻ', desc: '2–3 business days · Addis & Regions', fee: 150, icon: 'fa-truck', eta: '2–3 days' },
+  express:  { label: 'Express Delivery',  am: 'ፈጣን ማድረሻ',   desc: 'Same-day inside Addis Ababa',      fee: 350, icon: 'fa-bolt',  eta: 'Today, before 8PM' },
+  pickup:   { label: 'Express Pickup',    am: 'በራስዎ መውሰድ',  desc: 'Collect free at Bole Hub',         fee: 0,   icon: 'fa-store', eta: 'Ready in 2 hours' }
+};
+
+/* ---------------- ORDER STATUS PIPELINE ---------------- */
+const STATUS_STEPS = [
+  { label: 'Order Confirmed ✅',  sub: 'ትዕዛዝዎ ተረጋግጧል',        at: 0,      color: 'emerald' },
+  { label: 'Preparing Package 📦', sub: 'በማዘጋጀት ላይ',            at: 8000,   color: 'blue'    },
+  { label: 'Out for Delivery 🚚',  sub: 'በመንገድ ላይ · Rider en route', at: 22000,  color: 'purple'  },
+  { label: 'Delivered 🎉',         sub: 'ደርሷል · Enjoy!',          at: 45000,  color: 'emerald' }
+];
+
+function statusIndexFor(createdAt) {
+  const elapsed = Date.now() - createdAt;
+  let idx = 0;
+  STATUS_STEPS.forEach((s, i) => { if (elapsed >= s.at) idx = i; });
+  return idx;
+}
+
+/* =========================================================
+   APP STATE
+   ========================================================= */
+const state = {
+  cart: storeGet(CART_KEY, []),
+  orders: storeGet(ORDERS_KEY, []),
+  wishlist: storeGet(WISH_KEY, []),
+  category: 'All',
+  query: '',
+  wishOnly: false,
+  checkoutItems: [],
+  checkoutSource: 'cart',
+  deliveryMethod: 'standard'
+};
+
+/* =========================================================
+   TOASTS
+   ========================================================= */
+const TOAST_STYLES = {
+  success: { border: 'border-emerald-400/40', bg: 'bg-emerald-500/12', icon: 'fa-circle-check', color: 'text-emerald-400' },
+  error:   { border: 'border-rose-400/40',    bg: 'bg-rose-500/12',    icon: 'fa-circle-exclamation', color: 'text-rose-400' },
+  info:    { border: 'border-purple-400/40',  bg: 'bg-purple-500/12',  icon: 'fa-circle-info', color: 'text-purple-300' },
+  cart:    { border: 'border-blue-400/40',    bg: 'bg-blue-500/12',    icon: 'fa-cart-plus', color: 'text-blue-300' }
+};
+
+function toast(message, type = 'success', title = '') {
+  const s = TOAST_STYLES[type] || TOAST_STYLES.info;
+  const el = document.createElement('div');
+  el.className = `pointer-events-auto slide-in-right glass-strong ${s.border} border rounded-2xl px-4 py-3.5 flex items-start gap-3 shadow-2xl shadow-slate-950/60`;
+  el.innerHTML = `
+    <i class="fa-solid ${s.icon} ${s.color} mt-0.5 text-[15px]"></i>
+    <div class="flex-1 min-w-0">
+      ${title ? `<p class="text-[13px] font-extrabold text-white leading-tight">${title}</p>` : ''}
+      <p class="text-[12px] ${title ? 'text-slate-400 mt-0.5' : 'text-slate-200 font-medium'} leading-snug">${message}</p>
+    </div>
+    <button class="text-slate-500 hover:text-white transition shrink-0" onclick="this.parentElement.remove()">
+      <i class="fa-solid fa-xmark text-[11px]"></i>
+    </button>`;
+  document.getElementById('toastContainer').appendChild(el);
+  setTimeout(() => {
+    el.style.transition = 'all .35s ease';
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(40px)';
+    setTimeout(() => el.remove(), 350);
+  }, 3800);
+}
+
+/* =========================================================
+   WALLET UI
+   ========================================================= */
+function renderWallet() {
+  const bal = getWallet();
+  document.querySelectorAll('[data-wallet-chip]').forEach(el => {
+    el.textContent = fmtShort(bal) + ' ETB';
+  });
+  const big = document.querySelector('[data-wallet-big]');
+  if (big) big.textContent = fmtShort(bal);
+
+  const spent = state.orders.reduce((sum, o) => sum + o.total, 0);
+  const statOrders = document.querySelector('[data-stat-orders]');
+  const statSpent = document.querySelector('[data-stat-spent]');
+  const statCart = document.querySelector('[data-stat-cart]');
+  if (statOrders) statOrders.textContent = state.orders.length;
+  if (statSpent) statSpent.textContent = fmtShort(spent);
+  if (statCart) statCart.textContent = cartCount();
+
+  updateCheckoutTotals();
+}
+
+function topUp(amount) {
+  setWallet(getWallet() + amount);
+  toast(`Added ${fmt(amount)} to your demo wallet.`, 'success', 'Wallet Topped Up 💰');
+}
+
+function resetWallet() {
+  setWallet(START_BALANCE);
+  toast(`Demo wallet reset to ${fmt(START_BALANCE)}.`, 'info', 'Wallet Reset');
+}
+
+/* =========================================================
+   PRODUCT RENDERING
+   ========================================================= */
+function visibleProducts() {
+  const q = state.query.trim().toLowerCase();
+  return PRODUCTS.filter(p => {
+    if (state.wishOnly && !state.wishlist.includes(p.id)) return false;
+    if (state.category !== 'All' && p.cat !== state.category) return false;
+    if (q) {
+      const haystack = (p.title + ' ' + p.cat + ' ' + p.seller).toLowerCase();
+      if (!haystack.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function tagStyle(tag) {
+  const map = {
+    HOT: 'bg-rose-500/90 text-white',
+    DEAL: 'bg-emerald-500/90 text-white',
+    PREMIUM: 'bg-gradient-to-r from-purple-500 to-blue-500 text-white',
+    LOCAL: 'bg-amber-500/90 text-slate-950',
+    BUDGET: 'bg-sky-500/90 text-white'
+  };
+  return map[tag] || 'bg-white/15 text-white';
+}
+
+function renderProducts() {
+  const grid = document.getElementById('productGrid');
+  const list = visibleProducts();
+
+  document.getElementById('resultCount').textContent = list.length;
+
+  const labelParts = [];
+  if (state.category !== 'All') labelParts.push(`in ${state.category}`);
+  if (state.wishOnly) labelParts.push('in Wishlist ❤️');
+  if (state.query) labelParts.push(`matching “${state.query}”`);
+  const filterLabel = document.getElementById('filterLabel');
+  filterLabel.textContent = labelParts.join(' ');
+
+  const hasFilters = state.category !== 'All' || state.query || state.wishOnly;
+  document.getElementById('clearFiltersBtn').classList.toggle('hidden', !hasFilters);
+
+  if (!list.length) {
+    grid.innerHTML = `
+      <div class="col-span-full glass rounded-3xl py-16 px-6 text-center fade-up">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-white/5 border border-white/10 grid place-items-center">
+          <i class="fa-solid fa-magnifying-glass text-slate-500 text-xl"></i>
+        </div>
+        <h3 class="mt-4 text-lg font-extrabold text-white">ምንም አልተገኘም</h3>
+        <p class="mt-1 text-[13px] text-slate-400">No products match your current filters.</p>
+        <button onclick="clearFilters()" class="btn-grad mt-5 px-6 py-2.5 rounded-xl text-white font-bold text-[13px]">
+          Clear Filters
+        </button>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map((p, i) => {
+    const wished = state.wishlist.includes(p.id);
+    const discount = p.old ? Math.round(((p.old - p.price) / p.old) * 100) : 0;
+    return `
+    <article class="card-hover glass rounded-2xl overflow-hidden flex flex-col fade-up" style="animation-delay:${i * 45}ms">
+
+      <!-- Image -->
+      <div class="relative h-48 overflow-hidden bg-slate-900">
+        <img src="${p.img}" alt="${p.title}" loading="lazy"
+             onerror="this.onerror=null;this.src='https://picsum.photos/seed/${p.id}/700/500';"
+             class="w-full h-full object-cover transition-transform duration-700 ease-out hover:scale-110" />
+
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/10 to-transparent pointer-events-none"></div>
+
+        <!-- Category badge -->
+        <span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-slate-950/70 backdrop-blur-md border border-white/15 text-[10px] font-extrabold text-purple-200 uppercase tracking-wider">
+          ${p.cat}
+        </span>
+
+        ${p.tag ? `<span class="absolute top-3 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-lg ${tagStyle(p.tag)} text-[10px] font-extrabold tracking-wider shadow-lg">${p.tag}</span>` : ''}
+
+        <!-- Wishlist -->
+        <button onclick="toggleWish('${p.id}')"
+          class="absolute top-3 right-3 w-9 h-9 rounded-xl bg-slate-950/70 backdrop-blur-md border border-white/15 grid place-items-center transition-all duration-300 hover:scale-110 ${wished ? 'border-rose-400/70' : ''}">
+          <i class="fa-${wished ? 'solid' : 'regular'} fa-heart text-[13px] ${wished ? 'text-rose-400' : 'text-white/70'}"></i>
+        </button>
+
+        ${discount > 0 ? `<span class="absolute bottom-3 right-3 px-2 py-1 rounded-lg bg-rose-500 text-white text-[10px] font-extrabold shadow-lg">-${discount}%</span>` : ''}
+      </div>
+
+      <!-- Body -->
+      <div class="p-4 flex flex-col flex-1">
+        <!-- Seller trust -->
+        <div class="flex items-center gap-1.5 text-[10.5px] font-semibold text-emerald-400">
+          <i class="fa-solid fa-circle-check text-[9px]"></i>
+          <span>★ ${p.rating.toFixed(1)}</span>
+          <span class="text-slate-500">·</span>
+          <span class="text-slate-400 truncate">${p.seller}</span>
+          <span class="text-slate-600">Verified Merchant</span>
+        </div>
+
+        <h3 class="mt-1.5 font-bold text-slate-100 text-[14px] leading-snug line-clamp-2 min-h-[38px]">${p.title}</h3>
+
+        <div class="mt-3 flex items-end justify-between gap-2">
+          <div>
+            <p class="text-[17px] font-black text-white leading-none">${fmtShort(p.price)} <span class="text-[11px] font-bold text-slate-400">ETB</span></p>
+            ${p.old ? `<p class="text-[11px] text-slate-500 line-through mt-1">${fmtShort(p.old)} ETB</p>` : ''}
+          </div>
+        </div>
+
+        <div class="mt-3.5 flex gap-2">
+          <button onclick="addToCart('${p.id}')"
+            class="flex-1 py-2.5 rounded-xl bg-white/5 border border-white/12 hover:border-purple-400/60 hover:bg-purple-500/12 text-[12px] font-bold text-slate-200 hover:text-white transition-all duration-300 active:scale-95">
+            <i class="fa-solid fa-cart-plus mr-1 text-[11px]"></i> Add
+          </button>
+          <button onclick="buyNow('${p.id}')"
+            class="flex-1 btn-grad py-2.5 rounded-xl text-[12px] font-extrabold text-white active:scale-95">
+            Buy Now
+          </button>
+        </div>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+/* =========================================================
+   CATEGORY BAR
+   ========================================================= */
+function renderCategories() {
+  const bar = document.getElementById('categoryBar');
+  bar.innerHTML = CATEGORIES.map(c => {
+    const active = state.category === c;
+    return `
+      <button onclick="setCategory('${c}')"
+        class="shrink-0 px-4 py-2.5 rounded-xl text-[12.5px] font-bold transition-all duration-300 border active:scale-95
+        ${active
+          ? 'btn-grad text-white border-transparent shadow-lg shadow-purple-600/35'
+          : 'bg-white/5 text-slate-300 border-white/10 hover:border-purple-400/50 hover:text-white hover:bg-purple-500/10'}">
+        ${c === 'All' ? '<i class="fa-solid fa-layer-group mr-1.5 text-[10px]"></i>' : ''}${c}
+      </button>`;
+  }).join('');
+}
+
+function setCategory(cat) {
+  state.category = cat;
+  state.wishOnly = false;
+  renderCategories();
+  renderProducts();
+}
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+function onSearch(value) {
+  state.query = value;
+  document.getElementById('clearSearchBtn').classList.toggle('hidden', !value);
+  renderProducts();
+}
+function clearSearch() {
+  state.query = '';
+  document.getElementById('searchInput').value = '';
+  document.getElementById('clearSearchBtn').classList.add('hidden');
+  renderProducts();
+}
+function clearFilters() {
+  state.query = '';
+  state.category = 'All';
+  state.wishOnly = false;
+  document.getElementById('searchInput').value = '';
+  document.getElementById('clearSearchBtn').classList.add('hidden');
+  renderCategories();
+  renderProducts();
+  toast('Filters cleared — showing all products.', 'info');
+}
+
+/* =========================================================
+   WISHLIST
+   ========================================================= */
+function toggleWish(id) {
+  const i = state.wishlist.indexOf(id);
+  const product = PRODUCTS.find(p => p.id === id);
+  if (i > -1) {
+    state.wishlist.splice(i, 1);
+    toast(`Removed “${product.title}” from wishlist.`, 'info');
+  } else {
+    state.wishlist.push(id);
+    toast(`Saved “${product.title}” to wishlist.`, 'success', 'Added to Wishlist ❤️');
+  }
+  storeSet(WISH_KEY, state.wishlist);
+  renderWishCount();
+  renderProducts();
+}
+
+function renderWishCount() {
+  const badge = document.getElementById('wishCount');
+  const n = state.wishlist.length;
+  badge.textContent = n;
+  badge.classList.toggle('hidden', n === 0);
+}
+
+function toggleWishFilter() {
+  if (!state.wishlist.length) {
+    toast('Your wishlist is empty. Tap the ❤️ on any product.', 'info');
+    return;
+  }
+  state.wishOnly = !state.wishOnly;
+  const btn = document.getElementById('wishlistBtn');
+  btn.classList.toggle('border-rose-400/80', state.wishOnly);
+  btn.classList.toggle('bg-rose-500/20', state.wishOnly);
+  renderProducts();
+  if (state.wishOnly) {
+    document.getElementById('productGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    toast('Showing wishlist items only.', 'info');
+  }
+}
+
+/* =========================================================
+   CART
+   ========================================================= */
+function cartCount() {
+  return state.cart.reduce((s, c) => s + c.qty, 0);
+}
+
+function cartDetailed() {
+  return state.cart
+    .map(c => {
+      const p = PRODUCTS.find(x => x.id === c.id);
+      return p ? { ...p, qty: c.qty } : null;
+    })
+    .filter(Boolean);
+}
+
+function cartSubtotal() {
+  return cartDetailed().reduce((s, i) => s + i.price * i.qty, 0);
+}
+
+function saveCart() {
+  storeSet(CART_KEY, state.cart);
+}
+
+function addToCart(id, silent = false) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  const line = state.cart.find(c => c.id === id);
+  if (line) line.qty += 1;
+  else state.cart.push({ id, qty: 1 });
+  saveCart();
+  renderCart();
+  renderWallet();
+  animateCartButton();
+  if (!silent) toast(`${p.title} added to cart.`, 'cart', 'Added to Cart 🛒');
+}
+
+function changeQty(id, delta) {
+  const line = state.cart.find(c => c.id === id);
+  if (!line) return;
+  line.qty += delta;
+  if (line.qty <= 0) state.cart = state.cart.filter(c => c.id !== id);
+  saveCart();
+  renderCart();
+  renderWallet();
+}
+
+function removeFromCart(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  state.cart = state.cart.filter(c => c.id !== id);
+  saveCart();
+  renderCart();
+  renderWallet();
+  toast(`Removed ${p ? p.title : 'item'} from cart.`, 'info');
+}
+
+function animateCartButton() {
+  const badge = document.getElementById('cartCount');
+  badge.classList.remove('pop-in');
+  void badge.offsetWidth;
+  badge.classList.add('pop-in');
+}
+
+function renderCart() {
+  const wrap = document.getElementById('cartItems');
+  const items = cartDetailed();
+
+  const count = cartCount();
+  const badge = document.getElementById('cartCount');
+  badge.textContent = count;
+  badge.classList.toggle('hidden', count === 0);
+
+  if (!items.length) {
+    wrap.innerHTML = `
+      <div class="h-full flex flex-col items-center justify-center text-center py-16">
+        <div class="w-20 h-20 rounded-3xl bg-white/5 border border-white/10 grid place-items-center">
+          <i class="fa-solid fa-basket-shopping text-slate-600 text-2xl"></i>
+        </div>
+        <h4 class="mt-4 font-extrabold text-white">ቅርጫትዎ ባዶ ነው</h4>
+        <p class="mt-1 text-[12.5px] text-slate-400 max-w-[220px]">Your cart is empty. Discover amazing deals across Ethiopia.</p>
+        <button onclick="closeCart()" class="btn-grad mt-5 px-6 py-2.5 rounded-xl text-white font-bold text-[13px]">
+          Browse Products
+        </button>
+      </div>`;
+    document.getElementById('cartSubtotal').textContent = '0 ETB';
+    document.getElementById('cartCheckoutBtn').disabled = true;
+    return;
+  }
+
+  wrap.innerHTML = items.map(i => `
+    <div class="glass rounded-2xl p-3 flex gap-3 items-center fade-up">
+      <img src="${i.img}" alt="${i.title}" onerror="this.onerror=null;this.src='https://picsum.photos/seed/${i.id}/200/200';"
+           class="w-16 h-16 rounded-xl object-cover border border-white/10 shrink-0" />
+      <div class="flex-1 min-w-0">
+        <p class="text-[13px] font-bold text-slate-100 truncate">${i.title}</p>
+        <p class="text-[10.5px] text-emerald-400 font-semibold mt-0.5">
+          <i class="fa-solid fa-circle-check text-[8px]"></i> ★ ${i.rating.toFixed(1)} · ${i.seller}
+        </p>
+        <div class="flex items-center justify-between mt-2">
+          <p class="text-[13px] font-black text-white">${fmtShort(i.price * i.qty)} <span class="text-[10px] text-slate-400">ETB</span></p>
+          <div class="flex items-center gap-1.5">
+            <button onclick="changeQty('${i.id}',-1)" class="w-7 h-7 rounded-lg bg-white/5 border border-white/10 hover:bg-white/12 text-slate-300 transition grid place-items-center">
+              <i class="fa-solid fa-minus text-[9px]"></i>
+            </button>
+            <span class="w-7 text-center text-[12.5px] font-bold text-white">${i.qty}</span>
+            <button onclick="changeQty('${i.id}',1)" class="w-7 h-7 rounded-lg bg-white/5 border border-white/10 hover:bg-white/12 text-slate-300 transition grid place-items-center">
+              <i class="fa-solid fa-plus text-[9px]"></i>
+            </button>
+            <button onclick="removeFromCart('${i.id}')" class="w-7 h-7 rounded-lg bg-rose-500/10 border border-rose-400/25 hover:bg-rose-500/25 text-rose-300 transition grid place-items-center ml-1">
+              <i class="fa-solid fa-trash-can text-[9px]"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('cartSubtotal').textContent = fmt(cartSubtotal());
+  document.getElementById('cartCheckoutBtn').disabled = false;
+}
+
+/* ---------------- CART DRAWER OPEN/CLOSE ---------------- */
+function openCart() {
+  renderCart();
+  const drawer = document.getElementById('cartDrawer');
+  const overlay = document.getElementById('cartOverlay');
+  drawer.classList.remove('translate-x-full');
+  overlay.classList.remove('opacity-0', 'pointer-events-none');
+  document.body.style.overflow = 'hidden';
+}
+function closeCart() {
+  const drawer = document.getElementById('cartDrawer');
+  const overlay = document.getElementById('cartOverlay');
+  drawer.classList.add('translate-x-full');
+  overlay.classList.add('opacity-0', 'pointer-events-none');
+  document.body.style.overflow = '';
+}
+
+/* =========================================================
+   CHECKOUT
+   ========================================================= */
+function renderDeliveryOptions() {
+  const wrap = document.getElementById('deliveryOptions');
+  wrap.innerHTML = Object.entries(DELIVERY).map(([key, d]) => `
+    <div class="pay-option">
+      <input type="radio" name="deliveryMethod" id="dm_${key}" value="${key}" class="hidden"
+             ${state.deliveryMethod === key ? 'checked' : ''} onchange="setDeliveryMethod('${key}')" />
+      <label for="dm_${key}"
+        class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-white/4 border border-white/10 cursor-pointer transition-all duration-300 hover:border-purple-400/40 hover:bg-purple-500/8">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/25 to-blue-500/25 border border-white/10 grid place-items-center shrink-0">
+          <i class="fa-solid ${d.icon} text-purple-300 text-[14px]"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-[13px] font-bold text-slate-100">${d.label} <span class="text-slate-500 font-medium">· ${d.am}</span></p>
+          <p class="text-[11px] text-slate-400 mt-0.5">${d.desc}</p>
+        </div>
+        <div class="text-right shrink-0">
+          <p class="text-[13px] font-black ${d.fee === 0 ? 'text-emerald-400' : 'text-white'}">${d.fee === 0 ? 'FREE' : '+' + fmtShort(d.fee)}</p>
+          <p class="text-[10px] text-slate-500">${d.fee === 0 ? '' : 'ETB'}</p>
+        </div>
+        <div class="tick w-5 h-5 rounded-full bg-purple-500 grid place-items-center shrink-0">
+          <i class="fa-solid fa-check text-white text-[9px]"></i>
+        </div>
+      </label>
+    </div>`).join('');
+}
+
+function setDeliveryMethod(key) {
+  state.deliveryMethod = key;
+  updateCheckoutTotals();
+}
+
+function checkoutSubtotal() {
+  return state.checkoutItems.reduce((s, i) => s + i.price * i.qty, 0);
+}
+
+function updateCheckoutTotals() {
+  const subEl = document.getElementById('coSubtotal');
+  if (!subEl) return;
+  const subtotal = checkoutSubtotal();
+  const fee = DELIVERY[state.deliveryMethod].fee;
+  const total = subtotal + fee;
+  const bal = getWallet();
+
+  subEl.textContent = fmt(subtotal);
+  document.getElementById('coFee').textContent = fee === 0 ? 'FREE' : fmt(fee);
+  document.getElementById('coTotal').textContent = fmt(total);
+
+  const after = bal - total;
+  const afterEl = document.getElementById('coAfter');
+  afterEl.textContent = after < 0 ? '⚠️ Insufficient' : fmt(after);
+  afterEl.className = after < 0 ? 'font-bold text-rose-400' : 'font-bold text-emerald-300';
+}
+
+function renderCheckoutItems() {
+  const wrap = document.getElementById('checkoutItems');
+  wrap.innerHTML = state.checkoutItems.map(i => `
+    <div class="flex items-center gap-3">
+      <img src="${i.img}" alt="${i.title}" onerror="this.onerror=null;this.src='https://picsum.photos/seed/${i.id}/200/200';"
+           class="w-11 h-11 rounded-xl object-cover border border-white/10 shrink-0" />
+      <div class="flex-1 min-w-0">
+        <p class="text-[12.5px] font-bold text-slate-100 truncate">${i.title}</p>
+        <p class="text-[10.5px] text-slate-500">Qty ${i.qty} × ${fmtShort(i.price)} ETB</p>
+      </div>
+      <p class="text-[12.5px] font-extrabold text-white shrink-0">${fmtShort(i.price * i.qty)}</p>
+    </div>`).join('');
+}
+
+function openCheckout(items, source) {
+  if (!items.length) return;
+  state.checkoutItems = items;
+  state.checkoutSource = source;
+  state.deliveryMethod = 'standard';
+
+  hideCheckoutError();
+  renderDeliveryOptions();
+  renderCheckoutItems();
+  updateCheckoutTotals();
+
+  document.getElementById('checkoutModal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCheckout() {
+  document.getElementById('checkoutModal').classList.add('hidden');
+  if (document.getElementById('successModal').classList.contains('hidden')) {
+    document.body.style.overflow = '';
+  }
+}
+
+function checkoutCart() {
+  const items = cartDetailed().map(i => ({ id: i.id, title: i.title, price: i.price, qty: i.qty, img: i.img }));
+  if (!items.length) { toast('Your cart is empty.', 'error'); return; }
+  closeCart();
+  setTimeout(() => openCheckout(items, 'cart'), 220);
+}
+
+function buyNow(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  openCheckout([{ id: p.id, title: p.title, price: p.price, qty: 1, img: p.img }], 'buy');
+}
+
+/* ---------------- VALIDATION HELPERS ---------------- */
+function showCheckoutError(msg) {
+  const box = document.getElementById('coError');
+  document.getElementById('coErrorText').textContent = msg;
+  box.classList.remove('hidden');
+  box.classList.add('flex');
+  box.classList.remove('pop-in'); void box.offsetWidth; box.classList.add('pop-in');
+}
+function hideCheckoutError() {
+  const box = document.getElementById('coError');
+  box.classList.add('hidden');
+  box.classList.remove('flex');
+}
+
+/* =========================================================
+   ORDER CONFIRMATION
+   ========================================================= */
+function confirmOrder() {
+  hideCheckoutError();
+
+  const city = document.getElementById('coCity').value.trim();
+  const woreda = document.getElementById('coWoreda').value.trim();
+  const landmark = document.getElementById('coLandmark').value.trim();
+  const phoneRaw = document.getElementById('coPhone').value.trim();
+  const phone = phoneRaw.replace(/\s+/g, '');
+
+  if (!city || !woreda || !landmark || !phone) {
+    showCheckoutError('እባክዎ ሁሉንም የማድረሻ መረጃ ይሙሉ — Please fill in all delivery fields.');
+    toast('Missing delivery information.', 'error');
+    return;
+  }
+  if (!/^(\+251|0)?[79]\d{8}$/.test(phone)) {
+    showCheckoutError('ትክክለኛ የስልክ ቁጥር ያስገቡ (ምሳሌ: 0912345678) — Invalid Ethiopian phone number.');
+    toast('Please enter a valid phone number.', 'error');
+    return;
+  }
+
+  const subtotal = checkoutSubtotal();
+  const fee = DELIVERY[state.deliveryMethod].fee;
+  const total = subtotal + fee;
+  const balance = getWallet();
+
+  if (total > balance) {
+    const short = total - balance;
+    showCheckoutError(`የኪስ ቦርሳዎ በቂ አይደለም። ${fmt(short)} ይጎድላል። Please top up your demo wallet to continue.`);
+    toast(`Insufficient balance — you need ${fmt(short)} more.`, 'error', 'Payment Failed');
+    return;
+  }
+
+  /* --- Deduct & persist --- */
+  setWallet(balance - total);
+
+  const order = {
+    id: 'ZG-' + String(Date.now()).slice(-6),
+    items: state.checkoutItems.map(i => ({ id: i.id, title: i.title, price: i.price, qty: i.qty, img: i.img })),
+    subtotal,
+    fee,
+    total,
+    method: state.deliveryMethod,
+    methodLabel: DELIVERY[state.deliveryMethod].label,
+    eta: DELIVERY[state.deliveryMethod].eta,
+    address: { city, woreda, landmark, phone },
+    createdAt: Date.now()
+  };
+
+  state.orders.unshift(order);
+  storeSet(ORDERS_KEY, state.orders);
+
+  /* --- Remove purchased items from cart (cart checkout only) --- */
+  if (state.checkoutSource === 'cart') {
+    const boughtIds = order.items.map(i => i.id);
+    state.cart = state.cart.filter(c => !boughtIds.includes(c.id));
+    saveCart();
+    renderCart();
+  }
+
+  state.checkoutItems = [];
+  renderOrders();
+  renderWallet();
+  closeCheckout();
+  showSuccess(order);
+}
+
+/* =========================================================
+   SUCCESS MODAL
+   ========================================================= */
+function showSuccess(order) {
+  document.getElementById('succOrderId').textContent = order.id;
+  document.getElementById('succTotal').textContent = fmt(order.total);
+  document.getElementById('succBalance').textContent = fmt(getWallet());
+  document.getElementById('succAddress').textContent =
+    `${order.address.city}, ${order.address.woreda}`;
+  document.getElementById('succEta').textContent = order.eta;
+
+  document.getElementById('successModal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  toast(`Order ${order.id} confirmed · ${fmt(order.total)} paid.`, 'success', 'Payment Successful ✅');
+}
+
+function closeSuccess() {
+  document.getElementById('successModal').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+function scrollToOrders() {
+  document.getElementById('ordersSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* =========================================================
+   ORDER TRACKING RENDER
+   ========================================================= */
+function timeAgo(ts) {
+  const s = Math.floor((Date.now() - ts) / 1000);
+  if (s < 60) return 'just now';
+  if (s < 3600) return Math.floor(s / 60) + 'm ago';
+  if (s < 86400) return Math.floor(s / 3600) + 'h ago';
+  return Math.floor(s / 86400) + 'd ago';
+}
+
+const STEP_COLORS = {
+  emerald: { dot: 'bg-emerald-400', glow: 'shadow-[0_0_12px_rgba(52,211,153,.9)]', text: 'text-emerald-300', chip: 'bg-emerald-500/12 border-emerald-400/35' },
+  blue:    { dot: 'bg-blue-400',    glow: 'shadow-[0_0_12px_rgba(96,165,250,.9)]',  text: 'text-blue-300',    chip: 'bg-blue-500/12 border-blue-400/35' },
+  purple:  { dot: 'bg-purple-400',  glow: 'shadow-[0_0_12px_rgba(192,132,252,.9)]', text: 'text-purple-300',  chip: 'bg-purple-500/12 border-purple-400/35' }
+};
+
+function renderOrders() {
+  const wrap = document.getElementById('ordersList');
+
+  if (!state.orders.length) {
+    wrap.innerHTML = `
+      <div class="glass rounded-3xl py-14 px-6 text-center fade-up">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-white/5 border border-white/10 grid place-items-center">
+          <i class="fa-solid fa-box-open text-slate-600 text-xl"></i>
+        </div>
+        <h3 class="mt-4 text-[15px] font-extrabold text-white">እስካሁን ትዕዛዝ የለም</h3>
+        <p class="mt-1 text-[12.5px] text-slate-400">No orders yet — your live tracking timeline will appear here.</p>
+      </div>`;
+    renderWallet();
+    return;
+  }
+
+  wrap.innerHTML = state.orders.map((o, idx) => {
+    const sIdx = statusIndexFor(o.createdAt);
+    const step = STATUS_STEPS[sIdx];
+    const c = STEP_COLORS[step.color] || STEP_COLORS.purple;
+    const progress = ((sIdx + 1) / STATUS_STEPS.length) * 100;
+    const itemCount = o.items.reduce((s, i) => s + i.qty, 0);
+
+    return `
+    <div class="glass rounded-3xl p-5 fade-up" data-order-id="${o.id}" data-created="${o.createdAt}" data-idx="${sIdx}" style="animation-delay:${idx * 60}ms">
+
+      <!-- Header -->
+      <div class="flex flex-wrap items-start justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-purple-500/25 to-blue-500/25 border border-white/10 grid place-items-center">
+            <i class="fa-solid fa-box text-purple-300 text-[15px]"></i>
+          </div>
+          <div>
+            <p class="text-[13.5px] font-extrabold text-white leading-none">${o.id}</p>
+            <p class="text-[11px] text-slate-400 mt-1">
+              ${timeAgo(o.createdAt)} · ${itemCount} item${itemCount > 1 ? 's' : ''} · ${fmt(o.total)}
+            </p>
+          </div>
+        </div>
+        <span class="px-3 py-1.5 rounded-full border text-[11px] font-extrabold ${c.chip} ${c.text}">
+          ${step.label}
+        </span>
+      </div>
+
+      <!-- Progress -->
+      <div class="mt-5">
+        <div class="flex items-center gap-1.5">
+          ${STATUS_STEPS.map((s, i) => `
+            <div class="flex items-center ${i < STATUS_STEPS.length - 1 ? 'flex-1' : ''}">
+              <div class="w-3 h-3 rounded-full shrink-0 ${i <= sIdx ? (STEP_COLORS[s.color] || STEP_COLORS.purple).dot + ' ' + (STEP_COLORS[s.color] || STEP_COLORS.purple).glow : 'bg-slate-700'}"></div>
+              ${i < STATUS_STEPS.length - 1 ? `<div class="flex-1 h-[3px] rounded-full mx-1 ${i < sIdx ? 'bg-gradient-to-r from-purple-400 to-blue-400' : 'bg-slate-700/70'}"></div>` : ''}
+            </div>`).join('')}
+        </div>
+        <div class="mt-2.5 flex items-center justify-between">
+          <p class="text-[11.5px] text-slate-400">${step.sub}</p>
+          <p class="text-[11px] font-bold text-slate-500">${Math.round(progress)}%</p>
+        </div>
+      </div>
+
+      <!-- Items -->
+      <div class="mt-5 pt-4 border-t border-white/8 flex flex-wrap gap-2.5">
+        ${o.items.map(i => `
+          <div class="flex items-center gap-2.5 bg-white/4 border border-white/8 rounded-xl p-2 pr-3.5">
+            <img src="${i.img}" alt="${i.title}" onerror="this.onerror=null;this.src='https://picsum.photos/seed/${i.id}/120/120';"
+                 class="w-9 h-9 rounded-lg object-cover border border-white/10" />
+            <div>
+              <p class="text-[11.5px] font-bold text-slate-200 max-w-[180px] truncate">${i.title}</p>
+              <p class="text-[10px] text-slate-500">×${i.qty} · ${fmtShort(i.price * i.qty)} ETB</p>
+            </div>
+          </div>`).join('')}
+      </div>
+
+      <!-- Address + meta -->
+      <div class="mt-4 grid sm:grid-cols-3 gap-3">
+        <div class="rounded-2xl bg-white/4 border border-white/8 px-3.5 py-3">
+          <p class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">
+            <i class="fa-solid fa-location-dot mr-1 text-purple-400"></i> Deliver To
+          </p>
+          <p class="text-[11.5px] text-slate-200 leading-snug font-medium">
+            ${o.address.city} · ${o.address.woreda}<br/>
+            <span class="text-slate-400">${o.address.landmark}</span>
+          </p>
+        </div>
+        <div class="rounded-2xl bg-white/4 border border-white/8 px-3.5 py-3">
+          <p class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">
+            <i class="fa-solid fa-phone mr-1 text-blue-400"></i> Contact
+          </p>
+          <p class="text-[11.5px] text-slate-200 font-medium">${o.address.phone}</p>
+          <p class="text-[10.5px] text-slate-500 mt-0.5">Rider will call before arrival</p>
+        </div>
+        <div class="rounded-2xl bg-white/4 border border-white/8 px-3.5 py-3">
+          <p class="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">
+            <i class="fa-solid fa-truck-fast mr-1 text-emerald-400"></i> Method
+          </p>
+          <p class="text-[11.5px] text-slate-200 font-medium">${o.methodLabel}</p>
+          <p class="text-[10.5px] text-slate-500 mt-0.5">Fee: ${o.fee === 0 ? 'FREE' : fmt(o.fee)} · ETA ${o.eta}</p>
+        </div>
+      </div>
+
+      <!-- Total strip -->
+      <div class="mt-4 flex items-center justify-between rounded-2xl bg-gradient-to-r from-purple-600/12 to-blue-600/12 border border-white/10 px-4 py-3">
+        <span class="text-[11.5px] text-slate-400 font-semibold">Subtotal ${fmt(o.subtotal)} + Delivery ${o.fee === 0 ? 'FREE' : fmt(o.fee)}</span>
+        <span class="text-[15px] font-black grad-text">${fmt(o.total)}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  renderWallet();
+}
+
+/* ---------------- LIVE STATUS TICKER ---------------- */
+function tickOrderStatuses() {
+  const cards = document.querySelectorAll('[data-order-id]');
+  if (!cards.length) return;
+  let needsRerender = false;
+  cards.forEach(card => {
+    const createdAt = parseInt(card.getAttribute('data-created'), 10);
+    const currentIdx = parseInt(card.getAttribute('data-idx'), 10);
+    const newIdx = statusIndexFor(createdAt);
+    if (newIdx !== currentIdx) needsRerender = true;
+  });
+  if (needsRerender) {
+    renderOrders();
+    toast('Your order status has been updated 🚚', 'info', 'Live Tracking');
+  }
+}
+
+/* =========================================================
+   KEYBOARD SHORTCUTS
+   ========================================================= */
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeCart();
+    closeCheckout();
+    closeSuccess();
+  }
+  if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'SELECT') {
+    e.preventDefault();
+    document.getElementById('searchInput').focus();
+  }
+});
+
+/* =========================================================
+   INIT
+   ========================================================= */
+function init() {
+  getWallet();                 // ensures zemen_wallet_balance exists (10,000 ETB)
+  renderCategories();
+  renderProducts();
+  renderCart();
+  renderWishCount();
+  renderOrders();
+  renderWallet();
+  renderDeliveryOptions();
+
+  setInterval(tickOrderStatuses, 2000);
+
+  setTimeout(() => {
+    toast('Welcome to ዘመን ገበያ! Your demo wallet is ready.', 'info', 'Zemen Gebeya Marketplace');
+  }, 900);
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+  </html>
