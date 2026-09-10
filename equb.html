@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ዘመን እቁብ - Zemen Equb</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); }
+            50% { box-shadow: 0 0 30px rgba(168, 85, 247, 0.8); }
+        }
+        .glow-card { animation: pulseGlow 3s infinite; }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans pb-10">
+
+    <!-- 1. SPLASH / LOADING SCREEN -->
+    <div id="splash-screen" class="fixed inset-0 z-50 bg-slate-950 flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="relative flex items-center justify-center">
+            <div class="w-24 h-24 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin"></div>
+            <i class="fa-solid fa-piggy-bank text-4xl text-purple-400 absolute"></i>
+        </div>
+        <h1 class="mt-6 text-2xl font-bold tracking-wider bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+            ዘመን እቁብ
+        </h1>
+        <p class="text-xs text-slate-400 mt-2">የዲጂታል እቁብ ማህበር ማዕከል...</p>
+    </div>
+
+    <!-- MAIN APP CONTAINER -->
+    <div id="main-app" class="hidden max-w-md mx-auto px-4 pt-4">
+
+        <!-- TOP BAR / EXIT BUTTON -->
+        <div class="flex items-center justify-between mb-6">
+            <a href="index.html" class="flex items-center gap-2 bg-slate-900 border border-slate-800 text-purple-400 px-3 py-1.5 rounded-full text-xs font-semibold hover:bg-slate-800 transition">
+                <i class="fa-solid fa-arrow-left"></i> ወደ Zemen Super App
+            </a>
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Zemen Equb</span>
+        </div>
+
+        <!-- WALLET CARD -->
+        <div class="glass border border-purple-500/20 rounded-2xl p-5 mb-6 glow-card bg-gradient-to-br from-purple-900/30 to-slate-900">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-xs text-purple-300">ያልተጣራ የኪስ ቦርሳ (Demo Wallet)</p>
+                    <h2 class="text-3xl font-extrabold text-white mt-1" id="wallet-balance">5,000.00 ETB</h2>
+                </div>
+                <div class="p-3 bg-purple-500/20 rounded-xl text-purple-300">
+                    <i class="fa-solid fa-wallet text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+                <span><i class="fa-solid fa-shield-halved text-emerald-400 mr-1"></i> የተጠበቀ ሲስተም</span>
+                <span>Demo Birr</span>
+            </div>
+        </div>
+
+        <!-- EQUB CREATION SECTION -->
+        <div class="glass border border-slate-800 rounded-2xl p-5 mb-6">
+            <h3 class="text-lg font-bold text-purple-300 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-plus-circle"></i> አዲስ እቁብ ፍጠር
+            </h3>
+
+            <form id="create-equb-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">የእቁቡ ስም</label>
+                    <input type="text" id="equb-name" required placeholder="ምሳሌ፦ የቤተሰብ እቁብ" 
+                        class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500 text-white">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">የአባላት ብዛት</label>
+                        <input type="number" id="equb-members" min="2" max="100" required placeholder="ምሳሌ፦ 10" 
+                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">ወርሃዊ ክፍያ (ETB)</label>
+                        <input type="number" id="equb-amount" min="100" required placeholder="ምሳሌ፦ 500" 
+                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500 text-white">
+                    </div>
+                </div>
+
+                <!-- DYNAMIC POOL CALCULATOR -->
+                <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3 text-xs flex justify-between items-center text-slate-300">
+                    <span>አጠቃላይ የሚሰበሰበው (Total Pool):</span>
+                    <span class="font-bold text-emerald-400 text-sm" id="calculated-total">0 ETB</span>
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 rounded-xl shadow-lg hover:opacity-90 transition text-sm">
+                    እቁብ ፍጠር
+                </button>
+            </form>
+        </div>
+
+        <!-- ACTIVE EQUBS LIST -->
+        <div class="space-y-4 mb-8">
+            <h3 class="text-md font-bold text-slate-300 flex items-center justify-between">
+                <span><i class="fa-solid fa-list-check text-purple-400 mr-2"></i> ንቁ እቁቦች</span>
+                <span id="equb-count" class="text-xs bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full">0</span>
+            </h3>
+            
+            <div id="equb-list-container" class="space-y-3">
+                <!-- Dynamically generated Equbs will appear here -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // 1. SPLASH SCREEN LOGIC
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                const mainApp = document.getElementById('main-app');
+                splash.classList.add('opacity-0');
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    mainApp.classList.remove('hidden');
+                }, 500);
+            }, 2000); // 2 Seconds loading effect
+
+            initWallet();
+            renderEqubs();
+        });
+
+        // 2. WALLET INITIALIZATION
+        function initWallet() {
+            let balance = localStorage.getItem('zemen_equb_balance');
+            if (!balance) {
+                balance = "5000";
+                localStorage.setItem('zemen_equb_balance', balance);
+            }
+            document.getElementById('wallet-balance').innerText = parseFloat(balance).toLocaleString('en-US', {minimumFractionDigits: 2}) + " ETB";
+        }
+
+        // 3. LIVE CALCULATOR
+        const membersInput = document.getElementById('equb-members');
+        const amountInput = document.getElementById('equb-amount');
+        const calculatedTotal = document.getElementById('calculated-total');
+
+        function updateTotal() {
+            const m = parseFloat(membersInput.value) || 0;
+            const a = parseFloat(amountInput.value) || 0;
+            const total = m * a;
+            calculatedTotal.innerText = total.toLocaleString('en-US') + " ETB";
+        }
+
+        membersInput.addEventListener('input', updateTotal);
+        amountInput.addEventListener('input', updateTotal);
+
+        // 4. CREATE EQUB LOGIC
+        document.getElementById('create-equb-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('equb-name').value;
+            const members = parseInt(document.getElementById('equb-members').value);
+            const amount = parseFloat(document.getElementById('equb-amount').value);
+            const total = members * amount;
+
+            const newEqub = {
+                id: 'EQ-' + Math.floor(100000 + Math.random() * 900000),
+                name: name,
+                members: members,
+                amount: amount,
+                total: total,
+                date: new Date().toLocaleDateString('am-ET')
+            };
+
+            let equbs = JSON.parse(localStorage.getItem('zemen_equbs_list') || '[]');
+            equbs.unshift(newEqub);
+            localStorage.setItem('zemen_equbs_list', JSON.stringify(equbs));
+
+            // Reset Form & Refresh
+            document.getElementById('create-equb-form').reset();
+            calculatedTotal.innerText = "0 ETB";
+            renderEqubs();
+            alert('🎉 እቁቡ በስኬት ተፈጥሯል!');
+        });
+
+        // 5. RENDER EQUBS
+        function renderEqubs() {
+            const container = document.getElementById('equb-list-container');
+            const equbs = JSON.parse(localStorage.getItem('zemen_equbs_list') || '[]');
+            document.getElementById('equb-count').innerText = equbs.length;
+
+            if (equbs.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 glass rounded-2xl border border-slate-800 text-slate-500 text-xs">
+                        <i class="fa-solid fa-folder-open text-3xl mb-2 block text-slate-600"></i>
+                        ምንም የተፈጠረ እቁብ የለም። ከላይ ባለው ፎርም አዲስ እቁብ ይፍጠሩ።
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = equbs.map(eq => {
+                // Fake dynamic link generation
+                const slug = eq.name.toLowerCase().replace(/\s+/g, '-');
+                const fakeLink = `https://zemen.com/equb/${slug}-${eq.id}`;
+
+                return `
+                    <div class="glass border border-slate-800 rounded-xl p-4 space-y-3 relative overflow-hidden">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-bold text-white text-md">${eq.name}</h4>
+                                <p class="text-xs text-slate-400">መለያ፦ <span class="text-purple-400 font-mono">${eq.id}</span></p>
+                            </div>
+                            <span class="bg-emerald-500/20 text-emerald-300 text-[10px] px-2 py-0.5 rounded-full font-semibold">ንቁ</span>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2 bg-slate-900/60 p-2.5 rounded-lg text-center text-xs">
+                            <div>
+                                <span class="text-slate-500 block text-[10px]">አባላት</span>
+                                <span class="font-bold text-slate-200">${eq.members}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500 block text-[10px]">ወርሃዊ ክፍያ</span>
+                                <span class="font-bold text-purple-300">${eq.amount} ETB</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500 block text-[10px]">ጠቅላላ ዙር</span>
+                                <span class="font-bold text-emerald-400">${eq.total.toLocaleString()} ETB</span>
+                            </div>
+                        </div>
+
+                        <!-- SHARE BUTTON & LINK -->
+                        <div class="pt-2 flex items-center justify-between border-t border-slate-800/60">
+                            <span class="text-[10px] text-slate-500 font-mono truncate max-w-[180px]">${fakeLink}</span>
+                            <button onclick="shareEqub('${eq.name}', '${fakeLink}')" class="bg-purple-600/30 border border-purple-500/40 text-purple-300 hover:bg-purple-600 hover:text-white px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
+                                <i class="fa-solid fa-share-nodes"></i> አጋራ (Share)
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 6. SHARE LINK ACTION
+        function shareEqub(name, link) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(link);
+                alert(`🔗 የ "${name}" እቁብ የጋበዣ ሊንክ ኮፒ ተደርጓል፦\n\n${link}`);
+            } else {
+                alert(`🔗 የጋበዣ ሊንክ፦\n${link}`);
+            }
+        }
+    </script>
+</body>
+</html>
+
