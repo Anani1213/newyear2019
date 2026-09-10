@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Telebirr FraudShield — Ethio Telecom Safety</title>
+<meta name="description" content="Detect fake telebirr SMS, phishing links and scams. A mobile-first safety checker for Ethio Telecom users." />
+<meta property="og:title" content="Telebirr FraudShield" />
+<meta property="og:description" content="Detect fake telebirr SMS, phishing links and scams." />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          etlime: "#8CC63F",
+          etlime2: "#6FAE28",
+          etblue: "#0B2A5B",
+          etblue2: "#123B7A"
+        },
+        fontFamily: { sans: ["system-ui", "Segoe UI", "Roboto", "sans-serif"] }
+      }
+    }
+  };
+</script>
+<style>
+  body { -webkit-tap-highlight-color: transparent; }
+  .tabbtn { color:#94a3b8; }
+  .tabbtn .ico { transition: all .18s ease; }
+  .tabbtn.active { color:#0B2A5B; }
+  .tabbtn.active .ico { background:#EAF7D9; color:#0B2A5B; box-shadow: 0 2px 10px rgba(140,198,63,.45); }
+  .fade { animation: f .18s ease-out; }
+  @keyframes f { from {opacity:0; transform:translateY(6px)} to {opacity:1; transform:none} }
+  .ussd-screen { font-family: ui-monospace, Menlo, Consolas, monospace; }
+  .langseg { background:#f1f5f9; padding:3px; border-radius:9999px; }
+  .langseg button { padding:.3rem .7rem; border-radius:9999px; font-size:11px; font-weight:700; transition: all .15s ease; }
+  .langseg button.on { background:#0B2A5B; color:#fff; box-shadow:0 1px 4px rgba(11,42,91,.35); }
+  .langseg button.off { background:transparent; color:#64748b; }
+  /* Splash screen */
+  #splash { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .splash-logo { position: relative; width: 96px; height: 96px; }
+  .splash-logo svg { position: relative; z-index: 10; filter: drop-shadow(0 0 14px rgba(140,198,63,.55)); }
+  .pulse-ring { position: absolute; inset: 0; border-radius: 50%; background: rgba(140,198,63,.18); animation: splashPulse 1.6s ease-out infinite; }
+  .pulse-ring:nth-child(2) { animation-delay: .55s; }
+  @keyframes splashPulse { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(1.7); opacity: 0; } }
+  .splash-bar { width: 180px; height: 4px; background: rgba(255,255,255,.18); border-radius: 999px; overflow: hidden; margin-top: 2.5rem; }
+  .splash-bar::after { content: ""; display: block; height: 100%; width: 0%; background: #8CC63F; border-radius: 999px; animation: splashLoad 2.6s ease-in-out forwards; }
+  @keyframes splashLoad { 0% { width: 0%; } 100% { width: 100%; } }
+</style>
+</head>
+<body class="bg-slate-200 text-slate-800">
+
+<!-- SPLASH SCREEN -->
+<div id="splash" class="fixed inset-0 z-50 bg-blue-900 transition-opacity duration-500">
+  <div class="splash-logo">
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+    <svg viewBox="0 0 24 24" class="w-24 h-24" fill="none">
+      <path d="M12 2.6l7 2.8v5.4c0 4.5-2.9 8.3-7 9.6-4.1-1.3-7-5.1-7-9.6V5.4l7-2.8z" fill="#8CC63F"/>
+      <path d="M8.6 12.1l2.4 2.4 4.4-4.6" stroke="#0B2A5B" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <h1 class="mt-6 text-2xl font-bold text-white tracking-tight">Telebirr FraudShield</h1>
+  <p class="mt-1 text-sm text-blue-200">Detect Fraud &bull; Stay Safe</p>
+  <div class="splash-bar"></div>
+</div>
+
+<div class="mx-auto max-w-md min-h-screen bg-slate-50 flex flex-col shadow-xl">
+
+  <!-- HEADER -->
+  <header class="bg-white px-4 pt-4 pb-3 sticky top-0 z-20 border-b border-slate-100">
+    <div class="flex items-center gap-3">
+      <div class="w-11 h-11 rounded-2xl bg-etblue grid place-items-center shrink-0 shadow-sm">
+        <svg viewBox="0 0 24 24" class="w-6 h-6" fill="none">
+          <path d="M12 2.6l7 2.8v5.4c0 4.5-2.9 8.3-7 9.6-4.1-1.3-7-5.1-7-9.6V5.4l7-2.8z" fill="#8CC63F"/>
+          <path d="M8.6 12.1l2.4 2.4 4.4-4.6" stroke="#0B2A5B" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="font-bold text-etblue leading-tight truncate">Telebirr FraudShield</p>
+        <p class="text-xs text-gray-500">Detect fraud • Stay safe</p>
+      </div>
+      <div class="langseg flex gap-1">
+        <button id="btnEn" onclick="setLang('en')" class="off">EN</button>
+        <button id="btnAm" onclick="setLang('am')" class="off">አማርኛ</button>
+      </div>
+      <img id="uPhoto" src="" alt="" class="w-10 h-10 rounded-full border-2 border-etlime object-cover hidden" />
+      <div id="uInitial" class="w-10 h-10 rounded-full bg-etblue text-white font-bold grid place-items-center text-base shrink-0">U</div>
+    </div>
+
+    <div class="mt-3 flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-etlime shadow-[0_0_0_3px_rgba(140,198,63,.2)]"></span>
+      <p id="uName" class="text-xs font-semibold text-slate-600">Guest User</p>
+      <p id="headSub" class="text-[10px] text-slate-400 truncate"></p>
+    </div>
+  </header>
+
+  <main class="flex-1 p-4 pb-28">
+
+    <!-- TAB 1: SMS SHIELD -->
+    <section id="tab-sms" class="fade">
+      <div class="relative overflow-hidden rounded-2xl bg-etblue p-5 shadow-lg">
+        <div class="absolute -right-10 -top-10 w-40 h-40 rounded-full bg-gradient-to-br from-teal-400/30 to-etlime/10"></div>
+        <div class="absolute -right-4 top-14 w-24 h-24 rounded-full bg-teal-300/10"></div>
+        <div class="relative">
+          <h2 id="tSmsTitle" class="text-lg font-bold text-white"></h2>
+          <p id="tSmsSub" class="text-xs text-slate-300 mt-1 max-w-[80%]"></p>
+        </div>
+      </div>
+
+      <div class="mt-4 bg-white shadow-md rounded-2xl p-4">
+        <textarea id="smsInput" rows="6" data-ph="phSms"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-etlime focus:bg-white"></textarea>
+
+        <div class="grid grid-cols-2 gap-3 mt-3">
+          <button id="tRealDemo" onclick="fillReal()" class="rounded-xl bg-green-100 text-green-700 text-xs font-bold py-3 active:scale-[0.98] transition"></button>
+          <button id="tFakeDemo" onclick="fillFake()" class="rounded-xl bg-red-100 text-red-700 text-xs font-bold py-3 active:scale-[0.98] transition"></button>
+        </div>
+
+        <button id="tScanBtn" onclick="runScan()" class="w-full mt-3 bg-etlime hover:bg-etlime2 text-etblue font-bold py-3 rounded-xl shadow-sm active:scale-[0.99] transition"></button>
+        <button id="tClear" onclick="clearScan()" class="w-full mt-2 text-xs text-slate-400 py-1"></button>
+      </div>
+
+      <div id="smsResult" class="mt-4"></div>
+    </section>
+
+    <!-- TAB 2: USSD -->
+    <section id="tab-ussd" class="hidden fade">
+      <div class="bg-white shadow-md rounded-2xl p-4">
+        <h2 id="tUssdTitle" class="text-lg font-bold text-etblue"></h2>
+        <p id="tUssdSub" class="text-xs text-slate-500 mb-3"></p>
+
+        <div class="bg-etblue rounded-2xl p-4">
+          <div id="ussdScreen" class="ussd-screen bg-[#0f172a] text-etlime text-[13px] leading-relaxed rounded-xl p-3 min-h-[190px] whitespace-pre-wrap"></div>
+          <div class="mt-3 flex gap-2">
+            <input id="ussdInput" inputmode="numeric" data-ph="phUssd"
+              class="flex-1 rounded-lg px-3 py-2 text-sm text-slate-800" />
+            <button id="tUssdSend" onclick="ussdSend()" class="bg-etlime text-etblue font-bold px-4 rounded-lg"></button>
+          </div>
+          <div class="mt-2 grid grid-cols-3 gap-2">
+            <button id="tDial" onclick="ussdDial()" class="bg-white/10 text-white text-xs py-2 rounded-lg"></button>
+            <button id="tBack" onclick="ussdBack()" class="bg-white/10 text-white text-xs py-2 rounded-lg"></button>
+            <button id="tEnd" onclick="ussdEnd()" class="bg-red-500 text-white text-xs py-2 rounded-lg"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: ALERTS -->
+    <section id="tab-alerts" class="hidden fade">
+      <div class="bg-white shadow-md rounded-2xl p-4">
+        <h2 id="tLinkTitle" class="text-lg font-bold text-etblue"></h2>
+        <p id="tLinkSub" class="text-xs text-slate-500 mb-3"></p>
+
+        <input id="urlInput" data-ph="phUrl"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-etlime focus:bg-white" />
+        <div class="grid grid-cols-3 gap-2 mt-3">
+          <button id="tExOfficial" onclick="tryUrl('https://telebirr.et/login')" class="text-[11px] font-semibold bg-green-100 text-green-700 rounded-xl py-2"></button>
+          <button id="tExScam" onclick="tryUrl('http://telebirr-bonus.xyz')" class="text-[11px] font-semibold bg-red-100 text-red-700 rounded-xl py-2"></button>
+          <button id="tExTypo" onclick="tryUrl('teebirr.co/free-gift')" class="text-[11px] font-semibold bg-amber-100 text-amber-700 rounded-xl py-2"></button>
+        </div>
+        <button id="tCheckBtn" onclick="checkUrl()" class="w-full mt-3 bg-etblue hover:bg-etblue2 text-white font-bold py-3 rounded-xl shadow-sm active:scale-[0.99] transition"></button>
+      </div>
+
+      <div id="urlResult" class="mt-4"></div>
+
+      <div class="mt-4 bg-white shadow-md rounded-2xl p-4">
+        <h3 id="tFeedTitle" class="font-semibold text-etblue text-sm"></h3>
+        <div class="flex gap-2 mt-2">
+          <input id="reportInput" data-ph="phReport"
+            class="flex-1 rounded-xl border border-slate-200 bg-slate-50 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-etlime focus:bg-white" />
+          <button id="tPost" onclick="addReport()" class="bg-etlime text-etblue font-bold px-4 rounded-xl text-sm"></button>
+        </div>
+        <div id="feed" class="mt-3 space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- TAB 4: SOS -->
+    <section id="tab-sos" class="hidden fade">
+      <div class="bg-white shadow-md rounded-2xl p-4">
+        <h2 id="tSosTitle" class="text-lg font-bold text-etblue"></h2>
+        <p id="tSosSub" class="text-xs text-slate-500 mb-3"></p>
+        <div id="hotlines" class="space-y-3"></div>
+      </div>
+
+      <div class="mt-4 rounded-2xl border border-red-200 bg-red-50 p-4">
+        <h3 id="tGuideTitle" class="font-bold text-red-700 text-sm"></h3>
+        <ol id="guideList" class="mt-2 space-y-2 text-sm text-slate-700 list-decimal list-inside"></ol>
+      </div>
+    </section>
+
+    <!-- TAB 5: ANALYTICS -->
+    <section id="tab-stats" class="hidden fade">
+      <div class="bg-white shadow-md rounded-2xl p-4">
+        <h2 id="tStatsTitle" class="text-lg font-bold text-etblue"></h2>
+        <p id="tStatsSub" class="text-xs text-slate-500 mb-3"></p>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="rounded-2xl bg-etblue text-white p-4">
+            <p class="text-3xl font-bold" id="mScans">0</p>
+            <p class="text-[11px] text-slate-300" data-i="mScans"></p>
+          </div>
+          <div class="rounded-2xl bg-red-500 text-white p-4">
+            <p class="text-3xl font-bold" id="mFraud">0</p>
+            <p class="text-[11px] text-red-100" data-i="mFraud"></p>
+          </div>
+          <div class="rounded-2xl bg-etlime text-etblue p-4">
+            <p class="text-3xl font-bold" id="mSafe">0</p>
+            <p class="text-[11px]" data-i="mSafe"></p>
+          </div>
+          <div class="rounded-2xl bg-slate-100 p-4">
+            <p class="text-3xl font-bold" id="mReports">0</p>
+            <p class="text-[11px] text-slate-600" data-i="mReports"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 bg-white shadow-md rounded-2xl p-4">
+        <div class="flex justify-between text-sm font-semibold text-etblue">
+          <span data-i="scoreLabel"></span><span id="scoreTxt">100%</span>
+        </div>
+        <div class="h-3 bg-slate-200 rounded-full mt-2 overflow-hidden">
+          <div id="scoreBar" class="h-full bg-etlime" style="width:100%"></div>
+        </div>
+        <p class="text-[11px] text-slate-500 mt-2" data-i="scoreNote"></p>
+      </div>
+
+      <div class="mt-4 bg-white shadow-md rounded-2xl p-4 text-sm">
+        <p class="font-semibold text-etblue mb-2" data-i="linksChecked"></p>
+        <p class="text-slate-600"><span data-i="lblSafe"></span>: <span id="mUrlSafe">0</span> · <span data-i="lblBad"></span>: <span id="mUrlBad">0</span></p>
+      </div>
+
+      <button onclick="resetStats()" class="w-full mt-4 text-xs text-slate-400 py-2" data-i="resetBtn"></button>
+    </section>
+  </main>
+
+  <!-- NAV -->
+  <nav class="fixed bottom-0 left-0 right-0 mx-auto max-w-md bg-white border-t border-slate-200 grid grid-cols-5 py-2 pb-3 shadow-[0_-4px_20px_rgba(15,23,42,.06)]">
+    <button class="tabbtn active flex flex-col items-center justify-center gap-1" data-tab="sms" onclick="switchTab('sms')">
+      <span class="ico w-10 h-8 grid place-items-center rounded-full">
+        <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5.5c0 4.4-2.9 8-7 9.5-4.1-1.5-7-5.1-7-9.5V6l7-3z"/></svg>
+      </span>
+      <span class="text-[10px] font-semibold" data-i="navShield"></span>
+    </button>
+    <button class="tabbtn flex flex-col items-center justify-center gap-1" data-tab="ussd" onclick="switchTab('ussd')">
+      <span class="ico w-10 h-8 grid place-items-center rounded-full">
+        <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2.5" width="14" height="19" rx="3"/><path d="M9 6.5h6M9 10.5h6M9 14.5h6"/></svg>
+      </span>
+      <span class="text-[10px] font-semibold">USSD</span>
+    </button>
+    <button class="tabbtn flex flex-col items-center justify-center gap-1" data-tab="alerts" onclick="switchTab('alerts')">
+      <span class="ico w-10 h-8 grid place-items-center rounded-full">
+        <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 016 6c0 4 1.5 5.5 2 6.2H4c.5-.7 2-2.2 2-6.2a6 6 0 016-6z"/><path d="M10 19.5a2 2 0 004 0"/></svg>
+      </span>
+      <span class="text-[10px] font-semibold" data-i="navAlerts"></span>
+    </button>
+    <button class="tabbtn flex flex-col items-center justify-center gap-1" data-tab="stats" onclick="switchTab('stats')">
+      <span class="ico w-10 h-8 grid place-items-center rounded-full">
+        <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19V11M12 19V5M19 19v-6"/></svg>
+      </span>
+      <span class="text-[10px] font-semibold" data-i="navStats"></span>
+    </button>
+    <button class="tabbtn flex flex-col items-center justify-center gap-1" data-tab="sos" onclick="switchTab('sos')">
+      <span class="ico w-10 h-8 grid place-items-center rounded-full">
+        <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 3.5h3l1.5 4-2 1.5a12 12 0 006 6l1.5-2 4 1.5v3a2 2 0 01-2.2 2A16.5 16.5 0 014.5 5.7 2 2 0 016.5 3.5z"/></svg>
+      </span>
+      <span class="text-[10px] font-semibold" data-i="navSos"></span>
+    </button>
+  </nav>
+</div>
+
+<script>
+/* ---------- Telegram ---------- */
+(function initTelegram(){
+  try {
+    var tg = window.Telegram && window.Telegram.WebApp;
+    if (tg) { tg.ready(); tg.expand(); }
+    var u = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
+    var name = u ? [u.first_name, u.last_name].filter(Boolean).join(" ") : "Guest User";
+    document.getElementById("uName").textContent = name;
+    document.getElementById("uInitial").textContent = (name[0] || "U").toUpperCase();
+    if (u && u.photo_url) {
+      var p = document.getElementById("uPhoto");
+      p.src = u.photo_url;
+      p.classList.remove("hidden");
+      document.getElementById("uInitial").classList.add("hidden");
+    }
+  } catch (e) { /* safe fallback */ }
+})();
+
+function haptic(type){ try { window.Telegram.WebApp.HapticFeedback.notificationOccurred(type); } catch(e){} }
+
+/* ---------- i18n ---------- */
+var LANG_KEY = "tfs_lang_v1";
+var I18N = {
+  en: {
+    headSub: "Stay safe on Ethio Telecom · check before you trust",
+    navShield: "Shield", navAlerts: "Alerts", navSos: "SOS", navStats: "Stats",
+    tSmsTitle: "🛡️ SMS Shield", tSmsSub: "Paste a telebirr message to check if it is genuine.",
+    phSms: "Paste the SMS text here...", tRealDemo: "Real SMS demo", tFakeDemo: "Fake SMS demo",
+    tScanBtn: "Scan message", tClear: "Clear", scanEmpty: "Please paste a message first.",
+    tUssdTitle: "📟 USSD Simulator", tUssdSub: "Works like *127# on a feature phone.",
+    phUssd: "Enter option", tUssdSend: "Send", tDial: "Dial *127#", tBack: "Back", tEnd: "End",
+    tLinkTitle: "🚨 Link Checker & Alerts", tLinkSub: "Check a link before you open it.",
+    phUrl: "e.g. http://telebirr-bonus.xyz", tExOfficial: "Official", tExScam: "Scam", tExTypo: "Typo",
+    tCheckBtn: "Check link", urlEmpty: "Type a link to check.",
+    tFeedTitle: "Community scam feed", phReport: "Report a scam you received", tPost: "Post",
+    feedEmpty: "No community reports yet. Be the first to warn others.",
+    tSosTitle: "📞 Emergency Hotlines", tSosSub: "Tap any card to call immediately.",
+    tGuideTitle: "If your telebirr account is compromised — act NOW:",
+    tStatsTitle: "📊 Analytics", tStatsSub: "Open to everyone — community safety metrics.",
+    mScans: "Total scans", mFraud: "Fraud detected", mSafe: "Verified safe", mReports: "Community reports",
+    scoreLabel: "Community safety score", scoreNote: "Share of checks that turned out to be genuine.",
+    linksChecked: "Links checked", lblSafe: "Safe", lblBad: "Dangerous", resetBtn: "Reset local data",
+    riskScore: "Risk score",
+    bRedSms: "🔴 Likely FRAUD — do not trust this message",
+    bAmberSms: "🟠 Suspicious — verify before acting",
+    bGreenSms: "🟢 Looks like a genuine telebirr message",
+    bRedUrl: "🔴 Dangerous phishing link!", bAmberUrl: "🟠 Be careful", bGreenUrl: "🟢 Safe official link",
+    noteRedSms: "Never share your PIN or OTP. Report the sender and delete the message.",
+    noteAmberSms: "Check your telebirr balance yourself before releasing anything.",
+    noteGreenSms: "Still confirm the amount in your own telebirr balance.",
+    noteRedUrl: "Do not open it. Never enter your telebirr PIN or an OTP on this page.",
+    noteAmberUrl: "Only continue if you are sure of the sender.",
+    noteGreenUrl: "This matches an official Ethio Telecom address.",
+    rTxFound: "Valid transaction number found: %s",
+    rNoTx: "No valid telebirr transaction number (e.g. DHP254JOT6).",
+    rMention: "Mentions telebirr.", rNoMention: "Does not mention telebirr.",
+    rSigned: "Signed by Ethio telecom.", rNoSigned: "Missing official Ethio telecom signature.",
+    rAmtOk: "Amount formatted correctly.", rNoAmt: "No properly formatted ETB amount.",
+    rBalLine: "Shows account balance line.", rDateLine: "Contains a transaction date.",
+    rScamWord: "Scam wording detected: \"%s\".",
+    rDangerLink: "Dangerous link inside the message: %s",
+    rHasLink: "Contains a link — telebirr rarely sends links.",
+    rPersNum: "Asks you to contact a personal phone number.",
+    rMulti: "Multiple signs of a fake message.",
+    rInvalid: "This is not a valid web address. Never open links you cannot read clearly.",
+    rHttp: "Uses insecure http:// instead of https://.",
+    rIp: "Uses a raw IP address instead of a domain name.",
+    rKeyword: "Suspicious keyword detected: \"%s\".",
+    rFakeDomain: "Fake domain mimicking Ethio Telecom / telebirr.",
+    rTldFake: "Untrusted address ending \".%s\" — the official one ends in .et.",
+    rHyphen: "Extra hyphens used to imitate the real name.",
+    rTldBad: "Address ends in \".%s\", commonly used by scam sites.",
+    rSubdomain: "Long chain of sub-domains used to hide the real owner.",
+    rPathBrand: "Brand name hidden in the page address, not the domain.",
+    rLookalike: "Contains look-alike foreign letters.",
+    rOfficialBad: "Official-looking domain but with unsafe content in the address.",
+    rOfficialOk: "Matches the official Ethio Telecom domain list.",
+    rNotOfficial: "Not on the official list of Ethio Telecom addresses.",
+    uBack: "0. Back",
+    uIdle: "Press \"Dial *127#\" to start the session.",
+    uEnded: "Call ended.\n\nPress \"Dial *127#\" to start again.",
+    uNoSession: "No active session.\nPress \"Dial *127#\" first.",
+    uInvalid: "Invalid option.",
+    uMain: "*127# telebirr FraudShield\n\n1. Check transaction status\n2. Verify an SMS code\n3. Report a scam\n4. Safety tips\n5. My safety stats\n\n0. Exit",
+    uTips: "SAFETY TIPS\n\n1. telebirr never asks for your PIN.\n2. No real prize needs a payment.\n3. Check the sender is 127.\n4. Links ending .xyz or .co are fake.\n5. Call 127 if unsure.\n\n0. Back",
+    uTxPrompt: "CHECK TRANSACTION\n\nEnter transaction number\n(e.g. DHP254JOT6)\n\n0. Back",
+    uCodePrompt: "VERIFY SMS CODE\n\nEnter the 6-digit code\nfrom the message\n\n0. Back",
+    uRepPrompt: "REPORT A SCAM\n\nEnter the scammer number\n(e.g. 0911223344)\n\n0. Back",
+    uStats: "MY SAFETY STATS\n\nScans: %s\nFraud found: %s\nSafe: %s\nLinks blocked: %s\n\n0. Back",
+    uTxOk: "RESULT\n\n%s\nFormat is VALID.\nConfirm the amount in your\ntelebirr balance before you\nrelease any goods.\n\n0. Back",
+    uTxBad: "RESULT\n\n%s\nINVALID format.\nThis is likely a FAKE payment\nmessage. Do not deliver.\n\n0. Back",
+    uCodeOk: "CODE %s\nFormat looks correct.\nNEVER share this code with\nanyone, including callers\nclaiming to be Ethio Telecom.\n\n0. Back",
+    uCodeBad: "CODE %s\nNot a 6-digit code.\nTreat the message as fake.\n\n0. Back",
+    uRepDone: "Thank you.\n\nNumber %s was reported\nto the community feed.\nReference: R%s\n\n0. Back"
+  },
+  am: {
+    headSub: "በኢትዮ ቴሌኮም ላይ ደህና ይሁኑ · ከመታመንዎ በፊት ያረጋግጡ",
+    navShield: "ጥላ", navAlerts: "ማንቂያዎች", navSos: "እርዳታ", navStats: "ትንታኔ",
+    tSmsTitle: "🛡️ የኤስኤምኤስ ጥላ", tSmsSub: "ትክክለኛነቱን ለማረጋገጥ የቴሌብር አጭር የጽሁፍ መልእክትን እዚህ ያስገቡ።",
+    phSms: "የቴሌብር አጭር የጽሁፍ መልእክትን እዚህ ያስገቡ...", tRealDemo: "እውነተኛ መልእክት ማሳያ", tFakeDemo: "ሐሰተኛ መልእክት ማሳያ",
+    tScanBtn: "መልእክቱን ይመርምሩ", tClear: "አጽዳ", scanEmpty: "እባክዎ መጀመሪያ መልእክት ያስገቡ።",
+    tUssdTitle: "📟 የUSSD ማስመሰያ", tUssdSub: "በተራ ስልክ ላይ እንደ *127# ይሰራል።",
+    phUssd: "አማራጭ ያስገቡ", tUssdSend: "ላክ", tDial: "*127# ይደውሉ", tBack: "ተመለስ", tEnd: "ጨርስ",
+    tLinkTitle: "🚨 የአገናኝ ፍተሻ እና ማንቂያዎች", tLinkSub: "አገናኙን ከመክፈትዎ በፊት ያረጋግጡ።",
+    phUrl: "ለምሳሌ http://telebirr-bonus.xyz", tExOfficial: "ኦፊሴላዊ", tExScam: "ማጭበርበር", tExTypo: "የፊደል ስህተት",
+    tCheckBtn: "አገናኙን ያረጋግጡ", urlEmpty: "እባክዎ የሚፈትሹትን አገናኝ ያስገቡ።",
+    tFeedTitle: "የማህበረሰብ የማጭበርበር መዝገብ", phReport: "የደረሰብዎን ማጭበርበር ይግለጹ", tPost: "ለጥፍ",
+    feedEmpty: "እስካሁን የማህበረሰብ ሪፖርት የለም። ሌሎችን ለማስጠንበቅ የመጀመሪያው ይሁኑ።",
+    tSosTitle: "📞 የአስቸኳይ ጊዜ ስልኮች", tSosSub: "ለመደወል ማንኛውንም ካርድ ይንኩ።",
+    tGuideTitle: "የቴሌብር ሂሳብዎ ከተበላሸ — ወዲያውኑ ይህን ያድርጉ፦",
+    tStatsTitle: "📊 ትንታኔ", tStatsSub: "ለሁሉም ክፍት — የማህበረሰብ የደህንነት መለኪያዎች።",
+    mScans: "ጠቅላላ ምርመራዎች", mFraud: "የተገኘ ማጭበርበር", mSafe: "የተረጋገጠ ደህና", mReports: "የማህበረሰብ ሪፖርቶች",
+    scoreLabel: "የማህበረሰብ የደህንነት ነጥብ", scoreNote: "ትክክል መሆናቸው ከተረጋገጠ ፍተሻዎች ድርሻ።",
+    linksChecked: "የተፈተሹ አገናኞች", lblSafe: "ደህና", lblBad: "አደገኛ", resetBtn: "የአካባቢ ውሂብን አጽዳ",
+    riskScore: "የአደጋ ነጥብ",
+    bRedSms: "🔴 ምናልባት ማጭበርበር — ይህንን መልእክት አይተኑ",
+    bAmberSms: "🟠 አጠራጣሪ — እርምጃ ከመውሰድዎ በፊት ያረጋግጡ",
+    bGreenSms: "🟢 እውነተኛ የቴሌብር መልእክት ይመስላል",
+    bRedUrl: "🔴 አደገኛ የማጭበርበር አገናኝ!", bAmberUrl: "🟠 ተጠንቅቀው ይሁኑ", bGreenUrl: "🟢 ደህና ኦፊሴላዊ አገናኝ",
+    noteRedSms: "ፒንዎን ወይም ኦቲፒዎን በፍጹም አያጋሩ። ላኪውን ይግለጹ እና መልእክቱን ይሰርዙ።",
+    noteAmberSms: "ማንኛውንም ከማስረከብዎ በፊት የቴሌብር ቀሪ ሂሳብዎን በራስዎ ያረጋግጡ።",
+    noteGreenSms: "ሆኖም መጠኑን በራስዎ በቴሌብር ቀሪ ሂሳብዎ ያረጋግጡ።",
+    noteRedUrl: "አይክፈቱት። በዚህ ገጽ ላይ የቴሌብር ፒንዎን ወይም ኦቲፒዎን በፍጹም አያስገቡ።",
+    noteAmberUrl: "ስለ ላኪው እርግጠኛ ከሆኑ ብቻ ይቀጥሉ።",
+    noteGreenUrl: "ይህ ከኦፊሴላዊ የኢትዮ ቴሌኮም አድራሻ ጋር ይዛመዳል።",
+    rTxFound: "ትክክለኛ የግብይት ቁጥር ተገኝቷል፦ %s",
+    rNoTx: "ትክክለኛ የቴሌብር የግብይት ቁጥር (ለምሳሌ DHP254JOT6) አልተገኘም።",
+    rMention: "ቴሌብርን ጠቅሷል።", rNoMention: "ቴሌብርን አልጠቀሰም።",
+    rSigned: "በኢትዮ ቴሌኮም የተፈረመ ነው።", rNoSigned: "ኦፊሴላዊ የኢትዮ ቴሌኮም ፊርማ የለውም።",
+    rAmtOk: "የገንዘብ መጠኑ በትክክል ተጽፏል።", rNoAmt: "በትክክል የተጻፈ የETB መጠን የለም።",
+    rBalLine: "የሂሳብ ቀሪ መስመር ያሳያል።", rDateLine: "የግብይት ቀን ይዟል።",
+    rScamWord: "የማጭበርበር ቃል ተገኝቷል፦ «%s»።",
+    rDangerLink: "በመልእክቱ ውስጥ አደገኛ አገናኝ አለ፦ %s",
+    rHasLink: "አገናኝ ይዟል — ቴሌብር በእጅጉ አገናኝ አይልክም።",
+    rPersNum: "ወደ የግል ስልክ ቁጥር እንዲደውሉ ይጠይቃል።",
+    rMulti: "የሐሰተኛ መልእክት በርካታ ምልክቶች ተገኝተዋል።",
+    rInvalid: "ይህ ትክክለኛ የድረ-ገጽ አድራሻ አይደለም። ግልጽ ለማንበብ የማይችሏቸውን አገናኞች በፍጹም አይክፈቱ።",
+    rHttp: "ደህና የሆነውን https:// ሳይሆን http:// ይጠቀማል።",
+    rIp: "በዶሜይን ስም ሳይሆን በጥሬ አይፒ አድራሻ ይጠቀማል።",
+    rKeyword: "አጠራጣሪ ቃል ተገኝቷል፦ «%s»።",
+    rFakeDomain: "ኢትዮ ቴሌኮምን / ቴሌብርን የሚመስል ሐሰተኛ ዶሜይን።",
+    rTldFake: "ያልተታመነ የአድራሻ መጨረሻ «.%s» — ኦፊሴላዊው በ.et ያበቃል።",
+    rHyphen: "ትክክለኛውን ስም ለማመሳሰል ተጨማሪ ሰረዞች ጠቅሟል።",
+    rTldBad: "አድራሻው በ«.%s» ያበቃል — ይህ ብዙውን ጊዜ በማጭበርበር ጣቢያዎች ጥቅም ላይ ይውላል።",
+    rSubdomain: "ትክክለኛውን ባለቤት ለመደበቅ ረጅም የንዑስ-ዶሜይን ሰንሰለት ተጠቅሟል።",
+    rPathBrand: "የብራንድ ስሙ በዶሜይኑ ሳይሆን በገጹ አድራሻ ውስጥ ተደብቋል።",
+    rLookalike: "የሚመሳሰሉ የውጭ ፊደላት ይዟል።",
+    rOfficialBad: "ኦፊሴላዊ የሚመስል ዶሜይን ነው፤ ግን አደገኛ ይዘት በአድራሻው ውስጥ አለ።",
+    rOfficialOk: "ከኦፊሴላዊ የኢትዮ ቴሌኮም ዶሜይኖች ዝርዝር ጋር ይዛመዳል።",
+    rNotOfficial: "በኦፊሴላዊ የኢትዮ ቴሌኮም አድራሻዎች ዝርዝር ላይ አልተካተተም።",
+    uBack: "0. ተመለስ",
+    uIdle: "ክፍለ ጊዜውን ለመጀመር «*127# ይደውሉ» የሚለውን ይጫኑ።",
+    uEnded: "ጥሪው ቋጥሯል።\n\nእንደገና ለመጀመር «*127# ይደውሉ» የሚለውን ይጫኑ።",
+    uNoSession: "ንቁ ክፍለ ጊዜ የለም።\nመጀመሪያ «*127# ይደውሉ» ይጫኑ።",
+    uInvalid: "የተሳሳተ አማራጭ።",
+    uMain: "*127# telebirr FraudShield\n\n1. የግብይት ሁኔታን ያረጋግጡ\n2. አጭር የጽሁፍ መልእክትን ያረጋግጡ\n3. ማጭበርበርን ሪፖርት ያድርጉ\n4. የደህንነት ምክሮች\n5. የኔ የደህንነት መረጃ\n\n0. ይውጡ",
+    uTips: "የደህንነት ምክሮች\n\n1. ቴሌብር ፒንዎን በፍጹም አይጠይቅም።\n2. ምንም እውነተኛ ሽልማት ክፍያ አይጠይቅም።\n3. ላኪው 127 መሆኑን ያረጋግጡ።\n4. በ.xyz ወይም .co የሚያበቁ አገናኞች ሐሰተኛ ናቸው።\n5. እርግጠኛ ካልሆኑ 127 ይደውሉ።\n\n0. ተመለስ",
+    uTxPrompt: "የግብይት ማረጋገጫ\n\nየግብይት ቁጥር ያስገቡ\n(ለምሳሌ DHP254JOT6)\n\n0. ተመለስ",
+    uCodePrompt: "የኤስኤምኤስ ኮድ ማረጋገጫ\n\nከመልእክቱ የ6-አሃዝ\nኮዱን ያስገቡ\n\n0. ተመለስ",
+    uRepPrompt: "ማጭበርበር ሪፖርት\n\nየሸበርኙን ቁጥር ያስገቡ\n(ለምሳሌ 0911223344)\n\n0. ተመለስ",
+    uStats: "የኔ የደህንነት መረጃ\n\nምርመራዎች፦ %s\nየተገኘ ማጭበርበር፦ %s\nደህና፦ %s\nየታገዱ አገናኞች፦ %s\n\n0. ተመለስ",
+    uTxOk: "ውጤት\n\n%s\nቅርጸቱ ትክክል ነው።\nእቃ ከማስረከብዎ በፊት መጠኑን\nበቴሌብር ቀሪ ሂሳብዎ\nያረጋግጡ።\n\n0. ተመለስ",
+    uTxBad: "ውጤት\n\n%s\nትክክል ያልሆነ ቅርጸት።\nይህ ምናልባት ሐሰተኛ የክፍያ\nመልእክት ነው። እቃ አያስረክቡ።\n\n0. ተመለስ",
+    uCodeOk: "ኮድ %s\nቅርጸቱ ትክክል ይመስላል።\nይህንን ኮድ ከማንም ጋር\nበፍጹም አያጋሩ፣ ኢትዮ ቴሌኮም\nነን የሚሉ ጥሪዎችን ጨምሮ።\n\n0. ተመለስ",
+    uCodeBad: "ኮድ %s\nየ6-አሃዝ ኮድ አይደለም።\nመልእክቱን እንደ ሐሰት ይቁጠሩት።\n\n0. ተመለስ",
+    uRepDone: "እናመሰግናለን።\n\nቁጥር %s ለማህበረሰብ መዝገብ\nሪፖርት ተደርጓል።\nማጣቀሻ፦ R%s\n\n0. ተመለስ"
+  }
+};
+var LANG = "en";
+function T(k){ return I18N[LANG][k] || I18N.en[k] || k; }
+function setLang(l){
+  LANG = (l === "am") ? "am" : "en";
+  try { localStorage.setItem(LANG_KEY, LANG); } catch(e){}
+  document.documentElement.lang = LANG === "am" ? "am" : "en";
+  applyLang();
+}
+function applyLang(){
+  document.getElementById("btnEn").className = LANG === "en" ? "on" : "off";
+  document.getElementById("btnAm").className = LANG === "am" ? "on" : "off";
+  ["headSub","tSmsTitle","tSmsSub","tRealDemo","tFakeDemo","tScanBtn","tClear",
+   "tUssdTitle","tUssdSub","tUssdSend","tDial","tBack","tEnd",
+   "tLinkTitle","tLinkSub","tExOfficial","tExScam","tExTypo","tCheckBtn",
+   "tFeedTitle","tPost","tSosTitle","tSosSub","tGuideTitle","tStatsTitle","tStatsSub"
+  ].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.textContent = T(id);
+  });
+  document.querySelectorAll("[data-i]").forEach(function(el){ el.textContent = T(el.dataset.i); });
+  document.querySelectorAll("[data-ph]").forEach(function(el){ el.placeholder = T(el.dataset.ph); });
+  renderHotlines();
+  renderGuide();
+  renderFeed();
+}
+
+/* ---------- Hotlines ---------- */
+var HOTLINES = [
+  { num: "127", icon: "🛡️", tone: "etblue",
+    en: { name: "Telebirr Fraud & Scam Reporting", am: "ነጻ የቴሌብር ማጭበርበሪያ ሪፖርት ማድረጊያ" },
+    descEn: "Official telebirr hotline — report fraud, blocked accounts, fake agents.",
+    descAm: "ኦፊሴላዊ የቴሌብር መስመር — ማጭበርበር፣ የታገዱ ሂሳቦች እና ሐሰተኛ ወኪሎችን ይግለጹ።" },
+  { num: "991", icon: "🚔", tone: "red",
+    en: { name: "National Police Emergency", am: "ብሔራዊ ፖሊስ አስቸኳይ ጥሪ" },
+    descEn: "Immediate danger, theft or organized scam operations.",
+    descAm: "ወሲብና አስቸኳይ አደጋ፣ ስርቆት ወይም የተደራጀ የማጭበርበር ድርጊት።" },
+  { num: "987", icon: "📱", tone: "lime",
+    en: { name: "Ethio Telecom Customer Service", am: "የኢትዮ ቴሌኮም የደንበኞች አገልግሎት" },
+    descEn: "General account help, SIM issues, service questions.",
+    descAm: "አጠቃላይ የሂሳብ እርዳታ፣ የሲም ችግሮች እና የአገልግሎት ጥያቄዎች።" },
+  { num: "900", icon: "☎️", tone: "lime",
+    en: { name: "Ethio Telecom Customer Service (alt)", am: "የኢትዮ ቴሌኮም የደንበኞች አገልግሎት (ተጨማሪ)" },
+    descEn: "Alternative customer care line for telebirr users.",
+    descAm: "ለቴሌብር ተጠቃሚዎች አማራጭ የደንበኛ እንክብካቤ መስመር።" }
+];
+var TONE = {
+  etblue: ["bg-etblue", "text-etblue", "bg-etblue"],
+  red:    ["bg-red-600", "text-red-700", "bg-red-600"],
+  lime:   ["bg-etlime", "text-etblue", "bg-etlime"]
+};
+function renderHotlines(){
+  var box = document.getElementById("hotlines");
+  box.innerHTML = HOTLINES.map(function(h){
+    var c = TONE[h.tone];
+    var am = h.en.am;
+    return '<a href="tel:' + h.num + '" class="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-4 shadow-sm active:scale-[0.98] transition">'
+      + '<span class="w-12 h-12 grid place-items-center rounded-xl text-xl text-white ' + c[0] + '">' + h.icon + '</span>'
+      + '<span class="flex-1">'
+      + '<span class="block font-bold ' + c[1] + ' text-sm">' + h.num + ' · ' + esc(LANG === "am" ? am : h.en.name) + '</span>'
+      + '<span class="block text-[11px] text-slate-500 mt-0.5">' + esc(LANG === "am" ? am : h.en.name) + '</span>'
+      + '<span class="block text-xs text-slate-600 mt-1">' + esc(LANG === "am" ? h.descAm : h.descEn) + '</span>'
+      + '</span>'
+      + '<span class="text-etlime text-lg">📲</span>'
+      + '</a>';
+  }).join("");
+}
+var GUIDE = {
+  en: [
+    "Dial *127# immediately and block your telebirr account (or ask a trusted person to help).",
+    "Call 127 to report the fraud and freeze suspicious transactions.",
+    "Change your telebirr PIN — never reuse an old one.",
+    "Never share OTP codes with anyone, even callers claiming to be Ethio Telecom.",
+    "Report the scammer's number on the Alerts tab to protect the community.",
+    "If money was stolen, call the police emergency line 991 with the transaction details."
+  ],
+  am: [
+    "ወዲያውኑ *127# በመደወል የቴሌብር ሂሳብዎን ያግዱ (ወይም የሚታመን ሰው እንዲረዳዎ ይጠይቁ)።",
+    "ማጭበርበሩን ለማሳወቅ እና አጠራጣሪ ዝውውሮችን ለማቀዝቀዝ 127 ይደውሉ።",
+    "የቴሌብር ፒንዎን ይቀይሩ — የቆየውን በፍጹም አይድገሙ።",
+    "የኦቲፒ ኮዶችን ከማንም ጋር አያጋሩ፣ ኢትዮ ቴሌኮም ነን የሚሉ ጥሪዎችን ጨምሮ።",
+    "ማህበረሰቡን ለመጠበቅ የሸበርኙን ቁጥር በማንቂያዎች ትር ላይ ይግለጹ።",
+    "ገንዘብ ከተሰረቀ፣ የዝውውር ዝርዝሮቹን ይዘው የፖሊስ አስቸኳይ መስመር 991 ይደውሉ።"
+  ]
+};
+function renderGuide(){
+  document.getElementById("guideList").innerHTML = GUIDE[LANG].map(function(g){
+    return "<li>" + esc(g) + "</li>";
+  }).join("");
+}
+
+/* ---------- Storage ---------- */
+var KEY = "tfs_metrics_v1", RKEY = "tfs_reports_v1";
+function stats(){
+  var d = { scans:0, fraud:0, safe:0, urlSafe:0, urlBad:0 };
+  try { var s = JSON.parse(localStorage.getItem(KEY) || "{}"); for (var k in d) if (typeof s[k] === "number") d[k] = s[k]; } catch(e){}
+  return d;
+}
+function save(s){ try { localStorage.setItem(KEY, JSON.stringify(s)); } catch(e){} render(); }
+function reports(){ try { return JSON.parse(localStorage.getItem(RKEY) || "[]"); } catch(e){ return []; } }
+function saveReports(a){ try { localStorage.setItem(RKEY, JSON.stringify(a.slice(0,30))); } catch(e){} renderFeed(); render(); }
+function resetStats(){ try { localStorage.removeItem(KEY); localStorage.removeItem(RKEY); } catch(e){} renderFeed(); render(); }
+
+function render(){
+  var s = stats(), r = reports();
+  document.getElementById("mScans").textContent = s.scans;
+  document.getElementById("mFraud").textContent = s.fraud;
+  document.getElementById("mSafe").textContent = s.safe;
+  document.getElementById("mReports").textContent = r.length;
+  document.getElementById("mUrlSafe").textContent = s.urlSafe;
+  document.getElementById("mUrlBad").textContent = s.urlBad;
+  var total = s.scans + s.urlSafe + s.urlBad;
+  var good = s.safe + s.urlSafe;
+  var pct = total ? Math.round((good / total) * 100) : 100;
+  document.getElementById("scoreTxt").textContent = pct + "%";
+  var bar = document.getElementById("scoreBar");
+  bar.style.width = pct + "%";
+  bar.className = "h-full " + (pct >= 70 ? "bg-etlime" : pct >= 40 ? "bg-amber-400" : "bg-red-500");
+}
+
+/* ---------- Tabs ---------- */
+var TABS = ["sms","ussd","alerts","sos","stats"];
+function switchTab(t){
+  TABS.forEach(function(x){ document.getElementById("tab-" + x).classList.toggle("hidden", x !== t); });
+  document.getElementById("tab-" + t).classList.add("fade");
+  document.querySelectorAll(".tabbtn").forEach(function(b){ b.classList.toggle("active", b.dataset.tab === t); });
+  window.scrollTo(0,0);
+  if (t === "stats") render();
+}
+
+/* ---------- Tab 1: SMS ---------- */
+var REAL_SMS = "Dear DEREJAW You have received ETB 100.00 from Mamed Jilo(2519**3830) 421970 on 25/08/2026 03:04:28. Your transaction number is DHP254JOT6. Your current E-Money Account balance is ETB 100.11. Thank you for using telebirr Ethio telecom";
+var FAKE_SMS = "CONGRATULATIONS!! Your telebirr account WON ETB 50,000 bonus. Click http://telebirr-bonus.xyz/claim and send your PIN 1234 to agent 0911xxxxx within 10 minutes to receive your free gift money.";
+
+function fillReal(){ document.getElementById("smsInput").value = REAL_SMS; }
+function fillFake(){ document.getElementById("smsInput").value = FAKE_SMS; }
+function clearScan(){ document.getElementById("smsInput").value = ""; document.getElementById("smsResult").innerHTML = ""; }
+
+function runScan(){
+  var txt = (document.getElementById("smsInput").value || "").trim();
+  var box = document.getElementById("smsResult");
+  if (!txt) { box.innerHTML = warn(T("scanEmpty")); return; }
+
+  var low = txt.toLowerCase();
+  var risk = 0, bad = [], good = [];
+
+  var txId = txt.match(/\b[A-Z]{2,4}\d{2,4}[A-Z0-9]{4,8}\b/);
+  if (txId) { good.push("Valid transaction number found: " + txId[0]); }
+  else { risk += 30; bad.push("No valid telebirr transaction number (e.g. DHP254JOT6)."); }
+
+  if (/telebirr/i.test(txt)) good.push("Mentions telebirr."); else { risk += 10; bad.push("Does not mention telebirr."); }
+  if (/ethio\s*telecom/i.test(txt)) good.push("Signed by Ethio telecom."); else { risk += 10; bad.push("Missing official Ethio telecom signature."); }
+  if (/\bETB\s?[\d,]+(\.\d{2})?/i.test(txt)) good.push("Amount formatted correctly."); else { risk += 10; bad.push("No properly formatted ETB amount."); }
+  if (/balance/i.test(txt)) good.push("Shows account balance line."); else risk += 5;
+  if (/\d{2}\/\d{2}\/\d{4}/.test(txt)) good.push("Contains a transaction date."); else risk += 5;
+
+  var scamWords = ["pin","password","otp","code to","won","win","winner","bonus","free","gift","prize","congratulation","claim","urgent","click","verify your account","lottery","reward"];
+  scamWords.forEach(function(w){ if (low.indexOf(w) > -1) { risk += 12; bad.push('Scam wording detected: "' + w + '".'); } });
+
+  var link = txt.match(/(https?:\/\/[^\s]+|www\.[^\s]+|[a-z0-9-]+\.(xyz|top|click|info|co|link|online|site)[^\s]*)/i);
+  if (link) {
+    var v = analyzeUrl(link[0]);
+    if (v.danger) { risk += 40; bad.push("Dangerous link inside the message: " + link[0]); }
+    else { risk += 10; bad.push("Contains a link — telebirr rarely sends links."); }
+  }
+  if (/09\d{8}|\+2519\d{8}/.test(txt) && /send|transfer|call/i.test(low)) { risk += 15; bad.push("Asks you to contact a personal phone number."); }
+
+  risk = Math.max(0, Math.min(99, risk));
+  var s = stats(); s.scans++; if (risk >= 50) s.fraud++; else s.safe++; save(s);
+  haptic(risk >= 50 ? "error" : "success");
+
+  box.innerHTML = verdict(risk, bad, good);
+}
+
+/* ---------- Tab 3: strict link checker ---------- */
+var OFFICIAL = ["telebirr.et","ethiotelecom.et"];
+var BAD_WORDS = ["bonus","free","gift","win","winner","prize","reward","claim","lottery","promo","login-telebirr","telebirr-login","verify","update-account","otp","pin","support-telebirr","recharge-free"];
+var BAD_TLDS = ["xyz","top","click","online","site","info","co","icu","link","live","ru","tk","cf","ml","gq","work","shop"];
+
+function analyzeUrl(raw){
+  var input = (raw || "").trim();
+  var reasons = [], risk = 0, danger = false;
+  if (!input) return { risk:0, danger:false, reasons:["Nothing entered."], host:"", invalid:true };
+
+  var work = input.replace(/^\s*https?:\/\//i, "").replace(/^www\./i, "");
+  var host = work.split(/[\/?#]/)[0].toLowerCase();
+  var path = work.slice(host.length).toLowerCase();
+  var low = input.toLowerCase();
+
+  if (!/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(host)) {
+    return { risk: 60, danger: true, host: host || input, invalid: true,
+      reasons: ["This is not a valid web address. Never open links you cannot read clearly."] };
+  }
+
+  var isOfficial = OFFICIAL.some(function(d){ return host === d || host.endsWith("." + d); });
+
+  if (/^http:\/\//i.test(input)) { risk += 20; reasons.push("Uses insecure http:// instead of https://."); }
+  if (/^\d{1,3}(\.\d{1,3}){3}$/.test(host)) { risk += 60; reasons.push("Uses a raw IP address instead of a domain name."); }
+
+  var tld = host.split(".").pop();
+  var looksLikeBirr = /t[e3]+l[e3]?-?b[i1l]+r+|te+birr|tele-?birr|telbir|telebrr|ethi?o-?telecom|ethiotelcom/i.test(host);
+
+  BAD_WORDS.forEach(function(w){
+    if (low.indexOf(w) > -1) { risk += 35; danger = true; reasons.push('Suspicious keyword detected: "' + w + '".'); }
+  });
+
+  if (looksLikeBirr && !isOfficial) {
+    risk += 60; danger = true;
+    reasons.push("Fake domain mimicking Ethio Telecom / telebirr.");
+    if (BAD_TLDS.indexOf(tld) > -1) reasons.push("Untrusted address ending .“" + tld + "” — the official one ends in .et.");
+    if (host.indexOf("-") > -1) reasons.push("Extra hyphens used to imitate the real name.");
+  } else if (!isOfficial && BAD_TLDS.indexOf(tld) > -1) {
+    risk += 30; reasons.push("Address ends in .“" + tld + "”, commonly used by scam sites.");
+  }
+
+  if (host.split(".").length > 3 && !isOfficial) { risk += 20; reasons.push("Long chain of sub-domains used to hide the real owner."); }
+  if (/(telebirr|ethiotelecom)/i.test(path) && !isOfficial) { risk += 35; danger = true; reasons.push("Brand name hidden in the page address, not the domain."); }
+  if (/[а-яα-ω]/i.test(host)) { risk += 50; danger = true; reasons.push("Contains look-alike foreign letters."); }
+
+  if (isOfficial) {
+    if (risk >= 35) { danger = true; reasons.push("Official-looking domain but with unsafe content in the address."); }
+    else { risk = Math.min(risk, 10); reasons = ["Matches the official Ethio Telecom domain list."].concat(reasons); }
+  } else if (!danger && risk < 40) {
+    risk = Math.max(risk, 45);
+    reasons.push("Not on the official list of Ethio Telecom addresses.");
+  }
+
+  risk = Math.max(0, Math.min(99, risk));
+  if (risk >= 60) danger = true;
+  if (danger) risk = Math.max(risk, 86);
+  return { risk: risk, danger: danger, reasons: reasons, host: host, official: isOfficial };
+}
+
+function tryUrl(u){ document.getElementById("urlInput").value = u; checkUrl(); }
+
+function checkUrl(){
+  var raw = document.getElementById("urlInput").value;
+  var box = document.getElementById("urlResult");
+  if (!raw.trim()) { box.innerHTML = warn(T("urlEmpty")); return; }
+  var v = analyzeUrl(raw);
+  var s = stats(); if (v.risk >= 50) s.urlBad++; else s.urlSafe++; save(s);
+  haptic(v.risk >= 50 ? "error" : "success");
+
+  if (v.risk >= 50) {
+    box.innerHTML = banner("red", T("bRedUrl"), v.host, v.risk, v.reasons, T("noteRedUrl"));
+  } else if (v.risk >= 25) {
+    box.innerHTML = banner("amber", T("bAmberUrl"), v.host, v.risk, v.reasons, T("noteAmberUrl"));
+  } else {
+    box.innerHTML = banner("green", T("bGreenUrl"), v.host, v.risk, v.reasons, T("noteGreenUrl"));
+  }
+}
+
+/* ---------- feed ---------- */
+function addReport(){
+  var el = document.getElementById("reportInput");
+  var t = (el.value || "").trim().slice(0, 200);
+  if (!t) return;
+  var a = reports();
+  a.unshift({ t: t, d: new Date().toLocaleString() });
+  el.value = "";
+  saveReports(a);
+  haptic("success");
+}
+function renderFeed(){
+  var a = reports(), f = document.getElementById("feed");
+  if (!a.length) { f.innerHTML = '<p class="text-xs text-slate-400">' + esc(T("feedEmpty")) + '</p>'; return; }
+  f.innerHTML = a.map(function(r){
+    return '<div class="rounded-xl bg-slate-50 border border-slate-200 p-3"><p class="text-sm">'
+      + esc(r.t) + '</p><p class="text-[10px] text-slate-400 mt-1">' + esc(r.d) + '</p></div>';
+  }).join("");
+}
+
+/* ---------- USSD ---------- */
+var ussdStack = [], ussdActive = false;
+var MENUS = {
+  main: "*127# telebirr FraudShield\n\n1. Check transaction status\n2. Verify an SMS code\n3. Report a scam\n4. Safety tips\n5. My safety stats\n\n0. Exit",
+  tips: "SAFETY TIPS\n\n1. telebirr never asks for your PIN.\n2. No real prize needs a payment.\n3. Check the sender is 127.\n4. Links ending .xyz or .co are fake.\n5. Call 127 if unsure.\n\n0. Back"
+};
+function ussdPrint(t){ document.getElementById("ussdScreen").textContent = t; }
+function ussdDial(){ ussdActive = true; ussdStack = ["main"]; ussdPrint(MENUS.main); }
+function ussdEnd(){ ussdActive = false; ussdStack = []; ussdPrint("Call ended.\n\nPress \"Dial *127#\" to start again."); }
+function ussdBack(){ if (!ussdActive) return ussdDial(); ussdStack = ["main"]; ussdPrint(MENUS.main); }
+
+function ussdSend(){
+  var el = document.getElementById("ussdInput");
+  var v = (el.value || "").trim();
+  el.value = "";
+  if (!ussdActive) { ussdPrint("No active session.\nPress \"Dial *127#\" first."); return; }
+  if (!v) return;
+  var state = ussdStack[ussdStack.length - 1];
+
+  if (v === "0") { if (state === "main") return ussdEnd(); return ussdBack(); }
+
+  if (state === "main") {
+    if (v === "1") { ussdStack.push("tx"); return ussdPrint("CHECK TRANSACTION\n\nEnter transaction number\n(e.g. DHP254JOT6)\n\n0. Back"); }
+    if (v === "2") { ussdStack.push("code"); return ussdPrint("VERIFY SMS CODE\n\nEnter the 6-digit code\nfrom the message\n\n0. Back"); }
+    if (v === "3") { ussdStack.push("rep"); return ussdPrint("REPORT A SCAM\n\nEnter the scammer number\n(e.g. 0911223344)\n\n0. Back"); }
+    if (v === "4") { ussdStack.push("tips"); return ussdPrint(MENUS.tips); }
+    if (v === "5") { var s = stats(); ussdStack.push("st"); return ussdPrint("MY SAFETY STATS\n\nScans: " + s.scans + "\nFraud found: " + s.fraud + "\nSafe: " + s.safe + "\nLinks blocked: " + s.urlBad + "\n\n0. Back"); }
+    return ussdPrint("Invalid option.\n\n" + MENUS.main);
+  }
+  if (state === "tx") {
+    var ok = /^[A-Z]{2,4}\d{2,4}[A-Z0-9]{4,8}$/i.test(v);
+    var s1 = stats(); s1.scans++; ok ? s1.safe++ : s1.fraud++; save(s1);
+    return ussdPrint(ok
+      ? "RESULT\n\n" + v.toUpperCase() + "\nFormat is VALID.\nConfirm the amount in your\ntelebirr balance before you\nrelease any goods.\n\n0. Back"
+      : "RESULT\n\n" + v.toUpperCase() + "\nINVALID format.\nThis is likely a FAKE payment\nmessage. Do not deliver.\n\n0. Back");
+  }
+  if (state === "code") {
+    var okc = /^\d{6}$/.test(v);
+    return ussdPrint(okc
+      ? "CODE " + v + "\nFormat looks correct.\nNEVER share this code with\nanyone, including callers\nclaiming to be Ethio Telecom.\n\n0. Back"
+      : "CODE " + v + "\nNot a 6-digit code.\nTreat the message as fake.\n\n0. Back");
+  }
+  if (state === "rep") {
+    var a = reports();
+    a.unshift({ t: "USSD report: scam number " + v, d: new Date().toLocaleString() });
+    saveReports(a);
+    return ussdPrint("Thank you.\n\nNumber " + v + " was reported\nto the community feed.\nReference: R" + Math.floor(Math.random()*90000+10000) + "\n\n0. Back");
+  }
+  return ussdPrint("Invalid option.\n\n0. Back");
+}
+
+/* ---------- shared UI ---------- */
+function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" })[c]; }); }
+function warn(t){ return '<div class="rounded-xl bg-amber-50 border border-amber-300 p-3 text-sm text-amber-800">' + esc(t) + '</div>'; }
+function list(items){ return items.length ? '<ul class="mt-2 space-y-1 text-sm">' + items.map(function(i){ return '<li>• ' + esc(i) + '</li>'; }).join("") + '</ul>' : ""; }
+
+function banner(tone, title, host, risk, reasons, note){
+  var map = { red:["bg-red-50","border-red-300","text-red-800","bg-red-500"],
+              amber:["bg-amber-50","border-amber-300","text-amber-900","bg-amber-400"],
+              green:["bg-lime-50","border-etlime","text-etblue","bg-etlime"] };
+  var c = map[tone];
+  return '<div class="rounded-2xl ' + c[0] + ' border ' + c[1] + ' p-4 shadow-sm ' + c[2] + '">'
+    + '<p class="font-bold">' + title + '</p>'
+    + (host ? '<p class="text-xs mt-1 break-all opacity-80">' + esc(host) + '</p>' : "")
+    + '<div class="mt-3"><div class="flex justify-between text-xs font-semibold"><span>' + esc(T("riskScore")) + '</span><span>' + risk + '%</span></div>'
+    + '<div class="h-2 bg-white/70 rounded-full mt-1 overflow-hidden"><div class="h-full ' + c[3] + '" style="width:' + risk + '%"></div></div></div>'
+    + list(reasons)
+    + (note ? '<p class="mt-3 text-xs font-semibold">' + esc(note) + '</p>' : "")
+    + '</div>';
+}
+
+function verdict(risk, bad, good){
+  if (risk >= 50) {
+    return banner("red", T("bRedSms"), "", risk,
+      bad.length ? bad : ["Multiple signs of a fake message."],
+      T("noteRedSms"));
+  }
+  if (risk >= 25) {
+    return banner("amber", T("bAmberSms"), "", risk,
+      bad.concat(good.slice(0,2)), T("noteAmberSms"));
+  }
+  return banner("green", T("bGreenSms"), "", risk,
+    good, T("noteGreenSms"));
+}
+
+/* ---------- boot ---------- */
+(function boot(){
+  try { var l = localStorage.getItem(LANG_KEY); if (l === "am") LANG = "am"; } catch(e){}
+  applyLang();
+  render();
+  ussdPrint("Press \"Dial *127#\" to start the session.");
+
+  /* splash transition */
+  setTimeout(function(){
+    var splash = document.getElementById("splash");
+    if (splash) {
+      splash.classList.add("opacity-0", "pointer-events-none");
+      setTimeout(function(){ splash.classList.add("hidden"); }, 500);
+    }
+  }, 2800);
+})();
+</script>
+</body>
+</html>
