@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#020617">
+<title>Zemen Donate & Charity</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  *{ -webkit-tap-highlight-color: transparent; }
+  html,body{ overscroll-behavior-y: none; }
+  body{
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background:#020617;
+    color:#e2e8f0;
+    min-height:100vh;
+  }
+  .glass{
+    background: rgba(15,23,42,.55);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border:1px solid rgba(51,65,85,.65);
+  }
+  .glass-strong{
+    background: rgba(2,6,23,.9);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+  }
+  .glow-emerald{ box-shadow: 0 0 28px rgba(16,185,129,.35); }
+  .glow-soft{ box-shadow: 0 0 40px rgba(16,185,129,.18); }
+  .no-scrollbar::-webkit-scrollbar{ display:none; }
+  .no-scrollbar{ -ms-overflow-style:none; scrollbar-width:none; }
+
+  /* ---------- Splash ---------- */
+  #splash{ transition: opacity .6s ease, visibility .6s ease; }
+  @keyframes heartPulse{
+    0%,100%{ transform: scale(1); filter: drop-shadow(0 0 18px rgba(16,185,129,.75)); }
+    50%{ transform: scale(1.09); filter: drop-shadow(0 0 34px rgba(45,212,191,.95)); }
+  }
+  .splash-heart{ animation: heartPulse 1.6s ease-in-out infinite; }
+  @keyframes ringSpin{ to{ transform: rotate(360deg); } }
+  .splash-ring{
+    position:absolute; inset:-14px; border-radius:9999px;
+    border:2px solid transparent;
+    border-top-color:#10b981; border-right-color:rgba(45,212,191,.35);
+    animation: ringSpin 1.5s linear infinite;
+  }
+  #splashBar{ transition: width 2s cubic-bezier(.45,.05,.25,1); }
+
+  /* ---------- Category pills ---------- */
+  .cat-pill{
+    flex:none; padding:.5rem .95rem; border-radius:9999px; font-size:.75rem; font-weight:700;
+    border:1px solid rgba(51,65,85,.85); background:rgba(15,23,42,.7); color:#94a3b8;
+    transition: all .22s ease; white-space:nowrap;
+  }
+  .cat-pill.active{
+    background:linear-gradient(135deg,#10b981,#0d9488);
+    color:#022c22; border-color:transparent;
+    box-shadow:0 0 18px rgba(16,185,129,.45);
+    transform: translateY(-1px);
+  }
+
+  /* ---------- Progress ---------- */
+  .progress-fill{
+    transition: width 1.15s cubic-bezier(.4,0,.2,1);
+    box-shadow: 0 0 12px rgba(16,185,129,.65);
+  }
+
+  /* ---------- Amount buttons ---------- */
+  .amt-btn{
+    padding:.7rem .25rem; border-radius:1rem; font-weight:800; font-size:.85rem;
+    border:1px solid rgba(51,65,85,.9); background:rgba(15,23,42,.7); color:#cbd5e1;
+    transition: all .18s ease;
+  }
+  .amt-btn.active{
+    background:linear-gradient(135deg,rgba(16,185,129,.22),rgba(13,148,136,.22));
+    border-color:#10b981; color:#6ee7b7;
+    box-shadow:0 0 18px rgba(16,185,129,.35);
+  }
+  .freq-btn{
+    padding:.65rem .5rem; border-radius:.9rem; font-weight:700; font-size:.78rem;
+    border:1px solid rgba(51,65,85,.9); background:rgba(15,23,42,.7); color:#94a3b8;
+    transition: all .18s ease;
+  }
+  .freq-btn.active{
+    background:linear-gradient(135deg,#10b981,#0d9488); color:#022c22; border-color:transparent;
+    box-shadow:0 0 16px rgba(16,185,129,.4);
+  }
+
+  /* ---------- Tabs ---------- */
+  .tab-btn{
+    padding:.85rem .5rem .95rem; display:flex; flex-direction:column; align-items:center; gap:.2rem;
+    font-size:.68rem; font-weight:700; color:#64748b; transition: color .2s ease; position:relative;
+  }
+  .tab-btn.active{ color:#34d399; }
+  .tab-btn.active::after{
+    content:''; position:absolute; top:0; left:50%; transform:translateX(-50%);
+    width:38px; height:3px; border-radius:0 0 999px 999px;
+    background:linear-gradient(90deg,#10b981,#2dd4bf);
+    box-shadow:0 0 14px rgba(16,185,129,.8);
+  }
+
+  /* ---------- Animations ---------- */
+  @keyframes fadeUp{ from{ opacity:0; transform: translateY(14px); } to{ opacity:1; transform:none; } }
+  .fade-up{ animation: fadeUp .45s ease both; }
+  @keyframes shake{ 0%,100%{transform:translateX(0)} 20%{transform:translateX(-7px)} 40%{transform:translateX(7px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+  .shake{ animation: shake .45s ease; }
+  @keyframes toastIn{ from{ opacity:0; transform: translateY(-14px) scale(.96); } to{ opacity:1; transform:none; } }
+
+  /* ---------- Sheet ---------- */
+  .sheet-panel{ transition: transform .32s cubic-bezier(.32,.72,0,1); }
+  .receipt-notch{
+    background-image: radial-gradient(circle at 0 50%, transparent 9px, rgba(15,23,42,.6) 9.5px);
+    background-size: 22px 100%;
+  }
+  .dashed-line{
+    border-top:2px dashed rgba(71,85,105,.7);
+  }
+</style>
+</head>
+<body class="bg-slate-950">
+
+<!-- ══════════════════════════════════════════
+     SPLASH SCREEN
+═══════════════════════════════════════════ -->
+<div id="splash" class="fixed inset-0 z-[300] flex flex-col items-center justify-center bg-slate-950">
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-[420px] h-[420px] rounded-full bg-emerald-500/10 blur-3xl"></div>
+    <div class="absolute bottom-0 right-0 w-72 h-72 rounded-full bg-teal-500/10 blur-3xl"></div>
+  </div>
+
+  <div class="relative z-10 flex flex-col items-center px-8 w-full max-w-xs">
+    <div class="relative w-24 h-24 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 grid place-items-center splash-heart">
+      <div class="splash-ring"></div>
+      <i class="fa-solid fa-hand-holding-heart text-4xl text-slate-950"></i>
+    </div>
+
+    <h1 class="mt-8 text-3xl font-black tracking-tight text-white">
+      Zemen <span class="text-emerald-400">Donate</span>
+    </h1>
+    <p class="mt-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-emerald-500/90">
+      Give Hope • Empower Lives
+    </p>
+
+    <div class="mt-12 w-full h-1.5 rounded-full bg-slate-800/90 overflow-hidden">
+      <div id="splashBar" class="h-full w-0 rounded-full bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500"></div>
+    </div>
+    <p class="mt-3 text-[10px] text-slate-500 tracking-wider">Securing your giving experience…</p>
+
+    <div class="mt-10 flex items-center gap-2 text-[10px] text-slate-600">
+      <i class="fa-solid fa-shield-halved text-emerald-600"></i>
+      <span>Verified Organizations • Transparent Giving</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     APP
+═══════════════════════════════════════════ -->
+<div id="app" class="min-h-screen">
+
+  <!-- ── HEADER ── -->
+  <header class="sticky top-0 z-40 glass-strong border-b border-slate-800/80">
+    <div class="max-w-3xl mx-auto px-4 pt-3 pb-2">
+      <div class="flex items-center justify-between gap-2">
+        <a href="index.html"
+           class="flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-bold text-slate-300 border border-slate-700/70 bg-slate-900/70 active:scale-95 transition">
+          <i class="fa-solid fa-arrow-left text-emerald-400"></i>
+          <span>Exit to Zemen</span>
+        </a>
+
+        <div class="flex items-center gap-1.5">
+          <div class="flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+            <i class="fa-solid fa-wallet text-emerald-400 text-xs"></i>
+            <span id="walletBalance" class="text-sm font-black text-emerald-300 tabular-nums">0</span>
+            <span class="text-[9px] font-bold text-emerald-500/90 mt-0.5">ETB</span>
+          </div>
+          <button onclick="topUpWallet()" title="Add demo funds"
+                  class="w-8 h-8 rounded-xl grid place-items-center bg-slate-900/80 border border-slate-700 text-slate-400 active:scale-90 transition">
+            <i class="fa-solid fa-plus text-[10px]"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 mt-3 pb-1">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 grid place-items-center glow-emerald">
+          <i class="fa-solid fa-hand-holding-heart text-slate-950 text-lg"></i>
+        </div>
+        <div class="leading-tight">
+          <h1 class="text-lg font-black tracking-tight text-white">
+            Zemen <span class="text-emerald-400">Donate</span>
+          </h1>
+          <p class="text-[10px] text-slate-400 font-medium">Give Hope • Empower Lives</p>
+        </div>
+        <div class="ml-auto flex items-center gap-1 text-[9px] font-bold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/25 px-2 py-1 rounded-full">
+          <i class="fa-solid fa-circle-check"></i> SECURE
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── MAIN ── -->
+  <main class="max-w-3xl mx-auto px-4 pt-4 pb-32">
+
+    <!-- ══════ CAMPAIGNS VIEW ══════ -->
+    <section id="viewCampaigns">
+
+      <!-- Hero banner -->
+      <div class="relative overflow-hidden rounded-3xl p-5 mb-4 bg-gradient-to-br from-emerald-600/25 via-teal-700/15 to-slate-900 border border-emerald-500/25 glow-soft">
+        <div class="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-emerald-400/10 blur-2xl"></div>
+        <i class="fa-solid fa-heart absolute right-4 bottom-3 text-6xl text-emerald-400/10"></i>
+        <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-400/90">Community Impact</p>
+        <p id="heroTotal" class="mt-1.5 text-2xl font-black text-white tabular-nums">ETB 0</p>
+        <p class="text-[11px] text-slate-400 mt-1">
+          raised by <span id="heroDonors" class="text-emerald-300 font-bold">0</span> generous Ethiopians across
+          <span id="heroCount" class="text-emerald-300 font-bold">0</span> verified campaigns
+        </p>
+      </div>
+
+      <!-- Search -->
+      <div class="relative mb-4">
+        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+        <input id="searchInput" type="text" placeholder="Search campaigns or organizations…"
+               oninput="state.query=this.value; renderCampaigns();"
+               class="w-full pl-10 pr-4 py-3 rounded-2xl glass text-sm text-slate-200 placeholder-slate-500 outline-none focus:border-emerald-500/60 transition">
+      </div>
+
+      <!-- Category pills -->
+      <div id="catPills" class="flex gap-2 overflow-x-auto no-scrollbar -mx-4 px-4 pb-4"></div>
+
+      <!-- Grid -->
+      <div id="campaignGrid" class="grid gap-4 sm:grid-cols-2"></div>
+    </section>
+
+    <!-- ══════ IMPACT / MY GIVING VIEW ══════ -->
+    <section id="viewImpact" class="hidden">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 grid place-items-center glow-emerald">
+          <i class="fa-solid fa-chart-line text-slate-950"></i>
+        </div>
+        <div>
+          <h2 class="text-lg font-black text-white">My Giving</h2>
+          <p class="text-[11px] text-slate-400">Your personal impact ledger</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <div class="glass rounded-2xl p-4">
+          <i class="fa-solid fa-coins text-emerald-400 text-sm"></i>
+          <p id="statTotal" class="mt-2 text-xl font-black text-white tabular-nums">0</p>
+          <p class="text-[10px] text-slate-400 font-semibold mt-0.5">TOTAL GIVEN (ETB)</p>
+        </div>
+        <div class="glass rounded-2xl p-4">
+          <i class="fa-solid fa-hand-holding-heart text-teal-400 text-sm"></i>
+          <p id="statCampaigns" class="mt-2 text-xl font-black text-white tabular-nums">0</p>
+          <p class="text-[10px] text-slate-400 font-semibold mt-0.5">CAMPAIGNS SUPPORTED</p>
+        </div>
+        <div class="glass rounded-2xl p-4">
+          <i class="fa-solid fa-people-group text-emerald-400 text-sm"></i>
+          <p id="statLives" class="mt-2 text-xl font-black text-white tabular-nums">0</p>
+          <p class="text-[10px] text-slate-400 font-semibold mt-0.5">EST. LIVES TOUCHED</p>
+        </div>
+        <div class="glass rounded-2xl p-4">
+          <i class="fa-solid fa-arrows-rotate text-teal-400 text-sm"></i>
+          <p id="statMonthly" class="mt-2 text-xl font-black text-white tabular-nums">0</p>
+          <p class="text-[10px] text-slate-400 font-semibold mt-0.5">MONTHLY PLEDGES</p>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-bold text-slate-200">Donation History</h3>
+        <span id="historyCount" class="text-[10px] font-bold text-slate-500"></span>
+      </div>
+
+      <div id="historyList" class="space-y-3"></div>
+    </section>
+  </main>
+
+  <!-- ── BOTTOM NAV ── -->
+  <nav class="fixed bottom-0 inset-x-0 z-50 glass-strong border-t border-slate-800">
+    <div class="max-w-3xl mx-auto grid grid-cols-2">
+      <button class="tab-btn active" data-tab="campaigns" onclick="switchTab('campaigns')">
+        <i class="fa-solid fa-hand-holding-heart text-base"></i>
+        <span>Campaigns</span>
+      </button>
+      <button class="tab-btn" data-tab="impact" onclick="switchTab('impact')">
+        <i class="fa-solid fa-heart-pulse text-base"></i>
+        <span>My Giving</span>
+      </button>
+    </div>
+    <div class="h-[env(safe-area-inset-bottom)]"></div>
+  </nav>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     DONATION SHEET
+═══════════════════════════════════════════ -->
+<div id="donateModal" class="fixed inset-0 z-[80] hidden">
+  <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onclick="closeDonate()"></div>
+  <div id="donatePanel"
+       class="sheet-panel absolute bottom-0 left-0 right-0 translate-y-full max-h-[93vh] overflow-y-auto no-scrollbar
+              rounded-t-[28px] border-t border-emerald-500/30 glass-strong">
+    <div class="sticky top-0 z-10 pt-3 pb-2 glass-strong rounded-t-[28px]">
+      <div class="w-12 h-1.5 rounded-full bg-slate-700 mx-auto"></div>
+    </div>
+    <div id="donateBody" class="px-5 pb-8"></div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     RECEIPT SHEET
+═══════════════════════════════════════════ -->
+<div id="receiptModal" class="fixed inset-0 z-[90] hidden">
+  <div class="absolute inset-0 bg-slate-950/85 backdrop-blur-sm" onclick="closeReceipt()"></div>
+  <div id="receiptPanel"
+       class="sheet-panel absolute bottom-0 left-0 right-0 translate-y-full max-h-[93vh] overflow-y-auto no-scrollbar
+              rounded-t-[28px] border-t border-emerald-500/30 glass-strong">
+    <div class="sticky top-0 z-10 pt-3 pb-2 glass-strong rounded-t-[28px]">
+      <div class="w-12 h-1.5 rounded-full bg-slate-700 mx-auto"></div>
+    </div>
+    <div id="receiptBody" class="px-5 pb-8"></div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     CERTIFICATE SHEET
+═══════════════════════════════════════════ -->
+<div id="certModal" class="fixed inset-0 z-[95] hidden">
+  <div class="absolute inset-0 bg-slate-950/88 backdrop-blur-sm" onclick="closeCert()"></div>
+  <div id="certPanel"
+       class="sheet-panel absolute bottom-0 left-0 right-0 translate-y-full max-h-[93vh] overflow-y-auto no-scrollbar
+              rounded-t-[28px] border-t border-emerald-500/30 glass-strong">
+    <div class="sticky top-0 z-10 pt-3 pb-2 glass-strong rounded-t-[28px]">
+      <div class="w-12 h-1.5 rounded-full bg-slate-700 mx-auto"></div>
+    </div>
+    <div class="px-5 pb-8">
+      <div class="text-center mb-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30">
+          <i class="fa-solid fa-award text-emerald-400 text-xs"></i>
+          <span class="text-[10px] font-black tracking-widest text-emerald-300">IMPACT CERTIFICATE</span>
+        </div>
+        <h3 class="mt-3 text-lg font-black text-white">Your Certificate of Impact</h3>
+        <p class="text-[11px] text-slate-400 mt-1">Share your generosity — inspire others to give.</p>
+      </div>
+      <div class="rounded-2xl overflow-hidden border border-emerald-500/25 bg-slate-950">
+        <img id="certImage" alt="Impact Certificate" class="w-full block">
+      </div>
+      <div class="grid grid-cols-2 gap-3 mt-4">
+        <button onclick="downloadCert()"
+                class="py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-sm active:scale-95 transition glow-emerald">
+          <i class="fa-solid fa-download mr-1.5"></i>Download
+        </button>
+        <button onclick="closeCert()"
+                class="py-3.5 rounded-2xl border border-slate-700 bg-slate-900/70 text-slate-300 font-bold text-sm active:scale-95 transition">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     SHARE SHEET
+═══════════════════════════════════════════ -->
+<div id="shareModal" class="fixed inset-0 z-[100] hidden">
+  <div class="absolute inset-0 bg-slate-950/85 backdrop-blur-sm" onclick="closeShare()"></div>
+  <div id="sharePanel"
+       class="sheet-panel absolute bottom-0 left-0 right-0 translate-y-full rounded-t-[28px] border-t border-emerald-500/30 glass-strong">
+    <div class="pt-3 pb-2"><div class="w-12 h-1.5 rounded-full bg-slate-700 mx-auto"></div></div>
+    <div class="px-5 pb-10">
+      <h3 class="text-center text-base font-black text-white">Spread the Word</h3>
+      <p class="text-center text-[11px] text-slate-400 mt-1 mb-5">Every share can bring one more donor.</p>
+      <div class="grid grid-cols-4 gap-3" id="shareGrid"></div>
+      <div class="mt-5 flex items-center gap-3 p-3 rounded-2xl bg-slate-900/70 border border-slate-800">
+        <i class="fa-solid fa-link text-emerald-400 text-xs"></i>
+        <span id="shareLink" class="text-[10px] text-slate-400 truncate flex-1">zemen.app/donate/…</span>
+        <button onclick="copyLink()" class="text-[10px] font-black text-emerald-400 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 active:scale-95 transition">COPY</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- TOAST CONTAINER -->
+<div id="toastBox" class="fixed top-4 inset-x-0 z-[200] flex flex-col items-center gap-2 px-4 pointer-events-none"></div>
+
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   CONSTANTS & STORAGE
+═══════════════════════════════════════════════════════════ */
+const WALLET_KEY   = 'zemen_wallet_balance';
+const HISTORY_KEY  = 'zemen_donation_history';
+const NAME_KEY     = 'zemen_donor_name';
+const RAISED_KEY   = 'zemen_campaign_raised';
+
+/* ═══════════════════════════════════════════════════════════
+   CAMPAIGN DATA
+═══════════════════════════════════════════════════════════ */
+const CAMPAIGNS = [
+  {
+    id:'cmp-101', org:'Ethiopian Red Cross Society', verified:true,
+    title:'Emergency Relief for Drought-Affected Families in Borena',
+    cat:'emergency', catLabel:'Emergency Relief', urgent:true,
+    icon:'fa-hand-holding-droplet', gradient:'from-rose-500/30 via-orange-600/15 to-slate-900',
+    raised:1245000, goal:2000000, donors:3421, days:12,
+    desc:'Severe drought has displaced over 18,000 households in the Borena zone. Your donation delivers clean water, emergency food rations and mobile health kits to families who have lost everything. Every 500 ETB feeds a family for one full week.'
+  },
+  {
+    id:'cmp-102', org:'Black Lion Specialized Hospital', verified:true,
+    title:'Life-Saving Heart Surgery for 12 Children',
+    cat:'health', catLabel:'Health & Medical', urgent:true,
+    icon:'fa-heart-pulse', gradient:'from-emerald-500/30 via-teal-600/15 to-slate-900',
+    raised:780000, goal:1000000, donors:1876, days:20,
+    desc:'Twelve children under the age of 10 are waiting for congenital heart defect surgery. Each operation costs approximately 85,000 ETB. 100% of funds go directly to surgical costs, anesthesia and post-operative care at Black Lion Hospital.'
+  },
+  {
+    id:'cmp-103', org:'Ethiopian Orthodox Tewahedo Church', verified:true,
+    title:'Rebuild St. Mary Parish & Community Hall',
+    cat:'religious', catLabel:'Religious', urgent:false,
+    icon:'fa-church', gradient:'from-amber-500/25 via-yellow-600/10 to-slate-900',
+    raised:340000, goal:500000, donors:912, days:45,
+    desc:'The historic parish hall, which serves as a Sunday school and community feeding centre for over 400 families, requires urgent structural restoration. Your contribution rebuilds walls, roofing and the community kitchen.'
+  },
+  {
+    id:'cmp-104', org:'Aksum University Foundation', verified:true,
+    title:'Scholarships for 200 Rural Students',
+    cat:'education', catLabel:'Education', urgent:false,
+    icon:'fa-graduation-cap', gradient:'from-sky-500/25 via-indigo-600/12 to-slate-900',
+    raised:425000, goal:600000, donors:1345, days:33,
+    desc:'Talented students from rural Tigray and Amhara are dropping out due to tuition and living costs. A full-year scholarship — tuition, housing and materials — costs just 3,000 ETB per student.'
+  },
+  {
+    id:'cmp-105', org:'Addis Food Bank Initiative', verified:true,
+    title:'Feed 5,000 Vulnerable Families This Season',
+    cat:'emergency', catLabel:'Emergency Relief', urgent:false,
+    icon:'fa-bowl-food', gradient:'from-lime-500/25 via-emerald-600/12 to-slate-900',
+    raised:612000, goal:900000, donors:2288, days:18,
+    desc:'Rising food prices have pushed thousands of Addis Ababa households below the poverty line. 300 ETB provides a complete monthly food parcel: teff, lentils, oil and nutritional supplements for children.'
+  },
+  {
+    id:'cmp-106', org:'Hidase Community Foundation', verified:true,
+    title:'Clean Water Wells for Sidama Villages',
+    cat:'health', catLabel:'Health & Medical', urgent:false,
+    icon:'fa-droplet', gradient:'from-cyan-500/25 via-teal-600/12 to-slate-900',
+    raised:288000, goal:750000, donors:764, days:58,
+    desc:'Women and children walk up to 4 hours daily to fetch unsafe water. A single solar-powered borehole serves 1,200 people and eliminates waterborne disease for an entire generation.'
+  },
+  {
+    id:'cmp-107', org:'Mary Joy Development Association', verified:true,
+    title:'School Supplies for 3,000 Children',
+    cat:'education', catLabel:'Education', urgent:false,
+    icon:'fa-book-open', gradient:'from-violet-500/25 via-fuchsia-600/12 to-slate-900',
+    raised:156000, goal:400000, donors:498, days:40,
+    desc:'Back-to-school should not be a burden. 520 ETB equips one child with a backpack, exercise books, pens, geometry set and a school uniform for the entire academic year.'
+  },
+  {
+    id:'cmp-108', org:'Debre Damo Monastery Trust', verified:true,
+    title:'Preserve 400-Year-Old Sacred Manuscripts',
+    cat:'religious', catLabel:'Religious', urgent:false,
+    icon:'fa-scroll', gradient:'from-yellow-500/25 via-amber-700/12 to-slate-900',
+    raised:97500, goal:300000, donors:341, days:70,
+    desc:'Ancient Ge’ez manuscripts are deteriorating from humidity and age. Funds support acid-free archival storage, digital scanning and restoration by trained conservation specialists.'
+  }
+];
+
+/* ═══════════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════════ */
+const state = {
+  balance: 0,
+  history: [],
+  category: 'all',
+  query: '',
+  activeCampaign: null,
+  amount: 500,
+  freq: 'once',
+  donor: 'Guest Donor',
+  certDataUrl: null,
+  certFileName: 'zemen-impact-certificate.png'
+};
+
+/* ═══════════════════════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════════════════════════════ */
+const fmt = n => Number(n || 0).toLocaleString('en-US');
+
+function genRef(){
+  const d = new Date();
+  const p = x => String(x).padStart(2,'0');
+  const stamp = `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}`;
+  const rand = Math.random().toString(36).slice(2,7).toUpperCase();
+  return `ZMN-${stamp}-${rand}`;
+}
+
+function formatDate(iso){
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-GB',{ day:'2-digit', month:'short', year:'numeric' }) +
+         ' • ' + d.toLocaleTimeString('en-GB',{ hour:'2-digit', minute:'2-digit' });
+}
+
+function toast(msg, type='success'){
+  const box = document.getElementById('toastBox');
+  const el = document.createElement('div');
+  const palette = {
+    success:'border-emerald-500/40 bg-emerald-500/12 text-emerald-200',
+    error:'border-rose-500/40 bg-rose-500/12 text-rose-200',
+    info:'border-sky-500/40 bg-sky-500/12 text-sky-200'
+  };
+  const icons = { success:'fa-circle-check', error:'fa-circle-exclamation', info:'fa-circle-info' };
+  el.className = `pointer-events-auto max-w-sm w-full flex items-start gap-2.5 px-4 py-3 rounded-2xl border backdrop-blur-xl ${palette[type]}`;
+  el.style.animation = 'toastIn .3s ease both';
+  el.innerHTML = `<i class="fa-solid ${icons[type]} mt-0.5 text-sm"></i><span class="text-xs font-semibold leading-relaxed">${msg}</span>`;
+  box.appendChild(el);
+  setTimeout(()=>{
+    el.style.transition='opacity .3s ease, transform .3s ease';
+    el.style.opacity='0'; el.style.transform='translateY(-12px)';
+    setTimeout(()=>el.remove(), 320);
+  }, 2800);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LOCAL STORAGE
+═══════════════════════════════════════════════════════════ */
+function loadStorage(){
+  // Wallet
+  let bal = localStorage.getItem(WALLET_KEY);
+  if(bal === null || isNaN(parseFloat(bal))){
+    bal = 25000;
+    localStorage.setItem(WALLET_KEY, String(bal));
+  }
+  state.balance = parseFloat(bal);
+
+  // History
+  try{
+    const h = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+    state.history = Array.isArray(h) ? h : [];
+  }catch(e){ state.history = []; }
+
+  // Donor name
+  state.donor = localStorage.getItem(NAME_KEY) || 'Guest Donor';
+
+  // Campaign raised overrides
+  try{
+    const raised = JSON.parse(localStorage.getItem(RAISED_KEY) || '{}');
+    CAMPAIGNS.forEach(c => {
+      if(typeof raised[c.id] === 'number' && raised[c.id] > c.raised){
+        c.raised = raised[c.id];
+      }
+    });
+  }catch(e){}
+}
+
+function saveBalance(){
+  localStorage.setItem(WALLET_KEY, String(state.balance));
+}
+function saveHistory(){
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(state.history.slice(0, 60)));
+}
+function saveRaised(){
+  const map = {};
+  CAMPAIGNS.forEach(c => map[c.id] = c.raised);
+  localStorage.setItem(RAISED_KEY, JSON.stringify(map));
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER: WALLET
+═══════════════════════════════════════════════════════════ */
+function renderBalance(){
+  const el = document.getElementById('walletBalance');
+  el.textContent = fmt(Math.round(state.balance));
+  el.classList.remove('shake');
+  if(state.balance < 200){
+    el.classList.add('text-rose-300');
+  }else{
+    el.classList.remove('text-rose-300');
+  }
+}
+
+function topUpWallet(){
+  state.balance += 10000;
+  saveBalance();
+  renderBalance();
+  toast('Demo wallet topped up with ETB 10,000', 'info');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER: CATEGORY PILLS
+═══════════════════════════════════════════════════════════ */
+const CATEGORIES = [
+  { key:'all',       label:'All' },
+  { key:'emergency', label:'Emergency Relief · አደጋ ጊዜ' },
+  { key:'religious', label:'Religious · ሃይማኖታዊ' },
+  { key:'health',    label:'Health & Medical' },
+  { key:'education', label:'Education · ትምህርት' }
+];
+
+function renderPills(){
+  const box = document.getElementById('catPills');
+  box.innerHTML = CATEGORIES.map(c => `
+    <button class="cat-pill ${state.category===c.key?'active':''}"
+            onclick="setCategory('${c.key}')">${c.label}</button>
+  `).join('');
+}
+
+function setCategory(key){
+  state.category = key;
+  renderPills();
+  renderCampaigns();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER: CAMPAIGNS
+═══════════════════════════════════════════════════════════ */
+function filteredCampaigns(){
+  const q = state.query.trim().toLowerCase();
+  return CAMPAIGNS.filter(c => {
+    const catOk = state.category === 'all' || c.cat === state.category;
+    const qOk = !q || c.title.toLowerCase().includes(q) || c.org.toLowerCase().includes(q);
+    return catOk && qOk;
+  });
+}
+
+function campaignCard(c, index){
+  const pct = Math.min(100, (c.raised / c.goal) * 100);
+  const pctLabel = pct >= 100 ? '100' : pct.toFixed(0);
+  return `
+  <article onclick="openDonate('${c.id}')"
+           class="fade-up glass rounded-3xl overflow-hidden cursor-pointer active:scale-[0.98] transition-transform duration-200 hover:border-emerald-500/45"
+           style="animation-delay:${Math.min(index*60,360)}ms">
+
+    <div class="relative h-36 overflow-hidden bg-gradient-to-br ${c.gradient}">
+      <div class="absolute inset-0 opacity-[0.14]"
+           style="background-image:radial-gradient(circle at 1px 1px, #34d399 1px, transparent 0);background-size:16px 16px;"></div>
+      <i class="fa-solid ${c.icon} absolute -right-2 bottom-1 text-7xl text-white/10"></i>
+
+      <span class="absolute top-3 left-3 text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-950/75 border border-white/10 text-emerald-300">
+        ${c.catLabel}
+      </span>
+
+      ${c.urgent ? `
+        <span class="absolute top-3 right-3 text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-rose-500/90 text-white flex items-center gap-1">
+          <i class="fa-solid fa-bolt text-[8px]"></i>Urgent
+        </span>` : ''}
+
+      <div class="absolute bottom-3 left-3 flex items-center gap-1.5">
+        <i class="fa-solid fa-users text-[10px] text-emerald-300/90"></i>
+        <span class="text-[10px] font-bold text-slate-300">${fmt(c.donors)} donors</span>
+      </div>
+    </div>
+
+    <div class="p-4">
+      <div class="flex items-center gap-1.5 mb-1.5">
+        <span class="text-[10px] font-bold text-slate-400 truncate">${c.org}</span>
+        ${c.verified ? `<i class="fa-solid fa-circle-check text-emerald-400 text-[10px]" title="Verified Organization"></i>` : ''}
+      </div>
+
+      <h3 class="text-[13.5px] font-bold text-white leading-snug line-clamp-2 min-h-[38px]">${c.title}</h3>
+
+      <div class="mt-3">
+        <div class="h-2 w-full rounded-full bg-slate-800 overflow-hidden">
+          <div class="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-500 progress-fill"
+               data-progress="${pct}" style="width:0%"></div>
+        </div>
+
+        <div class="flex items-end justify-between mt-2">
+          <div>
+            <p class="text-[11px] font-black text-emerald-300 tabular-nums">${fmt(c.raised)} <span class="text-slate-500 font-bold">/ ${fmt(c.goal)} ETB</span></p>
+          </div>
+          <span class="text-[10px] font-black text-teal-400">${pctLabel}%</span>
+        </div>
+
+        <div class="flex items-center justify-between mt-3 pt-3 border-t border-slate-800/80">
+          <span class="text-[10px] text-slate-500 font-semibold">
+            <i class="fa-regular fa-clock mr-1"></i>${c.days} days left
+          </span>
+          <span class="text-[10px] font-black text-slate-950 bg-gradient-to-r from-emerald-400 to-teal-400 px-3 py-1.5 rounded-full">
+            DONATE
+          </span>
+        </div>
+      </div>
+    </div>
+  </article>`;
+}
+
+function renderCampaigns(){
+  const grid = document.getElementById('campaignGrid');
+  const list = filteredCampaigns();
+
+  if(!list.length){
+    grid.innerHTML = `
+      <div class="col-span-full glass rounded-3xl p-10 text-center">
+        <i class="fa-solid fa-magnifying-glass text-3xl text-slate-700"></i>
+        <p class="mt-3 text-sm font-bold text-slate-400">No campaigns found</p>
+        <p class="text-[11px] text-slate-500 mt-1">Try a different category or search term.</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map((c,i)=>campaignCard(c,i)).join('');
+
+  // Animate progress bars
+  setTimeout(()=>{
+    grid.querySelectorAll('[data-progress]').forEach(el=>{
+      el.style.width = el.dataset.progress + '%';
+    });
+  }, 60);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER: HERO STATS
+═══════════════════════════════════════════════════════════ */
+function renderHero(){
+  const total = CAMPAIGNS.reduce((s,c)=>s+c.raised,0);
+  const donors = CAMPAIGNS.reduce((s,c)=>s+c.donors,0);
+  document.getElementById('heroTotal').textContent = 'ETB ' + fmt(total);
+  document.getElementById('heroDonors').textContent = fmt(donors);
+  document.getElementById('heroCount').textContent = CAMPAIGNS.length;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER: IMPACT / HISTORY
+═══════════════════════════════════════════════════════════ */
+function renderImpact(){
+  const total = state.history.reduce((s,r)=>s+r.amount,0);
+  const unique = new Set(state.history.map(r=>r.campaignId)).size;
+  const lives = Math.round(total / 250);
+  const monthly = state.history.filter(r=>r.freq==='monthly').length;
+
+  document.getElementById('statTotal').textContent = fmt(total);
+  document.getElementById('statCampaigns').textContent = fmt(unique);
+  document.getElementById('statLives').textContent = fmt(lives);
+  document.getElementById('statMonthly').textContent = fmt(monthly);
+  document.getElementById('historyCount').textContent = state.history.length ? `${state.history.length} record${state.history.length>1?'s':''}` : '';
+
+  const list = document.getElementById('historyList');
+
+  if(!state.history.length){
+    list.innerHTML = `
+      <div class="glass rounded-3xl p-10 text-center">
+        <div class="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/25 grid place-items-center mx-auto">
+          <i class="fa-solid fa-hand-holding-heart text-2xl text-emerald-500/70"></i>
+        </div>
+        <p class="mt-4 text-sm font-bold text-slate-300">Your giving journey starts here</p>
+        <p class="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
+          Every donation you make will appear here with a full digital receipt and impact certificate.
+        </p>
+        <button onclick="switchTab('campaigns')"
+                class="mt-5 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 text-xs font-black active:scale-95 transition">
+          Browse Campaigns
+        </button>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = state.history.map((r, i) => `
+    <div class="fade-up glass rounded-2xl p-4 flex items-center gap-3" style="animation-delay:${Math.min(i*50,300)}ms">
+      <div class="w-11 h-11 rounded-2xl bg-gradient-to-br ${r.gradient || 'from-emerald-500/30 to-teal-600/20'} grid place-items-center flex-none border border-white/10">
+        <i class="fa-solid ${r.icon || 'fa-heart'} text-emerald-300 text-sm"></i>
+      </div>
+      <div class="min-w-0 flex-1">
+        <p class="text-[12px] font-bold text-white truncate">${r.campaignTitle}</p>
+        <p class="text-[10px] text-slate-400 truncate mt-0.5">${r.org}</p>
+        <div class="flex items-center gap-2 mt-1">
+          <span class="text-[9px] text-slate-500 font-semibold">${formatDate(r.date)}</span>
+          ${r.freq === 'monthly' ? `<span class="text-[8px] font-black text-teal-300 bg-teal-500/12 border border-teal-500/30 px-1.5 py-0.5 rounded-full">MONTHLY</span>` : ''}
+        </div>
+      </div>
+      <div class="text-right flex-none">
+        <p class="text-[13px] font-black text-emerald-300 tabular-nums">${fmt(r.amount)}</p>
+        <p class="text-[9px] text-slate-500 font-bold">ETB</p>
+        <button onclick="event.stopPropagation(); openReceiptByRef('${r.ref}')"
+                class="mt-1.5 text-[9px] font-black text-emerald-400 border border-emerald-500/30 bg-emerald-500/10 px-2 py-1 rounded-lg active:scale-95 transition">
+          RECEIPT
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TABS
+═══════════════════════════════════════════════════════════ */
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.tab === tab);
+  });
+  document.getElementById('viewCampaigns').classList.toggle('hidden', tab !== 'campaigns');
+  document.getElementById('viewImpact').classList.toggle('hidden', tab !== 'impact');
+  if(tab === 'impact') renderImpact();
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODAL HELPERS
+═══════════════════════════════════════════════════════════ */
+function showSheet(modalId, panelId){
+  const m = document.getElementById(modalId);
+  const p = document.getElementById(panelId);
+  m.classList.remove('hidden');
+  requestAnimationFrame(()=>{
+    p.classList.remove('translate-y-full');
+    p.classList.add('translate-y-0');
+  });
+  document.body.style.overflow = 'hidden';
+}
+
+function hideSheet(modalId, panelId){
+  const m = document.getElementById(modalId);
+  const p = document.getElementById(panelId);
+  p.classList.add('translate-y-full');
+  p.classList.remove('translate-y-0');
+  setTimeout(()=>{
+    m.classList.add('hidden');
+    if(!document.querySelector('[id$="Modal"]:not(.hidden)')){
+      document.body.style.overflow = '';
+    }
+  }, 320);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DONATION SHEET
+═══════════════════════════════════════════════════════════ */
+const PRESETS = [100, 500, 1000, 5000];
+
+function openDonate(id){
+  const c = CAMPAIGNS.find(x => x.id === id);
+  if(!c) return;
+
+  state.activeCampaign = c;
+  state.amount = 500;
+  state.freq = 'once';
+
+  const pct = Math.min(100, (c.raised / c.goal) * 100);
+
+  document.getElementById('donateBody').innerHTML = `
+    <!-- Campaign header -->
+    <div class="flex items-start gap-3 pb-4 border-b border-slate-800">
+      <div class="w-12 h-12 rounded-2xl bg-gradient-to-br ${c.gradient} grid place-items-center flex-none border border-white/10">
+        <i class="fa-solid ${c.icon} text-emerald-300"></i>
+      </div>
+      <div class="min-w-0">
+        <div class="flex items-center gap-1.5">
+          <span class="text-[10px] font-bold text-slate-400 truncate">${c.org}</span>
+          ${c.verified ? '<i class="fa-solid fa-circle-check text-emerald-400 text-[10px]"></i>' : ''}
+        </div>
+        <h3 class="text-sm font-black text-white leading-snug mt-0.5">${c.title}</h3>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="mt-4">
+      <div class="h-2.5 w-full rounded-full bg-slate-800 overflow-hidden">
+        <div class="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-500 progress-fill"
+             id="donateProgress" data-progress="${pct}" style="width:0%"></div>
+      </div>
+      <div class="flex items-center justify-between mt-2">
+        <p class="text-[11px] font-black text-emerald-300 tabular-nums">
+          ${fmt(c.raised)} <span class="text-slate-500 font-bold">/ ${fmt(c.goal)} ETB</span>
+        </p>
+        <span class="text-[10px] font-black text-teal-400">${pct.toFixed(0)}% funded</span>
+      </div>
+      <div class="flex items-center gap-4 mt-2 text-[10px] text-slate-500 font-semibold">
+        <span><i class="fa-solid fa-users mr-1"></i>${fmt(c.donors)} donors</span>
+        <span><i class="fa-regular fa-clock mr-1"></i>${c.days} days left</span>
+        <span class="text-emerald-500"><i class="fa-solid fa-shield-halved mr-1"></i>Verified</span>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <p class="mt-4 text-[11.5px] leading-relaxed text-slate-400">${c.desc}</p>
+
+    <!-- Amount -->
+    <div class="mt-5">
+      <label class="text-[10px] font-black tracking-widest text-slate-500">SELECT AMOUNT (ETB)</label>
+      <div class="grid grid-cols-4 gap-2 mt-2.5" id="presetGrid">
+        ${PRESETS.map(a => `
+          <button class="amt-btn ${a===500?'active':''}" data-amt="${a}" onclick="selectAmount(${a}, this)">
+            ${fmt(a)}
+          </button>`).join('')}
+      </div>
+
+      <div class="relative mt-2.5">
+        <i class="fa-solid fa-pen-to-square absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+        <input id="customAmount" type="number" inputmode="numeric" min="10" placeholder="Custom amount"
+               oninput="onCustomAmount(this.value)"
+               class="w-full pl-10 pr-14 py-3.5 rounded-2xl bg-slate-900/70 border border-slate-700/80 text-sm font-bold text-white placeholder-slate-500 outline-none focus:border-emerald-500/70 transition tabular-nums">
+        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-500">ETB</span>
+      </div>
+    </div>
+
+    <!-- Frequency -->
+    <div class="mt-5">
+      <label class="text-[10px] font-black tracking-widest text-slate-500">GIVING TYPE</label>
+      <div class="grid grid-cols-2 gap-2 mt-2.5">
+        <button class="freq-btn active" data-freq="once" onclick="setFreq('once', this)">
+          <i class="fa-solid fa-bolt mr-1"></i>One-time
+        </button>
+        <button class="freq-btn" data-freq="monthly" onclick="setFreq('monthly', this)">
+          <i class="fa-solid fa-arrows-rotate mr-1"></i>Monthly
+        </button>
+      </div>
+      <p id="freqHint" class="text-[10px] text-slate-500 mt-2 leading-relaxed">
+        A single gift, delivered immediately to this campaign.
+      </p>
+    </div>
+
+    <!-- Donor name -->
+    <div class="mt-5">
+      <label class="text-[10px] font-black tracking-widest text-slate-500">DONOR NAME (FOR RECEIPT)</label>
+      <input id="donorName" type="text" value="${state.donor.replace(/"/g,'&quot;')}"
+             oninput="state.donor=this.value"
+             class="w-full mt-2.5 px-4 py-3.5 rounded-2xl bg-slate-900/70 border border-slate-700/80 text-sm font-bold text-white placeholder-slate-500 outline-none focus:border-emerald-500/70 transition">
+    </div>
+
+    <!-- Summary -->
+    <div class="mt-5 rounded-2xl bg-slate-900/70 border border-slate-800 p-4">
+      <div class="flex items-center justify-between text-[11px] font-semibold text-slate-400">
+        <span>Donation amount</span>
+        <span id="sumAmount" class="text-white font-black tabular-nums">ETB 500</span>
+      </div>
+      <div class="flex items-center justify-between text-[11px] font-semibold text-slate-400 mt-2">
+        <span>Processing fee</span>
+        <span class="text-emerald-400 font-black">FREE</span>
+      </div>
+      <div class="dashed-line my-3"></div>
+      <div class="flex items-center justify-between">
+        <span class="text-[11px] font-black text-slate-300">TOTAL</span>
+        <span id="sumTotal" class="text-base font-black text-emerald-300 tabular-nums">ETB 500</span>
+      </div>
+      <div class="flex items-center justify-between mt-2.5 pt-2.5 border-t border-slate-800/80">
+        <span class="text-[10px] font-bold text-slate-500">Wallet balance</span>
+        <span id="sumWallet" class="text-[11px] font-black text-slate-300 tabular-nums">ETB ${fmt(state.balance)}</span>
+      </div>
+    </div>
+
+    <p id="balanceWarn" class="hidden mt-3 text-[11px] font-bold text-rose-300 bg-rose-500/10 border border-rose-500/30 rounded-xl px-3.5 py-2.5">
+      <i class="fa-solid fa-triangle-exclamation mr-1.5"></i>Insufficient wallet balance. Top up your demo wallet to continue.
+    </p>
+
+    <button id="confirmBtn" onclick="confirmDonation()"
+            class="w-full mt-4 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-sm active:scale-[0.97] transition glow-emerald">
+      <i class="fa-solid fa-heart mr-2"></i>Confirm Donation
+    </button>
+
+    <p class="text-center text-[10px] text-slate-600 mt-3 leading-relaxed">
+      <i class="fa-solid fa-lock mr-1"></i>Secured by Zemen Pay • 100% of your gift reaches the campaign
+    </p>
+  `;
+
+  showSheet('donateModal','donatePanel');
+  updateSummary();
+
+  setTimeout(()=>{
+    const dp = document.getElementById('donateProgress');
+    if(dp) dp.style.width = dp.dataset.progress + '%';
+  }, 80);
+}
+
+function closeDonate(){
+  hideSheet('donateModal','donatePanel');
+}
+
+function selectAmount(amt, btn){
+  state.amount = amt;
+  document.querySelectorAll('#presetGrid .amt-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const custom = document.getElementById('customAmount');
+  if(custom) custom.value = '';
+  updateSummary();
+}
+
+function onCustomAmount(val){
+  const v = parseFloat(val);
+  state.amount = isNaN(v) ? 0 : v;
+  document.querySelectorAll('#presetGrid .amt-btn').forEach(b=>b.classList.remove('active'));
+  updateSummary();
+}
+
+function setFreq(freq, btn){
+  state.freq = freq;
+  document.querySelectorAll('.freq-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const hint = document.getElementById('freqHint');
+  if(hint){
+    hint.textContent = freq === 'monthly'
+      ? 'You will be charged this amount every month. Cancel anytime from My Giving.'
+      : 'A single gift, delivered immediately to this campaign.';
+  }
+  updateSummary();
+}
+
+function updateSummary(){
+  const amt = state.amount || 0;
+  const sumAmount = document.getElementById('sumAmount');
+  const sumTotal  = document.getElementById('sumTotal');
+  const sumWallet = document.getElementById('sumWallet');
+  const warn      = document.getElementById('balanceWarn');
+  const btn       = document.getElementById('confirmBtn');
+
+  if(!sumAmount) return;
+
+  sumAmount.textContent = 'ETB ' + fmt(amt);
+  sumTotal.textContent  = 'ETB ' + fmt(amt);
+  sumWallet.textContent = 'ETB ' + fmt(Math.round(state.balance));
+
+  const insufficient = amt > state.balance || amt < 10;
+
+  if(amt > state.balance){
+    warn.classList.remove('hidden');
+  }else{
+    warn.classList.add('hidden');
+  }
+
+  if(insufficient){
+    btn.classList.add('opacity-50','grayscale');
+  }else{
+    btn.classList.remove('opacity-50','grayscale');
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CONFIRM DONATION
+═══════════════════════════════════════════════════════════ */
+function confirmDonation(){
+  const c = state.activeCampaign;
+  if(!c) return;
+
+  const amt = Math.round(state.amount);
+
+  if(!amt || amt < 10){
+    toast('Please enter an amount of at least 10 ETB.', 'error');
+    return;
+  }
+
+  if(amt > state.balance){
+    toast('Insufficient wallet balance. Top up to continue.', 'error');
+    const chip = document.getElementById('walletBalance');
+    chip.classList.add('shake');
+    setTimeout(()=>chip.classList.remove('shake'), 500);
+    return;
+  }
+
+  // Deduct
+  state.balance -= amt;
+  saveBalance();
+
+  // Update campaign
+  c.raised += amt;
+  c.donors += 1;
+  saveRaised();
+
+  // Donor name
+  const nameInput = document.getElementById('donorName');
+  const donor = (nameInput && nameInput.value.trim()) || 'Guest Donor';
+  state.donor = donor;
+  localStorage.setItem(NAME_KEY, donor);
+
+  // Receipt record
+  const rec = {
+    ref: genRef(),
+    campaignId: c.id,
+    campaignTitle: c.title,
+    org: c.org,
+    amount: amt,
+    freq: state.freq,
+    donor: donor,
+    date: new Date().toISOString(),
+    icon: c.icon,
+    gradient: c.gradient,
+    catLabel: c.catLabel
+  };
+
+  state.history.unshift(rec);
+  saveHistory();
+
+  // Refresh UI
+  renderBalance();
+  renderCampaigns();
+  renderHero();
+  renderImpact();
+
+  closeDonate();
+
+  setTimeout(()=>{
+    openReceipt(rec);
+    toast(`Thank you, ${donor.split(' ')[0]}! ETB ${fmt(amt)} donated 💚`, 'success');
+  }, 340);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RECEIPT
+═══════════════════════════════════════════════════════════ */
+function openReceiptByRef(ref){
+  const rec = state.history.find(r => r.ref === ref);
+  if(rec) openReceipt(rec);
+}
+
+function openReceipt(rec){
+  state.lastReceipt = rec;
+  const freqLabel = rec.freq === 'monthly' ? 'Monthly Recurring' : 'One-time Donation';
+
+  document.getElementById('receiptBody').innerHTML = `
+    <div class="text-center">
+      <div class="w-16 h-16 rounded-full bg-emerald-500/12 border border-emerald-500/35 grid place-items-center mx-auto glow-emerald">
+        <i class="fa-solid fa-check text-2xl text-emerald-400"></i>
+      </div>
+      <h3 class="mt-3.5 text-lg font-black text-white">Donation Successful</h3>
+      <p class="text-[11px] text-slate-400 mt-1">Your digital impact receipt is ready.</p>
+    </div>
+
+    <div class="mt-5 rounded-3xl overflow-hidden border border-emerald-500/25 bg-slate-900/70">
+      <div class="px-5 py-4 bg-gradient-to-r from-emerald-500/15 to-teal-500/10 border-b border-emerald-500/20">
+        <p class="text-[9px] font-black tracking-[0.2em] text-emerald-400">ZEMEN DONATE & CHARITY</p>
+        <p class="text-[10px] text-slate-400 mt-0.5">Official Digital Donation Receipt</p>
+      </div>
+
+      <div class="px-5 py-5 text-center border-b border-slate-800/80">
+        <p class="text-[10px] font-bold text-slate-500 tracking-widest">AMOUNT DONATED</p>
+        <p class="mt-1.5 text-3xl font-black text-emerald-300 tabular-nums">ETB ${fmt(rec.amount)}</p>
+        <span class="inline-block mt-2 text-[9px] font-black px-2.5 py-1 rounded-full ${rec.freq==='monthly' ? 'bg-teal-500/15 border border-teal-500/35 text-teal-300' : 'bg-emerald-500/12 border border-emerald-500/30 text-emerald-300'}">
+          ${freqLabel.toUpperCase()}
+        </span>
+      </div>
+
+      <div class="px-5 py-4 space-y-3 text-[11px]">
+        ${receiptRow('Donor Name', rec.donor)}
+        ${receiptRow('Organization', rec.org + ' ✓')}
+        ${receiptRow('Campaign', rec.campaignTitle)}
+        ${receiptRow('Category', rec.catLabel || '—')}
+        ${receiptRow('Payment Method', 'Zemen Wallet')}
+        ${receiptRow('Date & Time', formatDate(rec.date))}
+        <div class="dashed-line my-1"></div>
+        <div class="flex items-center justify-between">
+          <span class="text-slate-500 font-semibold">Transaction Ref ID</span>
+          <span class="font-black text-emerald-300 tabular-nums text-[10.5px]">${rec.ref}</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-slate-500 font-semibold">Status</span>
+          <span class="font-black text-emerald-400 flex items-center gap-1">
+            <i class="fa-solid fa-circle-check text-[10px]"></i>COMPLETED
+          </span>
+        </div>
+      </div>
+
+      <div class="px-5 py-3.5 bg-slate-950/60 border-t border-slate-800/80 text-center">
+        <p class="text-[9.5px] text-slate-500 leading-relaxed">
+          <i class="fa-solid fa-shield-halved text-emerald-500 mr-1"></i>
+          This receipt is digitally verified and valid for tax-deduction records in Ethiopia.
+        </p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3 mt-4">
+      <button onclick="openCertificate(state.lastReceipt)"
+              class="py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-xs active:scale-95 transition glow-emerald">
+        <i class="fa-solid fa-award mr-1.5"></i>Certificate
+      </button>
+      <button onclick="openShare(state.lastReceipt)"
+              class="py-3.5 rounded-2xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 font-black text-xs active:scale-95 transition">
+        <i class="fa-solid fa-share-nodes mr-1.5"></i>Share
+      </button>
+    </div>
+
+    <button onclick="closeReceipt()"
+            class="w-full mt-3 py-3.5 rounded-2xl border border-slate-700 bg-slate-900/70 text-slate-300 font-bold text-sm active:scale-95 transition">
+      Done
+    </button>
+  `;
+
+  showSheet('receiptModal','receiptPanel');
+}
+
+function receiptRow(label, value){
+  return `
+    <div class="flex items-start justify-between gap-4">
+      <span class="text-slate-500 font-semibold flex-none">${label}</span>
+      <span class="font-bold text-slate-200 text-right leading-snug">${value}</span>
+    </div>`;
+}
+
+function closeReceipt(){
+  hideSheet('receiptModal','receiptPanel');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   IMPACT CERTIFICATE (Canvas Generator)
+═══════════════════════════════════════════════════════════ */
+function openCertificate(rec){
+  if(!rec) return;
+
+  const W = 1240, H = 877;
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // Background
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, '#020617');
+  bg.addColorStop(0.5, '#04201d');
+  bg.addColorStop(1, '#020617');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // Radial glow top
+  const rg = ctx.createRadialGradient(W/2, 0, 0, W/2, 0, 700);
+  rg.addColorStop(0, 'rgba(16,185,129,0.28)');
+  rg.addColorStop(1, 'rgba(16,185,129,0)');
+  ctx.fillStyle = rg;
+  ctx.fillRect(0, 0, W, H);
+
+  // Bottom glow
+  const rg2 = ctx.createRadialGradient(W/2, H, 0, W/2, H, 600);
+  rg2.addColorStop(0, 'rgba(45,212,191,0.16)');
+  rg2.addColorStop(1, 'rgba(45,212,191,0)');
+  ctx.fillStyle = rg2;
+  ctx.fillRect(0, 0, W, H);
+
+  // Borders
+  ctx.strokeStyle = '#10b981';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(36, 36, W - 72, H - 72);
+
+  ctx.strokeStyle = 'rgba(45,212,191,0.32)';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(54, 54, W - 108, H - 108);
+
+  // Corner accents
+  ctx.strokeStyle = '#2dd4bf';
+  ctx.lineWidth = 5;
+  const corners = [[36,36,1,1],[W-36,36,-1,1],[36,H-36,1,-1],[W-36,H-36,-1,-1]];
+  corners.forEach(([x,y,dx,dy])=>{
+    ctx.beginPath();
+    ctx.moveTo(x + dx*0, y + dy*46);
+    ctx.lineTo(x, y);
+    ctx.lineTo(x + dx*46, y);
+    ctx.stroke();
+  });
+
+  ctx.textAlign = 'center';
+
+  // Heart icon
+  ctx.fillStyle = '#10b981';
+  ctx.shadowColor = 'rgba(16,185,129,0.85)';
+  ctx.shadowBlur = 34;
+  drawHeart(ctx, W/2, 96, 46);
+  ctx.shadowBlur = 0;
+
+  // Title
+  ctx.fillStyle = '#6ee7b7';
+  ctx.font = '700 17px "Segoe UI", system-ui, sans-serif';
+  ctx.fillText('Z E M E N   D O N A T E   &   C H A R I T Y', W/2, 198);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '900 46px "Segoe UI", system-ui, sans-serif';
+  ctx.fillText('CERTIFICATE OF IMPACT', W/2, 258);
+
+  // Divider
+  const dg = ctx.createLinearGradient(W/2 - 220, 0, W/2 + 220, 0);
+  dg.addColorStop(0, 'rgba(16,185,129,0)');
+  dg.addColorStop(0.5, '#10b981');
+  dg.addColorStop(1, 'rgba(16,185,129,0)');
+  ctx.fillStyle = dg;
+  ctx.fillRect(W/2 - 220, 282, 440, 2);
+
+  // "This certifies that"
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '500 18px "Segoe UI", system-ui, sans-serif';
+  ctx.fillText('This certificate is proudly presented to', W/2, 330);
+
+  // Donor name
+  const nameSize = fitFont(ctx, rec.donor, W - 260, 56, 30, '900');
+  ctx.font = `900 ${nameSize}px "Segoe UI", system-ui, sans-serif`;
+  ctx.fillStyle = '#34d399';
+  ctx.shadowColor = 'rgba(16,185,129,0.6)';
+  ctx.shadowBlur = 26;
+  ctx.fillText(rec.donor, W/2, 400);
+  ctx.shadowBlur = 0;
+
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '500 18px "Segoe UI", system-ui, sans-serif';
+  ctx.fillText('in recognition of a generous contribution of', W/2, 448);
+
+  // Amount
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '900 62px "Segoe UI", system-ui, sans-serif';
+  ctx.fillText(`ETB ${fmt(rec.amount)}`, W/2, 522);
+
+  // Campaign
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '500 17px "Segoe UI", system-ui, sans-serif';
+  ctx.fillText('supporting the campaign', W/2, 566);
+
+  const titleSize = fitFont(ctx, rec.campaignTitle, W - 320, 26, 15, '700');
+  ctx.font = `700 ${titleSize}px "Segoe UI", system-ui, sans-serif`;
+  ctx.fillStyle = '#a7f3d0';
+  ctx.fillText(rec.campaignTitle, W/2, 604);
+
+  ctx.font = '500 16px "Segoe UI", system-ui, sans-serif';
+  ctx.fillStyle = '#64748b';
+  ctx.fillText('by ' + rec.org, W/2, 636);
+
+  // Footer divider
+  ctx.fillStyle = 'rgba(51,65,85,0.7)';
+  ctx.fillRect(120, 690, W - 240, 1);
+
+  // Date (left)
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#64748b';
+  ctx.font = '600 12px "Segoe UI", system-ui, sans-serif';
+  ctx.fillText('DATE ISSUED', 140, 730);
+  ctx.fillStyle = '#e2e8f0';
+  ctx.font = '700 17px "Segoe UI", system-ui, sans-serif';
+  ctx.fillText(new Date(rec.date).toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'}), 140, 756);
+
+  // Ref (right)
+  ctx.textAlign = 'right';
+  ctx.fillStyle = '#64748b';
+  ctx.font = '600 12px "Segoe UI", system-ui, sans-serif';
+  ctx.fillText('TRANSACTION REF', W - 140, 730);
+  ctx.fillStyle = '#34d399';
+  ctx.font = '700 17px "Segoe UI", system-ui, sans-serif';
+  ctx.fillText(rec.ref, W - 140, 756);
+
+  // Seal
+  ctx.textAlign = 'center';
+  ctx.beginPath();
+  ctx.arc(W/2, 748, 44, 0, Math.PI*2);
+  ctx.strokeStyle = 'rgba(16,185,129,0.6)';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(W/2, 748, 36, 0, Math.PI*2);
+  ctx.strokeStyle = 'rgba(45,212,191,0.35)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  ctx.fillStyle = '#10b981';
+  drawHeart(ctx, W/2, 728, 15);
+
+  ctx.fillStyle = '#6ee7b7';
+  ctx.font = '900 10px "Segoe UI", system-ui, sans-serif';
+  ctx.fillText('VERIFIED', W/2, 776);
+
+  // Bottom line
+  ctx.fillStyle = '#475569';
+  ctx.font = '500 13px "Segoe UI", system-ui, sans-serif';
+  ctx.fillText('Thank you for empowering lives across Ethiopia.', W/2, 830);
+
+  // Export
+  state.certDataUrl = canvas.toDataURL('image/png');
+  state.certFileName = `Zemen-Impact-Certificate-${rec.ref}.png`;
+
+  document.getElementById('certImage').src = state.certDataUrl;
+  showSheet('certModal','certPanel');
+}
+
+function fitFont(ctx, text, maxWidth, startSize, minSize, weight){
+  let size = startSize;
+  ctx.font = `${weight} ${size}px "Segoe UI", system-ui, sans-serif`;
+  while(ctx.measureText(text).width > maxWidth && size > minSize){
+    size -= 1;
+    ctx.font = `${weight} ${size}px "Segoe UI", system-ui, sans-serif`;
+  }
+  return size;
+}
+
+function drawHeart(ctx, x, y, s){
+  ctx.beginPath();
+  ctx.moveTo(x, y + s * 0.32);
+  ctx.bezierCurveTo(x, y, x - s * 0.55, y, x - s * 0.55, y + s * 0.36);
+  ctx.bezierCurveTo(x - s * 0.55, y + s * 0.76, x, y + s * 0.98, x, y + s * 1.22);
+  ctx.bezierCurveTo(x, y + s * 0.98, x + s * 0.55, y + s * 0.76, x + s * 0.55, y + s * 0.36);
+  ctx.bezierCurveTo(x + s * 0.55, y, x, y, x, y + s * 0.32);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function downloadCert(){
+  if(!state.certDataUrl) return;
+  const a = document.createElement('a');
+  a.href = state.certDataUrl;
+  a.download = state.certFileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  toast('Impact Certificate downloaded 🏆', 'success');
+}
+
+function closeCert(){
+  hideSheet('certModal','certPanel');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SHARE SIMULATOR
+═══════════════════════════════════════════════════════════ */
+const SHARE_TARGETS = [
+  { key:'telegram', label:'Telegram', icon:'fa-telegram',   color:'from-sky-500 to-sky-600' },
+  { key:'facebook', label:'Facebook', icon:'fa-facebook-f', color:'from-blue-600 to-blue-700' },
+  { key:'whatsapp', label:'WhatsApp', icon:'fa-whatsapp',   color:'from-emerald-500 to-green-600' },
+  { key:'copy',     label:'Copy Link', icon:'fa-link',      color:'from-slate-600 to-slate-700' }
+];
+
+function openShare(rec){
+  if(!rec) return;
+  state.shareRec = rec;
+
+  const link = `https://zemen.app/donate/${rec.campaignId}?ref=${rec.ref}`;
+  document.getElementById('shareLink').textContent = link;
+
+  document.getElementById('shareGrid').innerHTML = SHARE_TARGETS.map(t => `
+    <button onclick="doShare('${t.key}')" class="flex flex-col items-center gap-2 active:scale-95 transition">
+      <span class="w-14 h-14 rounded-2xl bg-gradient-to-br ${t.color} grid place-items-center shadow-lg">
+        <i class="fa-brands ${t.icon} text-white text-xl"></i>
+      </span>
+      <span class="text-[9.5px] font-bold text-slate-400">${t.label}</span>
+    </button>
+  `).join('');
+
+  showSheet('shareModal','sharePanel');
+}
+
+function doShare(key){
+  const t = SHARE_TARGETS.find(x => x.key === key);
+  if(key === 'copy'){
+    copyLink();
+    return;
+  }
+  const rec = state.shareRec;
+  toast(`Shared to ${t.label}! You may have just inspired a new donor 💚`, 'success');
+  setTimeout(closeShare, 700);
+}
+
+function copyLink(){
+  const link = document.getElementById('shareLink').textContent;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(link).then(
+      ()=> toast('Campaign link copied to clipboard', 'info'),
+      ()=> toast('Link ready to share: ' + link, 'info')
+    );
+  }else{
+    toast('Link ready to share: ' + link, 'info');
+  }
+}
+
+function closeShare(){
+  hideSheet('shareModal','sharePanel');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BOOT
+═══════════════════════════════════════════════════════════ */
+function boot(){
+  loadStorage();
+  renderBalance();
+  renderPills();
+  renderCampaigns();
+  renderHero();
+  renderImpact();
+}
+
+window.addEventListener('load', ()=>{
+  boot();
+
+  // Splash progress
+  requestAnimationFrame(()=>{
+    const bar = document.getElementById('splashBar');
+    if(bar) bar.style.width = '100%';
+  });
+
+  // Fade splash after 2s
+  setTimeout(()=>{
+    const s = document.getElementById('splash');
+    if(!s) return;
+    s.style.opacity = '0';
+    s.style.visibility = 'hidden';
+    setTimeout(()=> s.remove(), 650);
+  }, 2000);
+});
+
+// Keyboard escape closes topmost sheet
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Escape') return;
+  if(!document.getElementById('shareModal').classList.contains('hidden')) return closeShare();
+  if(!document.getElementById('certModal').classList.contains('hidden')) return closeCert();
+  if(!document.getElementById('receiptModal').classList.contains('hidden')) return closeReceipt();
+  if(!document.getElementById('donateModal').classList.contains('hidden')) return closeDonate();
+});
+</script>
+</body>
+</html>
