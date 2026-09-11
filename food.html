@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#020617">
+<title>Zemen Food & Delivery</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'] }
+      }
+    }
+  }
+</script>
+
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; overscroll-behavior-y: none; }
+
+  /* Scrollbars */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-thumb { background: rgba(251,146,60,.35); border-radius: 99px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+
+  /* Ambient glow animations */
+  @keyframes glowPulse {
+    0%,100% { box-shadow: 0 0 28px rgba(251,146,60,.45), 0 0 70px rgba(249,115,22,.22); }
+    50%     { box-shadow: 0 0 56px rgba(251,146,60,.8), 0 0 120px rgba(249,115,22,.38); }
+  }
+  .glow-pulse { animation: glowPulse 2.6s ease-in-out infinite; }
+
+  @keyframes floaty { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-7px) } }
+  .floaty { animation: floaty 3.2s ease-in-out infinite; }
+
+  @keyframes shimmer { 0% { background-position: -200% 0 } 100% { background-position: 200% 0 } }
+
+  @keyframes popIn {
+    0% { transform: scale(.6); opacity: 0 }
+    70% { transform: scale(1.15); opacity: 1 }
+    100% { transform: scale(1); opacity: 1 }
+  }
+  .pop-in { animation: popIn .35s cubic-bezier(.16,1,.3,1); }
+
+  /* Toasts */
+  .toast { transform: translateY(-14px) scale(.96); opacity: 0; transition: all .38s cubic-bezier(.16,1,.3,1); }
+  .toast.show { transform: translateY(0) scale(1); opacity: 1; }
+
+  /* Tip selector */
+  .tip-btn { transition: all .22s cubic-bezier(.16,1,.3,1); }
+  .tip-btn.active-tip {
+    background: linear-gradient(90deg,#fbbf24,#ea580c);
+    color: #020617;
+    border-color: transparent;
+    box-shadow: 0 10px 26px -10px rgba(251,146,60,.75);
+    transform: translateY(-1px);
+  }
+
+  /* Cart badge bump */
+  @keyframes bump { 0%{transform:scale(1)} 40%{transform:scale(1.45)} 100%{transform:scale(1)} }
+  .bump { animation: bump .35s ease-out; }
+
+  /* Modal panel motion */
+  .panel-motion { transition: transform .35s cubic-bezier(.16,1,.3,1), opacity .3s ease; }
+
+  /* Splash */
+  #splash { transition: opacity .65s ease, visibility .65s ease; }
+
+  /* Card press */
+  .press:active { transform: scale(.975); }
+  .press { transition: transform .16s ease; }
+
+  /* Skeleton shimmer for banner placeholders */
+  .shimmer {
+    background-image: linear-gradient(100deg, rgba(255,255,255,0) 20%, rgba(255,255,255,.07) 40%, rgba(255,255,255,0) 60%);
+    background-size: 200% 100%;
+    animation: shimmer 3.2s linear infinite;
+  }
+
+  /* Safe area */
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+</style>
+</head>
+
+<body class="bg-slate-950 text-slate-100 antialiased selection:bg-amber-400/30 selection:text-amber-100">
+
+<!-- ══════════════════════════════════════════════════════════
+     1. BRANDED SPLASH SCREEN
+════════════════════════════════════════════════════════════ -->
+<div id="splash" class="fixed inset-0 z-[300] bg-slate-950 flex flex-col items-center justify-center overflow-hidden">
+  <!-- ambient background glows -->
+  <div class="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-amber-500/20 blur-[100px]"></div>
+  <div class="absolute -bottom-24 -right-24 w-72 h-72 rounded-full bg-orange-600/20 blur-[100px]"></div>
+  <div class="absolute top-1/3 left-1/2 -translate-x-1/2 w-56 h-56 rounded-full bg-amber-400/10 blur-[80px]"></div>
+
+  <div class="relative floaty">
+    <div class="absolute inset-0 rounded-[2.2rem] bg-amber-500/50 blur-2xl"></div>
+    <div class="glow-pulse relative w-28 h-28 rounded-[2.2rem] bg-gradient-to-br from-amber-300 via-amber-400 to-orange-600 flex items-center justify-center">
+      <i class="fa-solid fa-utensils text-4xl text-slate-950"></i>
+      <span class="absolute -bottom-2 -right-2 w-10 h-10 rounded-2xl bg-slate-950 border border-amber-400/40 flex items-center justify-center text-lg">🍲</span>
+    </div>
+  </div>
+
+  <h1 class="relative mt-9 text-4xl font-black tracking-tight">
+    Zemen <span class="bg-gradient-to-r from-amber-300 to-orange-500 bg-clip-text text-transparent">Food</span>
+  </h1>
+  <p class="relative mt-2 text-[13px] font-medium text-slate-400 tracking-wide">Delicious Food Delivered Fast</p>
+
+  <div class="relative mt-10 w-56 h-1.5 rounded-full bg-white/10 overflow-hidden">
+    <div id="splashBar" class="h-full w-0 rounded-full bg-gradient-to-r from-amber-300 via-amber-400 to-orange-600"
+         style="transition: width 1.85s cubic-bezier(.4,0,.2,1);"></div>
+  </div>
+  <p class="relative mt-4 text-[10px] font-bold tracking-[0.25em] text-slate-600 uppercase">Zemen Super App</p>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     APP SHELL
+════════════════════════════════════════════════════════════ -->
+<div id="app" class="opacity-0 transition-opacity duration-700">
+
+  <!-- ── TOP BAR ─────────────────────────────────────────── -->
+  <header class="sticky top-0 z-50 backdrop-blur-xl bg-slate-950/80 border-b border-white/10">
+    <div class="max-w-3xl mx-auto px-4 pt-3 pb-3">
+
+      <div class="flex items-center gap-2">
+        <!-- Exit to Super App -->
+        <a href="index.html"
+           aria-label="Exit to Zemen Super App"
+           class="press group flex items-center gap-2 pl-2.5 pr-3 py-1.5 rounded-xl bg-white/5 border border-white/10 hover:border-amber-400/50 hover:bg-amber-400/10 transition-all">
+          <i class="fa-solid fa-arrow-left text-amber-400 text-sm group-hover:-translate-x-0.5 transition-transform"></i>
+          <span class="text-[11px] font-bold leading-tight text-slate-200">
+            Exit
+            <span class="block text-[9px] font-medium text-slate-500">Zemen Super App</span>
+          </span>
+        </a>
+
+        <div class="flex-1"></div>
+
+        <!-- Wallet -->
+        <div class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-amber-500/15 to-orange-600/10 border border-amber-400/25">
+          <i class="fa-solid fa-wallet text-amber-400 text-xs"></i>
+          <span id="walletBalance" class="text-xs font-black text-amber-300 tabular-nums">0</span>
+          <span class="text-[9px] font-bold text-amber-400/70">ETB</span>
+        </div>
+
+        <!-- Cart -->
+        <button id="cartBtn" aria-label="Open cart"
+          class="press relative w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:border-amber-400/50 flex items-center justify-center transition-all">
+          <i class="fa-solid fa-basket-shopping text-slate-200 text-sm"></i>
+          <span id="cartBadge"
+            class="hidden absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 rounded-full bg-gradient-to-br from-amber-400 to-orange-600 text-slate-950 text-[10px] font-black items-center justify-center shadow-lg shadow-amber-500/40">0</span>
+        </button>
+      </div>
+
+      <!-- Search -->
+      <div class="mt-3 relative">
+        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+        <input id="searchInput" type="search" autocomplete="off" placeholder="Search restaurants or dishes…"
+          class="w-full pl-11 pr-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-400/50 focus:bg-white/[0.07] transition-all">
+      </div>
+    </div>
+  </header>
+
+
+  <!-- ── MAIN ────────────────────────────────────────────── -->
+  <main class="max-w-3xl mx-auto px-4 pb-32">
+
+    <!-- HOME -->
+    <section id="view-home">
+      <!-- Hero -->
+      <div class="relative mt-4 overflow-hidden rounded-3xl border border-amber-400/20 bg-gradient-to-br from-amber-500/20 via-orange-600/10 to-slate-900/40 p-5">
+        <div class="absolute -top-12 -right-12 w-44 h-44 bg-amber-500/25 blur-3xl rounded-full"></div>
+        <div class="absolute -bottom-16 -left-10 w-40 h-40 bg-orange-600/15 blur-3xl rounded-full"></div>
+        <div class="relative">
+          <p class="text-[10px] font-black tracking-[0.22em] text-amber-400 uppercase">Zemen Super App</p>
+          <h1 class="text-[26px] leading-tight font-black mt-1.5">
+            Delicious Food<br><span class="bg-gradient-to-r from-amber-300 to-orange-500 bg-clip-text text-transparent">Delivered Fast</span>
+          </h1>
+          <p class="text-[12px] text-slate-400 mt-1.5">From Habesha classics to late-night burgers — all in one place.</p>
+          <div class="flex flex-wrap gap-2 mt-4">
+            <span class="px-2.5 py-1.5 rounded-xl bg-slate-950/50 border border-white/10 text-[10px] font-bold text-slate-300">
+              <i class="fa-solid fa-bolt text-amber-400"></i> 25 min avg
+            </span>
+            <span class="px-2.5 py-1.5 rounded-xl bg-slate-950/50 border border-white/10 text-[10px] font-bold text-slate-300">
+              <i class="fa-solid fa-motorcycle text-amber-400"></i> 120+ riders
+            </span>
+            <span class="px-2.5 py-1.5 rounded-xl bg-slate-950/50 border border-white/10 text-[10px] font-bold text-slate-300">
+              <i class="fa-solid fa-shield-halved text-amber-400"></i> Safe pay
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Categories -->
+      <div id="categoryPills" class="flex gap-2 overflow-x-auto no-scrollbar mt-5 pb-1 -mx-4 px-4"></div>
+
+      <!-- Section header -->
+      <div class="flex items-end justify-between mt-6 mb-3">
+        <div>
+          <h2 class="font-black text-lg leading-none">Restaurants Near You</h2>
+          <p class="text-[11px] text-slate-500 mt-1">Addis Ababa • Delivering now</p>
+        </div>
+        <span id="resultCount" class="text-[11px] font-bold text-slate-500"></span>
+      </div>
+
+      <div id="restaurantGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+
+      <div id="noResults" class="hidden flex-col items-center justify-center py-16 text-center">
+        <div class="w-20 h-20 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center text-3xl mb-4">🔍</div>
+        <p class="font-bold text-slate-300">No results found</p>
+        <p class="text-xs text-slate-500 mt-1">Try a different dish or category</p>
+      </div>
+    </section>
+
+    <!-- RESTAURANT DETAIL -->
+    <section id="view-restaurant" class="hidden pt-4"></section>
+
+    <!-- ORDERS -->
+    <section id="view-orders" class="hidden pt-5">
+      <h2 class="text-xl font-black">My Orders</h2>
+      <p class="text-[11px] text-slate-500 mt-1 mb-4">Your recent Zemen Food orders & ratings</p>
+      <div id="ordersList" class="space-y-4"></div>
+    </section>
+
+    <!-- FAVORITES -->
+    <section id="view-favorites" class="hidden pt-5">
+      <h2 class="text-xl font-black">Favorites</h2>
+      <p class="text-[11px] text-slate-500 mt-1 mb-4">Restaurants you keep coming back to</p>
+      <div id="favoritesList" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+    </section>
+  </main>
+
+
+  <!-- ── BOTTOM NAV ──────────────────────────────────────── -->
+  <nav class="fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl bg-slate-950/90 border-t border-white/10 safe-bottom">
+    <div class="max-w-3xl mx-auto grid grid-cols-3">
+      <button data-nav="home" class="nav-btn flex flex-col items-center gap-1 py-3 transition-colors">
+        <i class="fa-solid fa-house text-base"></i>
+        <span class="text-[10px] font-bold">Home</span>
+      </button>
+      <button data-nav="favorites" class="nav-btn flex flex-col items-center gap-1 py-3 transition-colors">
+        <i class="fa-solid fa-heart text-base"></i>
+        <span class="text-[10px] font-bold">Favorites</span>
+      </button>
+      <button data-nav="orders" class="nav-btn flex flex-col items-center gap-1 py-3 transition-colors">
+        <i class="fa-solid fa-receipt text-base"></i>
+        <span class="text-[10px] font-bold">My Orders</span>
+      </button>
+    </div>
+  </nav>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CART DRAWER
+════════════════════════════════════════════════════════════ -->
+<div id="cartOverlay" class="fixed inset-0 z-[80] bg-slate-950/70 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+<aside id="cartDrawer"
+  class="fixed top-0 right-0 h-full w-full max-w-md z-[90] bg-slate-950/95 backdrop-blur-2xl border-l border-white/10 translate-x-full transition-transform duration-300 ease-[cubic-bezier(.16,1,.3,1)] flex flex-col">
+
+  <div class="flex items-center justify-between px-5 py-4 border-b border-white/10 shrink-0">
+    <div>
+      <h3 class="font-black text-lg leading-none">Your Basket</h3>
+      <p id="cartSubtitle" class="text-[11px] text-slate-500 mt-1">0 items</p>
+    </div>
+    <button id="closeCartBtn" class="press w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-slate-100">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <div id="cartBody" class="flex-1 overflow-y-auto px-4 py-4 space-y-3"></div>
+
+  <div id="cartFooter" class="shrink-0 border-t border-white/10 p-4 space-y-3 bg-slate-950/60">
+    <div class="flex justify-between text-[13px]">
+      <span class="text-slate-400">Item Total</span>
+      <span id="cartItemTotal" class="font-semibold tabular-nums">0 ETB</span>
+    </div>
+    <div class="flex justify-between text-[13px]">
+      <span class="text-slate-400">Delivery Fee</span>
+      <span id="cartDelivery" class="font-semibold tabular-nums">0 ETB</span>
+    </div>
+    <div class="flex justify-between items-center pt-2.5 border-t border-white/10">
+      <span class="font-bold">Total</span>
+      <span id="cartTotal" class="text-lg font-black text-amber-400 tabular-nums">0 ETB</span>
+    </div>
+    <button id="checkoutBtn"
+      class="press w-full py-4 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-600 text-slate-950 font-black text-sm shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 transition-all disabled:opacity-40 disabled:shadow-none">
+      Checkout
+    </button>
+  </div>
+</aside>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CHECKOUT MODAL
+════════════════════════════════════════════════════════════ -->
+<div id="checkoutModal" class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+  <div class="absolute inset-0 bg-slate-950/85 backdrop-blur-md" data-close="checkout"></div>
+
+  <div data-panel class="panel-motion relative w-full sm:max-w-lg max-h-[93vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl bg-slate-900/95 backdrop-blur-2xl border border-white/10 translate-y-8 sm:scale-95">
+    <div class="sticky top-0 z-10 bg-slate-900/95 backdrop-blur-xl px-5 pt-4 pb-3 border-b border-white/10">
+      <div class="w-10 h-1 rounded-full bg-white/20 mx-auto sm:hidden mb-3"></div>
+      <div class="flex items-center justify-between">
+        <h3 class="font-black text-lg">Checkout</h3>
+        <button data-close="checkout" class="press w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="p-5 space-y-5">
+
+      <!-- Landmark -->
+      <div>
+        <label class="flex items-center gap-2 text-[11px] font-black tracking-wider text-slate-400 uppercase mb-2">
+          <i class="fa-solid fa-location-dot text-amber-400"></i> Delivery Landmark
+        </label>
+        <input id="landmarkInput" type="text" placeholder="e.g. Bole Medhanialem, behind Getu Commercial"
+          class="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-sm placeholder-slate-500 focus:outline-none focus:border-amber-400/50 transition-all">
+        <div id="landmarkChips" class="flex flex-wrap gap-2 mt-2.5"></div>
+      </div>
+
+      <!-- Tip -->
+      <div>
+        <label class="flex items-center gap-2 text-[11px] font-black tracking-wider text-slate-400 uppercase mb-2">
+          <i class="fa-solid fa-hand-holding-heart text-amber-400"></i> Tip Your Driver
+        </label>
+        <div id="tipRow" class="grid grid-cols-4 gap-2">
+          <button data-tip="0"   class="tip-btn py-2.5 rounded-xl border border-white/10 bg-white/5 text-xs font-bold text-slate-300">None</button>
+          <button data-tip="20"  class="tip-btn py-2.5 rounded-xl border border-white/10 bg-white/5 text-xs font-bold text-slate-300">20 ETB</button>
+          <button data-tip="50"  class="tip-btn py-2.5 rounded-xl border border-white/10 bg-white/5 text-xs font-bold text-slate-300">50 ETB</button>
+          <button data-tip="100" class="tip-btn py-2.5 rounded-xl border border-white/10 bg-white/5 text-xs font-bold text-slate-300">100 ETB</button>
+        </div>
+        <p class="text-[10px] text-slate-500 mt-2">100% of your tip goes directly to the rider. 🙏</p>
+      </div>
+
+      <!-- Payment -->
+      <div>
+        <label class="flex items-center gap-2 text-[11px] font-black tracking-wider text-slate-400 uppercase mb-2">
+          <i class="fa-solid fa-credit-card text-amber-400"></i> Payment Method
+        </label>
+        <div class="flex items-center gap-3 p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/15 to-orange-600/5 border border-amber-400/30">
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-wallet text-slate-950"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-bold">Zemen Wallet</p>
+            <p class="text-[11px] text-slate-400">Balance: <span id="coWallet" class="text-amber-400 font-bold">0 ETB</span></p>
+          </div>
+          <i class="fa-solid fa-circle-check text-amber-400"></i>
+        </div>
+
+        <div id="insufficientBox" class="hidden mt-3 p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30">
+          <p class="text-[12px] font-bold text-rose-300"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Insufficient balance</p>
+          <p id="insufficientMsg" class="text-[11px] text-rose-300/70 mt-1"></p>
+          <button id="topUpBtn" class="press mt-3 w-full py-2.5 rounded-xl bg-rose-500/20 border border-rose-400/40 text-rose-200 text-xs font-bold">
+            <i class="fa-solid fa-plus mr-1"></i> Add 1,000 ETB (Demo Top-Up)
+          </button>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/10 space-y-2.5">
+        <div class="flex justify-between text-[13px]"><span class="text-slate-400">Item Total</span><span id="coSubtotal" class="font-semibold tabular-nums">0 ETB</span></div>
+        <div class="flex justify-between text-[13px]"><span class="text-slate-400">Delivery Fee</span><span id="coDelivery" class="font-semibold tabular-nums">0 ETB</span></div>
+        <div class="flex justify-between text-[13px]"><span class="text-slate-400">Driver Tip</span><span id="coTip" class="font-semibold tabular-nums">0 ETB</span></div>
+        <div class="flex justify-between items-center pt-2.5 border-t border-white/10">
+          <span class="font-bold">Total Payable</span>
+          <span id="coTotal" class="text-lg font-black text-amber-400 tabular-nums">0 ETB</span>
+        </div>
+      </div>
+
+      <button id="confirmPayBtn"
+        class="press w-full py-4 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-600 text-slate-950 font-black text-sm shadow-lg shadow-amber-500/30 flex items-center justify-center gap-2">
+        <i class="fa-solid fa-lock text-xs"></i>
+        Confirm & Pay <span id="coPayAmount" class="tabular-nums">0 ETB</span>
+      </button>
+      <p class="text-center text-[10px] text-slate-500 -mt-2">Secured by Zemen Pay • Instant confirmation</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     LIVE ORDER TRACKING MODAL
+════════════════════════════════════════════════════════════ -->
+<div id="trackModal" class="fixed inset-0 z-[120] flex items-end sm:items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+  <div class="absolute inset-0 bg-slate-950/88 backdrop-blur-md"></div>
+
+  <div data-panel class="panel-motion relative w-full sm:max-w-md max-h-[93vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl bg-slate-900/95 backdrop-blur-2xl border border-white/10 translate-y-8 sm:scale-95">
+
+    <div class="sticky top-0 z-10 bg-slate-900/95 backdrop-blur-xl px-5 pt-4 pb-3 border-b border-white/10">
+      <div class="w-10 h-1 rounded-full bg-white/20 mx-auto sm:hidden mb-3"></div>
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-[10px] font-black tracking-[0.22em] text-amber-400 uppercase flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span> Live Order
+          </p>
+          <h3 id="trackId" class="font-black text-lg mt-0.5">#ZFD-000000</h3>
+        </div>
+        <div class="text-right">
+          <p class="text-[10px] text-slate-500">Estimated arrival</p>
+          <p id="trackEta" class="text-sm font-black text-amber-400">25–35 min</p>
+        </div>
+      </div>
+      <div class="mt-3 h-1.5 rounded-full bg-white/10 overflow-hidden">
+        <div id="trackProgress" class="h-full w-0 bg-gradient-to-r from-amber-400 to-orange-600 rounded-full transition-all duration-700 ease-out"></div>
+      </div>
+    </div>
+
+    <div class="p-5">
+      <div id="trackBody"></div>
+
+      <div id="driverCard" class="mt-1 flex items-center gap-3 p-3 rounded-2xl bg-white/[0.03] border border-white/10">
+        <div class="w-11 h-11 rounded-full bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center text-slate-950 font-black shrink-0">M</div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-bold">Meseret A.</p>
+          <p class="text-[11px] text-slate-400"><i class="fa-solid fa-star text-amber-400"></i> 4.9 • Delivery Rider</p>
+        </div>
+        <button class="press w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-400/30 text-emerald-400 flex items-center justify-center">
+          <i class="fa-solid fa-phone text-sm"></i>
+        </button>
+      </div>
+
+      <div id="trackActions" class="mt-4 grid grid-cols-2 gap-3"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     RATING MODAL
+════════════════════════════════════════════════════════════ -->
+<div id="ratingModal" class="fixed inset-0 z-[130] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+  <div class="absolute inset-0 bg-slate-950/88 backdrop-blur-md" data-close="rating"></div>
+
+  <div data-panel class="panel-motion relative w-full max-w-sm rounded-3xl bg-slate-900/95 backdrop-blur-2xl border border-white/10 p-6 text-center scale-95">
+    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center mx-auto glow-pulse">
+      <i class="fa-solid fa-star text-2xl text-slate-950"></i>
+    </div>
+    <h3 class="font-black text-lg mt-4">How was your order?</h3>
+    <p id="ratingSubtitle" class="text-[11px] text-slate-400 mt-1">Your feedback helps us improve</p>
+
+    <div id="ratingStars" class="flex items-center justify-center gap-2 mt-5">
+      <button data-star="1" class="text-3xl text-slate-700 transition-all hover:scale-110"><i class="fa-solid fa-star"></i></button>
+      <button data-star="2" class="text-3xl text-slate-700 transition-all hover:scale-110"><i class="fa-solid fa-star"></i></button>
+      <button data-star="3" class="text-3xl text-slate-700 transition-all hover:scale-110"><i class="fa-solid fa-star"></i></button>
+      <button data-star="4" class="text-3xl text-slate-700 transition-all hover:scale-110"><i class="fa-solid fa-star"></i></button>
+      <button data-star="5" class="text-3xl text-slate-700 transition-all hover:scale-110"><i class="fa-solid fa-star"></i></button>
+    </div>
+
+    <textarea id="ratingComment" rows="2" placeholder="Any comments? (optional)"
+      class="w-full mt-4 px-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-sm placeholder-slate-500 focus:outline-none focus:border-amber-400/50 resize-none transition-all"></textarea>
+
+    <button id="submitRatingBtn"
+      class="press w-full mt-4 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-600 text-slate-950 font-black text-sm shadow-lg shadow-amber-500/25">
+      Submit Rating
+    </button>
+    <button data-close="rating" class="w-full mt-2 py-2 text-xs font-bold text-slate-500 hover:text-slate-300 transition">Maybe later</button>
+  </div>
+</div>
+
+
+<!-- TOASTS -->
+<div id="toastBox" class="fixed top-4 left-1/2 -translate-x-1/2 z-[400] w-[calc(100%-2rem)] max-w-sm space-y-2 pointer-events-none"></div>
+
+
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   ZEMEN FOOD & DELIVERY — APPLICATION LOGIC
+   ══════════════════════════════════════════════════════════════════ */
+(function () {
+'use strict';
+
+/* ───────────────────────── CONSTANTS ───────────────────────── */
+const LS = {
+  WALLET: 'zemen_wallet_balance',
+  ORDERS: 'zemen_orders',
+  FAVS:   'zemen_food_favorites'
+};
+const DEFAULT_WALLET = 2500;
+
+const CATEGORIES = [
+  { id: 'all',         label: 'All',            icon: 'fa-border-all' },
+  { id: 'traditional', label: 'Traditional',    icon: 'fa-bowl-food', sub: 'ሀበሻ ምግቦች' },
+  { id: 'fastfood',    label: 'Fast Food',      icon: 'fa-burger' },
+  { id: 'cafe',        label: 'Cafe & Bakery',  icon: 'fa-mug-hot' },
+  { id: 'drinks',      label: 'Drinks',         icon: 'fa-glass-water' }
+];
+
+const LANDMARKS = [
+  'Bole Medhanialem', 'Megenagna', 'Meskel Square', 'Kazanchis',
+  'Piassa', 'CMC', 'Summit', 'Gerji', 'Sarbet', 'Ayat'
+];
+
+const TRACK_STEPS = [
+  { title: 'Order Placed',      desc: 'We received your order',              icon: 'fa-receipt' },
+  { title: 'Kitchen Preparing', desc: 'Your food is being freshly cooked',   icon: 'fa-fire-burner' },
+  { title: 'Driver On the Way', desc: 'Meseret is heading to your location', icon: 'fa-motorcycle' },
+  { title: 'Delivered',         desc: 'Enjoy your meal! 🎉',                 icon: 'fa-circle-check' }
+];
+
+const RESTAURANTS = [
+  {
+    id:'yod', name:'Yod Abyssinia', category:'traditional', rating:4.8, reviews:1240,
+    time:'25-35', fee:40, emoji:'🍲', grad:'from-amber-500/30 via-orange-600/15 to-rose-700/10',
+    tags:['Doro Wat','Beyaynetu','Cultural'],
+    menu:[
+      {id:'y1', name:'Doro Wat Special', desc:'Slow-cooked chicken in rich berbere sauce, served with injera & ayib', price:340, emoji:'🍗'},
+      {id:'y2', name:'Beyaynetu Combo', desc:'Assorted vegan stews, shiro, gomen & fresh salad on injera', price:280, emoji:'🥘'},
+      {id:'y3', name:'Kitfo Special', desc:'Minced beef with mitmita, kibe & ayib cheese', price:420, emoji:'🥩'},
+      {id:'y4', name:'Tibs Firfir', desc:'Sautéed beef tossed with torn injera & rosemary', price:360, emoji:'🍖'},
+      {id:'y5', name:'Shiro Tegabino', desc:'Chickpea stew in a clay pot, extra spicy', price:220, emoji:'🍛'}
+    ]
+  },
+  {
+    id:'kategna', name:'Kategna Restaurant', category:'traditional', rating:4.6, reviews:860,
+    time:'20-30', fee:35, emoji:'🥘', grad:'from-rose-500/25 via-amber-500/15 to-slate-800/20',
+    tags:['Firfir','Chechebsa','Breakfast'],
+    menu:[
+      {id:'k1', name:'Kategna Firfir', desc:'Signature shredded injera in spicy berbere sauce', price:180, emoji:'🌶️'},
+      {id:'k2', name:'Chechebsa', desc:'Kita torn & sautéed in niter kibbeh with berbere', price:160, emoji:'🥞'},
+      {id:'k3', name:'Enkulal Firfir', desc:'Scrambled eggs with tomato, onion & green pepper', price:190, emoji:'🍳'},
+      {id:'k4', name:'Genfo', desc:'Barley porridge with butter & berbere dip', price:170, emoji:'🥣'}
+    ]
+  },
+  {
+    id:'tibeb', name:'Tibeb Cultural Kitchen', category:'traditional', rating:4.7, reviews:540,
+    time:'30-45', fee:50, emoji:'🍛', grad:'from-orange-500/25 via-rose-600/15 to-slate-900/30',
+    tags:['Agelgil','Raw Meat','Coffee Ceremony'],
+    menu:[
+      {id:'t1', name:'Agelgil Combo', desc:'Mixed traditional platter for two, served in agelgil', price:780, emoji:'🍽️'},
+      {id:'t2', name:'Gored Gored', desc:'Cubed raw beef with awaze & mitmita', price:460, emoji:'🥩'},
+      {id:'t3', name:'Dulet', desc:'Minced tripe, liver & beef with traditional spices', price:380, emoji:'🍲'},
+      {id:'t4', name:'Bula & Kitfo', desc:'Enset porridge with kitfo and ayib', price:330, emoji:'🥣'}
+    ]
+  },
+  {
+    id:'addisburger', name:'Addis Burger House', category:'fastfood', rating:4.5, reviews:2100,
+    time:'15-25', fee:30, emoji:'🍔', grad:'from-yellow-500/25 via-amber-600/15 to-slate-900/30',
+    tags:['Burgers','Fries','Late Night'],
+    menu:[
+      {id:'a1', name:'Zemen Double Cheese', desc:'Two beef patties, cheddar, zemen sauce & pickles', price:290, emoji:'🍔'},
+      {id:'a2', name:'Crispy Chicken Burger', desc:'Buttermilk fried chicken, slaw & garlic mayo', price:260, emoji:'🍗'},
+      {id:'a3', name:'Loaded Fries', desc:'Fries topped with beef chili, cheese & jalapeño', price:180, emoji:'🍟'},
+      {id:'a4', name:'Onion Rings (6pcs)', desc:'Golden battered rings with dipping sauce', price:120, emoji:'🧅'},
+      {id:'a5', name:'Vanilla Milkshake', desc:'Thick & creamy vanilla shake', price:150, emoji:'🥤'}
+    ]
+  },
+  {
+    id:'sishu', name:'Sishu Burger & Grill', category:'fastfood', rating:4.4, reviews:1500,
+    time:'20-30', fee:35, emoji:'🌯', grad:'from-red-500/20 via-orange-500/15 to-slate-900/30',
+    tags:['Shawarma','Grill','Wrap'],
+    menu:[
+      {id:'s1', name:'Beef Shawarma', desc:'Marinated beef, tahini & pickles in saj bread', price:210, emoji:'🌯'},
+      {id:'s2', name:'Chicken Sishu Wrap', desc:'Grilled chicken strips, cheese & garlic sauce', price:230, emoji:'🌮'},
+      {id:'s3', name:'Mixed Grill Platter', desc:'Beef, chicken & lamb skewers with rice', price:520, emoji:'🍢'},
+      {id:'s4', name:'Peri-Peri Wings (8pcs)', desc:'Flame-grilled wings glazed in peri-peri', price:280, emoji:'🍗'}
+    ]
+  },
+  {
+    id:'pizzabole', name:'Pizza Bole', category:'fastfood', rating:4.3, reviews:980,
+    time:'25-40', fee:45, emoji:'🍕', grad:'from-amber-400/20 via-red-600/15 to-slate-900/30',
+    tags:['Pizza','Pasta','Family'],
+    menu:[
+      {id:'p1', name:'Zemen Special Pizza', desc:'Beef, chicken, peppers, olives & extra cheese', price:480, emoji:'🍕'},
+      {id:'p2', name:'Margherita', desc:'Tomato, mozzarella & fresh basil', price:360, emoji:'🍕'},
+      {id:'p3', name:'Creamy Alfredo Pasta', desc:'Fettuccine in creamy parmesan sauce', price:340, emoji:'🍝'},
+      {id:'p4', name:'Garlic Bread', desc:'Toasted with herb butter & melted cheese', price:140, emoji:'🥖'}
+    ]
+  },
+  {
+    id:'tomoca', name:'Tomoca Coffee', category:'cafe', rating:4.9, reviews:3200,
+    time:'10-20', fee:25, emoji:'☕', grad:'from-amber-700/30 via-amber-500/10 to-slate-900/30',
+    tags:['Ethiopian Coffee','Macchiato','Since 1953'],
+    menu:[
+      {id:'tc1', name:'Tomoca Macchiato', desc:'Signature espresso with steamed milk', price:70, emoji:'☕'},
+      {id:'tc2', name:'Traditional Buna', desc:'Jebena-brewed Ethiopian coffee', price:60, emoji:'🫖'},
+      {id:'tc3', name:'Cappuccino', desc:'Espresso, milk foam & cocoa dust', price:90, emoji:'☕'},
+      {id:'tc4', name:'Butter Croissant', desc:'Flaky, buttery French croissant', price:110, emoji:'🥐'}
+    ]
+  },
+  {
+    id:'kaldis', name:"Kaldi's Coffee", category:'cafe', rating:4.6, reviews:2600,
+    time:'15-25', fee:30, emoji:'🥐', grad:'from-emerald-600/20 via-amber-500/10 to-slate-900/30',
+    tags:['Breakfast','Pastries','Sandwich'],
+    menu:[
+      {id:'kc1', name:'Full Breakfast Plate', desc:'Eggs, sausage, toast, beans & fresh juice', price:250, emoji:'🍳'},
+      {id:'kc2', name:'Club Sandwich', desc:'Triple-decker with chicken, egg & salad', price:230, emoji:'🥪'},
+      {id:'kc3', name:'Cinnamon Roll', desc:'Freshly baked with cream cheese glaze', price:130, emoji:'🍩'},
+      {id:'kc4', name:'Iced Latte', desc:'Double shot over ice with cold milk', price:120, emoji:'🧊'}
+    ]
+  },
+  {
+    id:'bekele', name:'Bekele Bakery', category:'cafe', rating:4.4, reviews:720,
+    time:'15-25', fee:25, emoji:'🍞', grad:'from-yellow-600/20 via-amber-700/10 to-slate-900/30',
+    tags:['Fresh Bread','Cakes','Dabo'],
+    menu:[
+      {id:'b1', name:'Fresh Dabo (Loaf)', desc:'Traditional Ethiopian bread, baked daily', price:80, emoji:'🍞'},
+      {id:'b2', name:'Chocolate Cake Slice', desc:'Rich, moist chocolate layer cake', price:150, emoji:'🍰'},
+      {id:'b3', name:'Sambusa (3pcs)', desc:'Crispy pastry with spiced beef filling', price:60, emoji:'🥟'},
+      {id:'b4', name:'Glazed Donuts (3pcs)', desc:'Soft glazed ring donuts', price:90, emoji:'🍩'}
+    ]
+  },
+  {
+    id:'ambrosia', name:'Ambrosia Juice Bar', category:'drinks', rating:4.7, reviews:640,
+    time:'10-20', fee:25, emoji:'🥤', grad:'from-lime-500/20 via-emerald-600/15 to-slate-900/30',
+    tags:['Fresh Juice','Smoothies','Avocado'],
+    menu:[
+      {id:'am1', name:'Avocado & Mango Juice', desc:'Thick layered spris with wild honey', price:140, emoji:'🥑'},
+      {id:'am2', name:'Papaya Spris', desc:'Fresh papaya blended with chilled milk', price:120, emoji:'🥭'},
+      {id:'am3', name:'Berry Smoothie', desc:'Mixed berries, banana & yogurt', price:160, emoji:'🫐'},
+      {id:'am4', name:'Lemon Mint Cooler', desc:'Fresh lemon, mint & crushed ice', price:100, emoji:'🍋'}
+    ]
+  },
+  {
+    id:'tejhouse', name:'Tej House Bole', category:'drinks', rating:4.5, reviews:410,
+    time:'20-35', fee:40, emoji:'🍯', grad:'from-amber-500/20 via-yellow-600/15 to-slate-900/30',
+    tags:['Tej','Honey Wine','Traditional'],
+    menu:[
+      {id:'tj1', name:'Tej (1 Litre)', desc:'Traditional honey wine served in a berele', price:320, emoji:'🍯'},
+      {id:'tj2', name:'Tella (1 Litre)', desc:'Home-brewed traditional barley beer', price:180, emoji:'🍺'},
+      {id:'tj3', name:'Katikala Shot', desc:'Traditional distilled spirit', price:90, emoji:'🥃'},
+      {id:'tj4', name:'Honey Lemon Tea', desc:'Hot tea with wild honey & lemon', price:80, emoji:'🍵'}
+    ]
+  }
+];
+
+/* ───────────────────────── STATE ───────────────────────── */
+const state = {
+  view: 'home',
+  category: 'all',
+  search: '',
+  activeRestaurant: null,
+  cart: [],
+  favorites: [],
+  orders: [],
+  tip: 0,
+  trackingOrderId: null,
+  ratingOrderId: null,
+  selectedStars: 0,
+  trackTimers: []
+};
+
+/* ───────────────────────── HELPERS ───────────────────────── */
+const $  = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+const fmt = n => {
+  const num = Number(n) || 0;
+  return num.toLocaleString('en-US', {
+    minimumFractionDigits: Number.isInteger(num) ? 0 : 2,
+    maximumFractionDigits: 2
+  });
+};
+
+const esc = s => String(s == null ? '' : s)
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
+const getRestaurant = id => RESTAURANTS.find(r => r.id === id);
+const getMenuItem  = (rid, iid) => {
+  const r = getRestaurant(rid);
+  return r ? r.menu.find(m => m.id === iid) : null;
+};
+
+function loadJSON(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return fallback;
+    const parsed = JSON.parse(raw);
+    return parsed == null ? fallback : parsed;
+  } catch (e) { return fallback; }
+}
+function saveJSON(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+}
+
+/* ───────────────────────── WALLET ───────────────────────── */
+function getWallet() {
+  let v = parseFloat(localStorage.getItem(LS.WALLET));
+  if (!isFinite(v) || v < 0) {
+    v = DEFAULT_WALLET;
+    try { localStorage.setItem(LS.WALLET, String(v)); } catch (e) {}
+  }
+  return v;
+}
+function setWallet(v) {
+  const safe = Math.max(0, Math.round(v * 100) / 100);
+  try { localStorage.setItem(LS.WALLET, String(safe)); } catch (e) {}
+  renderWallet();
+}
+function renderWallet() {
+  const el = $('#walletBalance');
+  if (el) el.textContent = fmt(getWallet());
+}
+
+/* ───────────────────────── TOASTS ───────────────────────── */
+function toast(title, msg, type) {
+  type = type || 'success';
+  const themes = {
+    success: { grad: 'from-amber-400 to-orange-600', icon: 'fa-circle-check' },
+    error:   { grad: 'from-rose-500 to-red-600',     icon: 'fa-triangle-exclamation' },
+    info:    { grad: 'from-sky-400 to-blue-600',     icon: 'fa-circle-info' }
+  };
+  const t = themes[type] || themes.success;
+
+  const el = document.createElement('div');
+  el.className = 'toast pointer-events-auto flex items-start gap-3 p-3.5 rounded-2xl bg-slate-900/95 backdrop-blur-xl border border-white/10 shadow-2xl shadow-black/50';
+  el.innerHTML =
+    '<div class="w-9 h-9 rounded-xl bg-gradient-to-br ' + t.grad + ' flex items-center justify-center shrink-0">' +
+      '<i class="fa-solid ' + t.icon + ' text-slate-950 text-sm"></i>' +
+    '</div>' +
+    '<div class="min-w-0 pt-0.5">' +
+      '<p class="text-[13px] font-bold text-slate-100 leading-tight">' + esc(title) + '</p>' +
+      (msg ? '<p class="text-[11px] text-slate-400 mt-1 leading-snug">' + esc(msg) + '</p>' : '') +
+    '</div>';
+
+  $('#toastBox').appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
+  setTimeout(() => {
+    el.classList.remove('show');
+    setTimeout(() => el.remove(), 400);
+  }, 2900);
+}
+
+/* ───────────────────────── MODAL HELPERS ───────────────────────── */
+function showModal(id) {
+  const m = document.getElementById(id);
+  if (!m) return;
+  m.classList.remove('opacity-0', 'pointer-events-none');
+  const p = m.querySelector('[data-panel]');
+  if (p) p.classList.remove('translate-y-8', 'translate-y-6', 'sm:scale-95', 'scale-95');
+  document.body.classList.add('overflow-hidden');
+}
+function hideModal(id) {
+  const m = document.getElementById(id);
+  if (!m) return;
+  m.classList.add('opacity-0', 'pointer-events-none');
+  const p = m.querySelector('[data-panel]');
+  if (p) p.classList.add('translate-y-8', 'sm:scale-95');
+  const anyOpen = ['checkoutModal', 'trackModal', 'ratingModal'].some(x => {
+    const el = document.getElementById(x);
+    return el && !el.classList.contains('opacity-0');
+  });
+  if (!anyOpen && !$('#cartDrawer').classList.contains('translate-x-0')) {
+    document.body.classList.remove('overflow-hidden');
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CART
+   ═══════════════════════════════════════════════════════════════ */
+function cartCount()    { return state.cart.reduce((s, i) => s + i.qty, 0); }
+function cartSubtotal() { return state.cart.reduce((s, i) => s + i.price * i.qty, 0); }
+function cartDeliveryFee() {
+  const ids = Array.from(new Set(state.cart.map(i => i.restaurantId)));
+  return ids.reduce((sum, id) => {
+    const r = getRestaurant(id);
+    return sum + (r ? r.fee : 0);
+  }, 0);
+}
+function findCartItem(rid, iid) {
+  return state.cart.find(c => c.restaurantId === rid && c.itemId === iid);
+}
+
+function addToCart(rid, iid, silent) {
+  const r = getRestaurant(rid);
+  const m = getMenuItem(rid, iid);
+  if (!r || !m) return;
+
+  const existing = findCartItem(rid, iid);
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    state.cart.push({
+      restaurantId: rid,
+      restaurantName: r.name,
+      itemId: iid,
+      name: m.name,
+      price: m.price,
+      emoji: m.emoji,
+      qty: 1,
+      note: ''
+    });
+  }
+
+  if (!silent) toast('Added to Cart', m.name + ' • ' + fmt(m.price) + ' ETB', 'success');
+  syncCart();
+  bumpBadge();
+}
+
+function decrementCart(rid, iid) {
+  const item = findCartItem(rid, iid);
+  if (!item) return;
+  item.qty -= 1;
+  if (item.qty <= 0) {
+    state.cart = state.cart.filter(c => !(c.restaurantId === rid && c.itemId === iid));
+  }
+  syncCart();
+}
+
+function removeFromCart(rid, iid) {
+  const item = findCartItem(rid, iid);
+  state.cart = state.cart.filter(c => !(c.restaurantId === rid && c.itemId === iid));
+  if (item) toast('Removed', item.name + ' removed from basket', 'info');
+  syncCart();
+}
+
+function syncCart() {
+  renderCartBadge();
+  renderCart();
+  syncMenuActions();
+}
+
+function renderCartBadge() {
+  const n = cartCount();
+  const badge = $('#cartBadge');
+  if (!badge) return;
+  badge.textContent = n;
+  badge.classList.toggle('hidden', n === 0);
+  badge.classList.toggle('flex', n > 0);
+}
+
+function bumpBadge() {
+  const badge = $('#cartBadge');
+  if (!badge) return;
+  badge.classList.remove('bump');
+  void badge.offsetWidth;
+  badge.classList.add('bump');
+}
+
+/* Menu action buttons (Add / stepper) */
+function actionHTML(rid, iid) {
+  const c = findCartItem(rid, iid);
+  if (!c) {
+    return '<button data-add="' + rid + '|' + iid + '" ' +
+      'class="press px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-400 to-orange-600 text-slate-950 text-[11px] font-black shadow-lg shadow-amber-500/20">' +
+      '<i class="fa-solid fa-plus mr-1 text-[9px]"></i>Add</button>';
+  }
+  return '<div class="flex items-center gap-1.5 bg-white/5 border border-amber-400/30 rounded-xl p-1">' +
+    '<button data-dec="' + rid + '|' + iid + '" class="press w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-300">' +
+      '<i class="fa-solid fa-minus text-[9px]"></i></button>' +
+    '<span class="text-[13px] font-black w-6 text-center text-amber-400 tabular-nums">' + c.qty + '</span>' +
+    '<button data-inc="' + rid + '|' + iid + '" class="press w-7 h-7 rounded-lg bg-gradient-to-r from-amber-400 to-orange-600 text-slate-950 flex items-center justify-center">' +
+      '<i class="fa-solid fa-plus text-[9px]"></i></button>' +
+  '</div>';
+}
+
+function syncMenuActions() {
+  $$('[id^="act-"]').forEach(el => {
+    const key = el.id.replace('act-', '');
+    const parts = key.split('-');
+    const iid = parts.pop();
+    const rid = parts.join('-');
+    el.innerHTML = actionHTML(rid, iid);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CART DRAWER RENDER
+   ═══════════════════════════════════════════════════════════════ */
+function renderCart() {
+  const body = $('#cartBody');
+  const footer = $('#cartFooter');
+  const sub = cartSubtotal();
+  const fee = cartDeliveryFee();
+  const total = sub + fee;
+
+  $('#cartSubtitle').textContent = cartCount() + (cartCount() === 1 ? ' item' : ' items');
+
+  if (!state.cart.length) {
+    body.innerHTML =
+      '<div class="flex flex-col items-center justify-center py-20 text-center">' +
+        '<div class="w-20 h-20 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center text-3xl mb-4">🛒</div>' +
+        '<p class="font-bold text-slate-300">Your basket is empty</p>' +
+        '<p class="text-[11px] text-slate-500 mt-1 max-w-[220px]">Add some delicious Ethiopian food to get started</p>' +
+      '</div>';
+    footer.classList.add('hidden');
+    return;
+  }
+
+  footer.classList.remove('hidden');
+
+  body.innerHTML = state.cart.map(item => {
+    const key = item.restaurantId + '|' + item.itemId;
+    return '' +
+    '<div class="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10">' +
+      '<div class="flex items-start gap-3">' +
+        '<div class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-2xl shrink-0">' + item.emoji + '</div>' +
+        '<div class="flex-1 min-w-0">' +
+          '<div class="flex items-start justify-between gap-2">' +
+            '<div class="min-w-0">' +
+              '<h4 class="text-[13px] font-bold text-slate-100 truncate">' + esc(item.name) + '</h4>' +
+              '<p class="text-[10px] text-slate-500 truncate mt-0.5">' + esc(item.restaurantName) + '</p>' +
+            '</div>' +
+            '<button data-remove="' + key + '" class="press w-7 h-7 rounded-lg bg-white/5 hover:bg-rose-500/20 hover:text-rose-400 flex items-center justify-center text-slate-500 shrink-0 transition-colors">' +
+              '<i class="fa-solid fa-trash-can text-[10px]"></i>' +
+            '</button>' +
+          '</div>' +
+          '<input data-note="' + key + '" value="' + esc(item.note) + '" placeholder="Special instructions (e.g. extra spicy)" ' +
+            'class="w-full mt-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-[11px] text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-400/40 transition-all">' +
+          '<div class="flex items-center justify-between mt-2.5">' +
+            '<span class="text-[14px] font-black text-amber-400 tabular-nums">' + fmt(item.price * item.qty) + ' <span class="text-[10px] font-bold text-amber-400/70">ETB</span></span>' +
+            '<div class="flex items-center gap-1.5 bg-white/5 border border-amber-400/30 rounded-xl p-1">' +
+              '<button data-dec="' + key + '" class="press w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-300"><i class="fa-solid fa-minus text-[9px]"></i></button>' +
+              '<span class="text-[13px] font-black w-6 text-center text-amber-400 tabular-nums">' + item.qty + '</span>' +
+              '<button data-inc="' + key + '" class="press w-7 h-7 rounded-lg bg-gradient-to-r from-amber-400 to-orange-600 text-slate-950 flex items-center justify-center"><i class="fa-solid fa-plus text-[9px]"></i></button>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  $('#cartItemTotal').textContent = fmt(sub) + ' ETB';
+  $('#cartDelivery').textContent  = fmt(fee) + ' ETB';
+  $('#cartTotal').textContent     = fmt(total) + ' ETB';
+  $('#checkoutBtn').innerHTML     = 'Checkout • ' + fmt(total) + ' ETB';
+}
+
+function openCart() {
+  $('#cartOverlay').classList.remove('opacity-0', 'pointer-events-none');
+  $('#cartDrawer').classList.remove('translate-x-full');
+  $('#cartDrawer').classList.add('translate-x-0');
+  document.body.classList.add('overflow-hidden');
+}
+function closeCart() {
+  $('#cartOverlay').classList.add('opacity-0', 'pointer-events-none');
+  $('#cartDrawer').classList.add('translate-x-full');
+  $('#cartDrawer').classList.remove('translate-x-0');
+  const anyOpen = ['checkoutModal', 'trackModal', 'ratingModal'].some(x => {
+    const el = document.getElementById(x);
+    return el && !el.classList.contains('opacity-0');
+  });
+  if (!anyOpen) document.body.classList.remove('overflow-hidden');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HOME — CATEGORIES + RESTAURANT GRID
+   ═══════════════════════════════════════════════════════════════ */
+function renderCategories() {
+  $('#categoryPills').innerHTML = CATEGORIES.map(c => {
+    const active = state.category === c.id;
+    return '<button data-cat="' + c.id + '" class="press shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-2xl border text-[12px] font-bold whitespace-nowrap transition-all ' +
+      (active
+        ? 'bg-gradient-to-r from-amber-400 to-orange-600 text-slate-950 border-transparent shadow-lg shadow-amber-500/25'
+        : 'bg-white/5 text-slate-300 border-white/10 hover:border-amber-400/40 hover:bg-white/[0.07]') + '">' +
+      '<i class="fa-solid ' + c.icon + '"></i>' +
+      '<span>' + c.label + '</span>' +
+      (c.sub ? '<span class="text-[9px] font-medium opacity-70">' + c.sub + '</span>' : '') +
+    '</button>';
+  }).join('');
+}
+
+function restaurantCardHTML(r) {
+  const isFav = state.favorites.includes(r.id);
+  return '' +
+  '<article data-open="' + r.id + '" ' +
+    'class="press group relative rounded-3xl overflow-hidden border border-white/10 bg-white/[0.03] backdrop-blur-xl hover:border-amber-400/40 transition-colors cursor-pointer">' +
+
+    '<div class="relative h-32 bg-gradient-to-br ' + r.grad + ' flex items-center justify-center overflow-hidden">' +
+      '<div class="absolute inset-0 shimmer"></div>' +
+      '<span class="text-[64px] leading-none drop-shadow-2xl group-hover:scale-110 transition-transform duration-500 select-none">' + r.emoji + '</span>' +
+
+      '<button data-fav="' + r.id + '" aria-label="Toggle favorite" ' +
+        'class="press absolute top-3 right-3 w-9 h-9 rounded-xl bg-slate-950/70 backdrop-blur-md border border-white/10 flex items-center justify-center transition-all ' +
+        (isFav ? 'text-rose-400 border-rose-400/40' : 'text-slate-300 hover:text-rose-400') + '">' +
+        '<i class="' + (isFav ? 'fa-solid' : 'fa-regular') + ' fa-heart text-[13px]"></i>' +
+      '</button>' +
+
+      '<div class="absolute bottom-3 left-3 flex items-center gap-1.5">' +
+        '<span class="px-2 py-1 rounded-lg bg-slate-950/75 backdrop-blur-md text-[10px] font-black text-amber-400 border border-white/5">' +
+          '<i class="fa-solid fa-star text-[9px]"></i> ' + r.rating + '</span>' +
+        '<span class="px-2 py-1 rounded-lg bg-slate-950/75 backdrop-blur-md text-[10px] font-bold text-slate-300 border border-white/5">' +
+          '<i class="fa-regular fa-clock text-[9px]"></i> ' + r.time + ' min</span>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="p-4">' +
+      '<h3 class="font-bold text-[14px] text-slate-100 truncate">' + esc(r.name) + '</h3>' +
+      '<p class="text-[11px] text-slate-400 mt-1 truncate">' + esc(r.tags.join(' • ')) + '</p>' +
+      '<div class="flex items-center justify-between mt-3 pt-3 border-t border-white/5">' +
+        '<span class="text-[11px] text-slate-400 font-semibold">' +
+          '<i class="fa-solid fa-motorcycle text-amber-400/80 mr-1"></i>' + r.fee + ' ETB</span>' +
+        '<span class="text-[11px] font-bold text-amber-400 group-hover:translate-x-0.5 transition-transform">' +
+          'View Menu <i class="fa-solid fa-chevron-right text-[9px]"></i></span>' +
+      '</div>' +
+    '</div>' +
+  '</article>';
+}
+
+function renderRestaurants() {
+  const q = state.search.trim().toLowerCase();
+
+  const list = RESTAURANTS.filter(r => {
+    if (state.category !== 'all' && r.category !== state.category) return false;
+    if (!q) return true;
+    return r.name.toLowerCase().includes(q) ||
+           r.tags.join(' ').toLowerCase().includes(q) ||
+           r.menu.some(m => (m.name + ' ' + m.desc).toLowerCase().includes(q));
+  });
+
+  $('#resultCount').textContent = list.length + (list.length === 1 ? ' place' : ' places');
+  $('#noResults').classList.toggle('hidden', list.length > 0);
+  $('#noResults').classList.toggle('flex', list.length === 0);
+  $('#restaurantGrid').innerHTML = list.map(restaurantCardHTML).join('');
+}
+
+function renderFavorites() {
+  const favs = RESTAURANTS.filter(r => state.favorites.includes(r.id));
+  const el = $('#favoritesList');
+
+  if (!favs.length) {
+    el.className = 'block';
+    el.innerHTML =
+      '<div class="flex flex-col items-center justify-center py-20 text-center">' +
+        '<div class="w-20 h-20 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center text-3xl mb-4">💛</div>' +
+        '<p class="font-bold text-slate-300">No favorites yet</p>' +
+        '<p class="text-[11px] text-slate-500 mt-1 max-w-[240px]">Tap the heart on any restaurant to save it here</p>' +
+      '</div>';
+    return;
+  }
+
+  el.className = 'grid grid-cols-1 sm:grid-cols-2 gap-4';
+  el.innerHTML = favs.map(restaurantCardHTML).join('');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESTAURANT DETAIL VIEW
+   ═══════════════════════════════════════════════════════════════ */
+function openRestaurant(id) {
+  const r = getRestaurant(id);
+  if (!r) return;
+  state.activeRestaurant = id;
+  renderRestaurantView();
+  switchView('restaurant');
+}
+
+function renderRestaurantView() {
+  const r = getRestaurant(state.activeRestaurant);
+  if (!r) return;
+  const isFav = state.favorites.includes(r.id);
+
+  $('#view-restaurant').innerHTML = '' +
+    '<button data-back="1" class="press flex items-center gap-2 text-[12px] font-bold text-slate-400 hover:text-amber-400 transition-colors">' +
+      '<i class="fa-solid fa-arrow-left text-[11px]"></i> Back to restaurants' +
+    '</button>' +
+
+    '<div class="relative mt-4 rounded-3xl overflow-hidden border border-white/10 bg-gradient-to-br ' + r.grad + ' p-5">' +
+      '<div class="absolute -top-10 -right-10 w-36 h-36 bg-amber-500/20 blur-3xl rounded-full"></div>' +
+      '<div class="relative flex items-start gap-4">' +
+        '<div class="w-16 h-16 rounded-2xl bg-slate-950/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-[34px] shrink-0">' + r.emoji + '</div>' +
+        '<div class="flex-1 min-w-0">' +
+          '<h2 class="text-[19px] font-black leading-tight">' + esc(r.name) + '</h2>' +
+          '<p class="text-[11px] text-slate-400 mt-1">' + esc(r.tags.join(' • ')) + '</p>' +
+          '<div class="flex flex-wrap gap-1.5 mt-3">' +
+            '<span class="px-2 py-1 rounded-lg bg-slate-950/60 backdrop-blur text-[10px] font-black text-amber-400 border border-white/5">' +
+              '<i class="fa-solid fa-star text-[9px]"></i> ' + r.rating + ' <span class="text-slate-500 font-semibold">(' + fmt(r.reviews) + ')</span></span>' +
+            '<span class="px-2 py-1 rounded-lg bg-slate-950/60 backdrop-blur text-[10px] font-bold text-slate-300 border border-white/5">' +
+              '<i class="fa-regular fa-clock text-[9px]"></i> ' + r.time + ' min</span>' +
+            '<span class="px-2 py-1 rounded-lg bg-slate-950/60 backdrop-blur text-[10px] font-bold text-slate-300 border border-white/5">' +
+              '<i class="fa-solid fa-motorcycle text-[9px]"></i> ' + r.fee + ' ETB</span>' +
+          '</div>' +
+        '</div>' +
+        '<button data-fav="' + r.id + '" class="press w-10 h-10 rounded-xl bg-slate-950/60 backdrop-blur-md border border-white/10 flex items-center justify-center shrink-0 ' +
+          (isFav ? 'text-rose-400 border-rose-400/40' : 'text-slate-300') + '">' +
+          '<i class="' + (isFav ? 'fa-solid' : 'fa-regular') + ' fa-heart text-[13px]"></i>' +
+        '</button>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="flex items-end justify-between mt-6 mb-3">' +
+      '<h3 class="font-black text-base">Menu</h3>' +
+      '<span class="text-[11px] font-bold text-slate-500">' + r.menu.length + ' items</span>' +
+    '</div>' +
+
+    '<div class="space-y-3">' +
+      r.menu.map(m => '' +
+        '<div class="flex gap-3 p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-white/20 transition-colors">' +
+          '<div class="w-16 h-16 rounded-xl bg-gradient-to-br ' + r.grad + ' border border-white/5 flex items-center justify-center text-[30px] shrink-0">' + m.emoji + '</div>' +
+          '<div class="flex-1 min-w-0">' +
+            '<h4 class="font-bold text-[13px] text-slate-100 leading-snug">' + esc(m.name) + '</h4>' +
+            '<p class="text-[11px] text-slate-400 mt-1 leading-snug">' + esc(m.desc) + '</p>' +
+            '<div class="flex items-center justify-between mt-2.5 gap-2">' +
+              '<span class="text-[14px] font-black text-amber-400 tabular-nums">' + fmt(m.price) +
+                ' <span class="text-[10px] font-bold text-amber-400/70">ETB</span></span>' +
+              '<div id="act-' + r.id + '-' + m.id + '">' + actionHTML(r.id, m.id) + '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>').join('') +
+    '</div>' +
+
+    '<div class="h-6"></div>';
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   VIEW SWITCHING
+   ═══════════════════════════════════════════════════════════════ */
+function switchView(v) {
+  state.view = v;
+
+  ['home', 'restaurant', 'orders', 'favorites'].forEach(x => {
+    const el = document.getElementById('view-' + x);
+    if (el) el.classList.toggle('hidden', x !== v);
+  });
+
+  $$('.nav-btn').forEach(btn => {
+    const isActive = btn.dataset.nav === v || (v === 'restaurant' && btn.dataset.nav === 'home');
+    btn.classList.toggle('text-amber-400', isActive);
+    btn.classList.toggle('text-slate-500', !isActive);
+  });
+
+  if (v === 'orders')    renderOrders();
+  if (v === 'favorites') renderFavorites();
+  if (v === 'home')      renderRestaurants();
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CHECKOUT
+   ═══════════════════════════════════════════════════════════════ */
+function renderLandmarkChips() {
+  $('#landmarkChips').innerHTML = LANDMARKS.map(l =>
+    '<button type="button" data-landmark="' + esc(l) + '" ' +
+      'class="press px-2.5 py-1.5 rounded-xl bg-white/5 border border-white/10 text-[10px] font-bold text-slate-400 hover:border-amber-400/40 hover:text-amber-400 transition-all">' +
+      esc(l) + '</button>'
+  ).join('');
+}
+
+function renderCheckout() {
+  const sub = cartSubtotal();
+  const fee = cartDeliveryFee();
+  const tip = state.tip;
+  const total = sub + fee + tip;
+
+  $('#coSubtotal').textContent = fmt(sub) + ' ETB';
+  $('#coDelivery').textContent = fmt(fee) + ' ETB';
+  $('#coTip').textContent      = fmt(tip) + ' ETB';
+  $('#coTotal').textContent    = fmt(total) + ' ETB';
+  $('#coPayAmount').textContent = fmt(total) + ' ETB';
+  $('#coWallet').textContent   = fmt(getWallet()) + ' ETB';
+
+  $$('#tipRow [data-tip]').forEach(b => {
+    b.classList.toggle('active-tip', Number(b.dataset.tip) === state.tip);
+  });
+
+  const short = total - getWallet();
+  if (short > 0) {
+    $('#insufficientBox').classList.remove('hidden');
+    $('#insufficientMsg').textContent = 'You need ' + fmt(short) + ' ETB more to complete this order.';
+  } else {
+    $('#insufficientBox').classList.add('hidden');
+  }
+}
+
+function openCheckout() {
+  if (!state.cart.length) {
+    toast('Basket Empty', 'Add some items before checking out', 'info');
+    return;
+  }
+  state.tip = state.tip || 0;
+  renderCheckout();
+  closeCart();
+  showModal('checkoutModal');
+}
+
+function confirmPayment() {
+  const sub = cartSubtotal();
+  const fee = cartDeliveryFee();
+  const tip = state.tip;
+  const total = sub + fee + tip;
+  const wallet = getWallet();
+
+  if (total > wallet) {
+    toast('Insufficient Balance',
+      'You need ' + fmt(total - wallet) + ' ETB more in your Zemen Wallet',
+      'error');
+    renderCheckout();
+    const box = $('#insufficientBox');
+    box.classList.add('pop-in');
+    setTimeout(() => box.classList.remove('pop-in'), 400);
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  const landmark = ($('#landmarkInput').value || '').trim() || 'Bole, Addis Ababa';
+
+  const order = {
+    id: 'ZFD-' + String(Date.now()).slice(-6),
+    items: state.cart.map(c => ({ ...c })),
+    restaurantNames: Array.from(new Set(state.cart.map(c => c.restaurantName))),
+    subtotal: sub,
+    deliveryFee: fee,
+    tip: tip,
+    total: total,
+    landmark: landmark,
+    placedAt: Date.now(),
+    status: 0,
+    rating: 0,
+    comment: ''
+  };
+
+  // Deduct from Zemen Super App wallet
+  setWallet(wallet - total);
+
+  // Persist order
+  state.orders.unshift(order);
+  saveJSON(LS.ORDERS, state.orders);
+
+  // Clear cart
+  state.cart = [];
+  state.tip = 0;
+  $('#landmarkInput').value = '';
+  syncCart();
+
+  hideModal('checkoutModal');
+  toast('Payment Successful', fmt(total) + ' ETB paid from Zemen Wallet', 'success');
+
+  setTimeout(() => {
+    startTracking(order);
+    if (state.view === 'orders') renderOrders();
+  }, 420);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LIVE ORDER TRACKING
+   ═══════════════════════════════════════════════════════════════ */
+const DOT_DONE   = 'step-dot w-10 h-10 rounded-full border-2 border-amber-400/50 bg-amber-400/15 flex items-center justify-center text-amber-400 transition-all duration-500';
+const DOT_ACTIVE = 'step-dot w-10 h-10 rounded-full border-2 border-amber-400 bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center text-slate-950 shadow-lg shadow-amber-500/40 transition-all duration-500 scale-110';
+const DOT_IDLE   = 'step-dot w-10 h-10 rounded-full border-2 border-white/10 bg-white/5 flex items-center justify-center text-slate-600 transition-all duration-500';
+
+const LINE_DONE = 'step-line w-0.5 flex-1 bg-amber-400/50 my-1 rounded-full transition-all duration-500';
+const LINE_IDLE = 'step-line w-0.5 flex-1 bg-white/10 my-1 rounded-full transition-all duration-500';
+
+const TITLE_DONE   = 'step-title text-[13px] font-bold text-slate-300 transition-colors';
+const TITLE_ACTIVE = 'step-title text-[13px] font-black text-amber-400 transition-colors';
+const TITLE_IDLE   = 'step-title text-[13px] font-bold text-slate-600 transition-colors';
+
+function renderTrackTimeline() {
+  $('#trackBody').innerHTML = TRACK_STEPS.map((s, i) => '' +
+    '<div class="flex gap-4" data-step="' + i + '">' +
+      '<div class="flex flex-col items-center">' +
+        '<div class="' + DOT_IDLE + '"><i class="fa-solid ' + s.icon + ' text-sm"></i></div>' +
+        (i < TRACK_STEPS.length - 1
+          ? '<div class="' + LINE_IDLE + '"></div>'
+          : '') +
+      '</div>' +
+      '<div class="flex-1 pb-6 pt-2">' +
+        '<h5 class="' + TITLE_IDLE + '">' + s.title + '</h5>' +
+        '<p class="text-[11px] text-slate-500 mt-1 leading-snug">' + s.desc + '</p>' +
+      '</div>' +
+    '</div>'
+  ).join('');
+}
+
+function activateStep(step) {
+  $$('#trackBody [data-step]').forEach(row => {
+    const idx = Number(row.dataset.step);
+    const dot   = row.querySelector('.step-dot');
+    const line  = row.querySelector('.step-line');
+    const title = row.querySelector('.step-title');
+    if (!dot) return;
+
+    if (idx < step) {
+      dot.className = DOT_DONE;
+      if (line) line.className = LINE_DONE;
+      if (title) title.className = TITLE_DONE;
+    } else if (idx === step) {
+      dot.className = DOT_ACTIVE;
+      if (line) line.className = LINE_DONE;
+      if (title) title.className = TITLE_ACTIVE;
+      dot.classList.add('pop-in');
+    } else {
+      dot.className = DOT_IDLE;
+      if (line) line.className = LINE_IDLE;
+      if (title) title.className = TITLE_IDLE;
+    }
+  });
+
+  const pct = ((step + 1) / TRACK_STEPS.length) * 100;
+  $('#trackProgress').style.width = pct + '%';
+}
+
+function clearTrackTimers() {
+  state.trackTimers.forEach(t => clearTimeout(t));
+  state.trackTimers = [];
+}
+
+function updateOrderStatus(orderId, status) {
+  const o = state.orders.find(x => x.id === orderId);
+  if (o) {
+    o.status = status;
+    saveJSON(LS.ORDERS, state.orders);
+  }
+}
+
+function startTracking(order) {
+  clearTrackTimers();
+  state.trackingOrderId = order.id;
+
+  $('#trackId').textContent = '#' + order.id;
+  $('#trackEta').textContent = order.restaurantNames.length > 1 ? '30–45 min' : '25–35 min';
+  $('#trackProgress').style.width = '0%';
+
+  renderTrackTimeline();
+  activateStep(0);
+  updateOrderStatus(order.id, 0);
+
+  $('#trackActions').innerHTML =
+    '<button data-close="track" class="col-span-2 press w-full py-3.5 rounded-2xl bg-white/5 border border-white/10 text-[13px] font-bold text-slate-300">' +
+      'Continue Browsing' +
+    '</button>';
+
+  showModal('trackModal');
+
+  const delays = [2300, 5400, 9800];
+  delays.forEach((delay, i) => {
+    const timer = setTimeout(() => {
+      const next = i + 1;
+      activateStep(next);
+      updateOrderStatus(order.id, next);
+
+      if (next === 3) {
+        // Delivered
+        $('#trackEta').textContent = 'Delivered ✓';
+        toast('Order Delivered', 'Enjoy your meal! Don\'t forget to rate 🎉', 'success');
+
+        $('#trackActions').innerHTML =
+          '<button data-rate-order="' + order.id + '" class="press py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-600 text-slate-950 text-[13px] font-black shadow-lg shadow-amber-500/25">' +
+            '<i class="fa-solid fa-star text-[11px] mr-1"></i> Rate Order' +
+          '</button>' +
+          '<button data-close="track" class="press py-3.5 rounded-2xl bg-white/5 border border-white/10 text-[13px] font-bold text-slate-300">Done</button>';
+
+        if (state.view === 'orders') renderOrders();
+      }
+    }, delay);
+    state.trackTimers.push(timer);
+  });
+}
+
+function openTrackingForOrder(order) {
+  state.trackingOrderId = order.id;
+  $('#trackId').textContent = '#' + order.id;
+  $('#trackEta').textContent = order.status >= 3 ? 'Delivered ✓' : 'In progress';
+  $('#trackProgress').style.width = (((order.status || 0) + 1) / 4 * 100) + '%';
+
+  renderTrackTimeline();
+  activateStep(order.status || 0);
+
+  if (order.status >= 3) {
+    $('#trackActions').innerHTML =
+      '<button data-rate-order="' + order.id + '" class="press py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-600 text-slate-950 text-[13px] font-black">' +
+        '<i class="fa-solid fa-star text-[11px] mr-1"></i> Rate' +
+      '</button>' +
+      '<button data-close="track" class="press py-3.5 rounded-2xl bg-white/5 border border-white/10 text-[13px] font-bold text-slate-300">Close</button>';
+  } else {
+    $('#trackActions').innerHTML =
+      '<button data-close="track" class="col-span-2 press w-full py-3.5 rounded-2xl bg-white/5 border border-white/10 text-[13px] font-bold text-slate-300">Continue Browsing</button>';
+  }
+
+  showModal('trackModal');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ORDERS HISTORY
+   ═══════════════════════════════════════════════════════════════ */
+function renderOrders() {
+  const el = $('#ordersList');
+
+  if (!state.orders.length) {
+    el.innerHTML =
+      '<div class="flex flex-col items-center justify-center py-20 text-center">' +
+        '<div class="w-20 h-20 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center text-3xl mb-4">🧾</div>' +
+        '<p class="font-bold text-slate-300">No orders yet</p>' +
+        '<p class="text-[11px] text-slate-500 mt-1 max-w-[240px]">Your Zemen Food order history will appear here</p>' +
+        '<button data-nav="home" class="press mt-5 px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-600 text-slate-950 text-[12px] font-black shadow-lg shadow-amber-500/25">Browse Restaurants</button>' +
+      '</div>';
+    return;
+  }
+
+  el.innerHTML = state.orders.map(o => {
+    const statusLabel = o.status >= 3 ? 'Delivered' : 'In Progress';
+    const statusClass = o.status >= 3
+      ? 'bg-emerald-500/15 text-emerald-400 border-emerald-400/30'
+      : 'bg-amber-500/15 text-amber-400 border-amber-400/30';
+
+    const itemsPreview = o.items.slice(0, 3).map(i => i.qty + '× ' + esc(i.name)).join(' • ') +
+      (o.items.length > 3 ? ' +' + (o.items.length - 3) + ' more' : '');
+
+    const d = new Date(o.placedAt);
+
+    return '' +
+    '<div class="rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-4">' +
+
+      '<div class="flex items-start justify-between gap-3">' +
+        '<div class="min-w-0">' +
+          '<p class="text-[10px] font-black tracking-widest text-amber-400">#' + o.id + '</p>' +
+          '<h3 class="font-bold text-[14px] mt-1 truncate">' + esc(o.restaurantNames.join(', ')) + '</h3>' +
+          '<p class="text-[10px] text-slate-500 mt-1">' + d.toLocaleDateString() + ' • ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + '</p>' +
+        '</div>' +
+        '<span class="shrink-0 px-2.5 py-1 rounded-lg border text-[10px] font-black ' + statusClass + '">' + statusLabel + '</span>' +
+      '</div>' +
+
+      '<p class="text-[11px] text-slate-400 mt-3 leading-snug">' + itemsPreview + '</p>' +
+
+      '<div class="flex items-center gap-2 mt-2 text-[10px] text-slate-500">' +
+        '<i class="fa-solid fa-location-dot text-amber-400/70"></i>' + esc(o.landmark) +
+      '</div>' +
+
+      '<div class="flex items-center justify-between mt-3.5 pt-3.5 border-t border-white/5">' +
+        '<div>' +
+          '<p class="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Total Paid</p>' +
+          '<p class="text-[15px] font-black text-amber-400 tabular-nums">' + fmt(o.total) + ' <span class="text-[10px] font-bold text-amber-400/70">ETB</span></p>' +
+        '</div>' +
+        '<div class="flex gap-2">' +
+          (o.status < 3
+            ? '<button data-track-order="' + o.id + '" class="press px-3.5 py-2.5 rounded-xl bg-amber-400/15 border border-amber-400/30 text-amber-400 text-[11px] font-black"><i class="fa-solid fa-location-crosshairs mr-1"></i>Track</button>'
+            : '') +
+          '<button data-reorder="' + o.id + '" class="press px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 text-[11px] font-bold hover:border-amber-400/40 hover:text-amber-400 transition-all"><i class="fa-solid fa-rotate-right mr-1"></i>Reorder</button>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="flex items-center gap-1.5 mt-3.5 pt-3.5 border-t border-white/5">' +
+        '<span class="text-[10px] font-bold text-slate-500 mr-1">Your rating:</span>' +
+        [1,2,3,4,5].map(s =>
+          '<button data-rate="' + o.id + '|' + s + '" class="press text-[15px] transition-transform hover:scale-125 ' +
+            (s <= (o.rating || 0) ? 'text-amber-400' : 'text-slate-700') + '">' +
+            '<i class="fa-solid fa-star"></i></button>'
+        ).join('') +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function rateOrder(orderId, stars) {
+  const o = state.orders.find(x => x.id === orderId);
+  if (!o) return;
+  o.rating = stars;
+  saveJSON(LS.ORDERS, state.orders);
+  renderOrders();
+  const labels = ['', 'Poor 😕', 'Fair 😐', 'Good 🙂', 'Great 😃', 'Excellent 🤩'];
+  toast('Thanks for rating!', labels[stars] + ' — your feedback helps us improve', 'success');
+}
+
+function reorder(orderId) {
+  const o = state.orders.find(x => x.id === orderId);
+  if (!o) return;
+
+  o.items.forEach(it => {
+    const existing = findCartItem(it.restaurantId, it.itemId);
+    if (existing) {
+      existing.qty += it.qty;
+    } else {
+      state.cart.push({ ...it, note: it.note || '' });
+    }
+  });
+
+  syncCart();
+  switchView('home');
+  setTimeout(openCart, 260);
+  toast('Added to Cart', o.items.length + ' item(s) re-added from ' + o.restaurantNames[0], 'success');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RATING MODAL
+   ═══════════════════════════════════════════════════════════════ */
+function openRatingModal(orderId) {
+  state.ratingOrderId = orderId;
+  state.selectedStars = 0;
+
+  const o = state.orders.find(x => x.id === orderId);
+  $('#ratingSubtitle').textContent = o
+    ? '#' + o.id + ' • ' + o.restaurantNames.join(', ')
+    : 'Your feedback helps us improve';
+
+  $('#ratingComment').value = '';
+  paintStars(0);
+  showModal('ratingModal');
+}
+
+function paintStars(n) {
+  $$('#ratingStars [data-star]').forEach(b => {
+    const v = Number(b.dataset.star);
+    b.classList.toggle('text-amber-400', v <= n);
+    b.classList.toggle('text-slate-700', v > n);
+    b.classList.toggle('scale-110', v === n);
+  });
+}
+
+function submitRating() {
+  const o = state.orders.find(x => x.id === state.ratingOrderId);
+  if (!o) { hideModal('ratingModal'); return; }
+  if (!state.selectedStars) {
+    toast('Select a rating', 'Tap a star to rate your order', 'info');
+    return;
+  }
+  o.rating = state.selectedStars;
+  o.comment = $('#ratingComment').value.trim();
+  saveJSON(LS.ORDERS, state.orders);
+
+  hideModal('ratingModal');
+  renderOrders();
+  toast('Rating Submitted', 'Thank you for your ' + state.selectedStars + '-star feedback! ⭐', 'success');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FAVORITES
+   ═══════════════════════════════════════════════════════════════ */
+function toggleFavorite(id) {
+  const r = getRestaurant(id);
+  if (!r) return;
+
+  if (state.favorites.includes(id)) {
+    state.favorites = state.favorites.filter(x => x !== id);
+    toast('Removed from Favorites', r.name, 'info');
+  } else {
+    state.favorites.push(id);
+    toast('Added to Favorites', r.name + ' saved ❤️', 'success');
+  }
+
+  saveJSON(LS.FAVS, state.favorites);
+
+  renderRestaurants();
+  if (state.view === 'favorites') renderFavorites();
+  if (state.view === 'restaurant') renderRestaurantView();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   GLOBAL EVENT DELEGATION
+   ═══════════════════════════════════════════════════════════════ */
+document.addEventListener('click', function (e) {
+  const el = e.target.closest(
+    '[data-add],[data-inc],[data-dec],[data-remove],[data-open],[data-fav],[data-back],' +
+    '[data-cat],[data-nav],[data-landmark],[data-tip],[data-rate],[data-rate-order],' +
+    '[data-reorder],[data-track-order],[data-close],[data-star]'
+  );
+  if (!el) return;
+
+  const d = el.dataset;
+
+  /* ── Add to cart ── */
+  if (d.add) {
+    const parts = d.add.split('|');
+    addToCart(parts[0], parts[1]);
+    return;
+  }
+
+  /* ── Increment ── */
+  if (d.inc) {
+    const parts = d.inc.split('|');
+    const existing = findCartItem(parts[0], parts[1]);
+    if (existing) {
+      existing.qty += 1;
+      syncCart();
+      bumpBadge();
+    } else {
+      addToCart(parts[0], parts[1]);
+    }
+    return;
+  }
+
+  /* ── Decrement ── */
+  if (d.dec) {
+    const parts = d.dec.split('|');
+    decrementCart(parts[0], parts[1]);
+    return;
+  }
+
+  /* ── Remove from cart ── */
+  if (d.remove) {
+    const parts = d.remove.split('|');
+    removeFromCart(parts[0], parts[1]);
+    return;
+  }
+
+  /* ── Open restaurant ── */
+  if (d.open) {
+    openRestaurant(d.open);
+    return;
+  }
+
+  /* ── Toggle favorite ── */
+  if (d.fav) {
+    e.stopPropagation();
+    toggleFavorite(d.fav);
+    return;
+  }
+
+  /* ── Back from restaurant ── */
+  if (d.back) {
+    state.activeRestaurant = null;
+    switchView('home');
+    return;
+  }
+
+  /* ── Category pill ── */
+  if (d.cat) {
+    state.category = d.cat;
+    renderCategories();
+    renderRestaurants();
+    return;
+  }
+
+  /* ── Bottom nav ── */
+  if (d.nav) {
+    switchView(d.nav);
+    return;
+  }
+
+  /* ── Landmark quick chip ── */
+  if (d.landmark) {
+    $('#landmarkInput').value = d.landmark;
+    return;
+  }
+
+  /* ── Tip selector ── */
+  if (d.tip !== undefined && el.classList.contains('tip-btn')) {
+    state.tip = Number(d.tip) || 0;
+    renderCheckout();
+    return;
+  }
+
+  /* ── Inline order rating (stars on order card) ── */
+  if (d.rate) {
+    const parts = d.rate.split('|');
+    rateOrder(parts[0], Number(parts[1]));
+    return;
+  }
+
+  /* ── Open rating modal from tracking ── */
+  if (d.rateOrder) {
+    hideModal('trackModal');
+    clearTrackTimers();
+    setTimeout(() => openRatingModal(d.rateOrder), 280);
+    return;
+  }
+
+  /* ── Reorder ── */
+  if (d.reorder) {
+    reorder(d.reorder);
+    return;
+  }
+
+  /* ── Track past order ── */
+  if (d.trackOrder) {
+    const o = state.orders.find(x => x.id === d.trackOrder);
+    if (o) openTrackingForOrder(o);
+    return;
+  }
+
+  /* ── Rating modal stars ── */
+  if (d.star) {
+    state.selectedStars = Number(d.star);
+    paintStars(state.selectedStars);
+    return;
+  }
+
+  /* ── Close modal / drawer ── */
+  if (d.close) {
+    if (d.close === 'checkout') hideModal('checkoutModal');
+    if (d.close === 'track')    { hideModal('trackModal'); clearTrackTimers(); }
+    if (d.close === 'rating')   hideModal('ratingModal');
+    if (d.close === 'cart')     closeCart();
+    return;
+  }
+});
+
+/* ── Cart note inputs (no re-render → keeps focus) ── */
+document.addEventListener('input', function (e) {
+  const noteEl = e.target.closest('[data-note]');
+  if (noteEl) {
+    const parts = noteEl.dataset.note.split('|');
+    const item = findCartItem(parts[0], parts[1]);
+    if (item) item.note = noteEl.value;
+  }
+});
+
+/* ── Search ── */
+$('#searchInput').addEventListener('input', function (e) {
+  state.search = e.target.value;
+  if (state.view !== 'home') switchView('home');
+  renderRestaurants();
+});
+
+/* ── Cart drawer triggers ── */
+$('#cartBtn').addEventListener('click', openCart);
+$('#closeCartBtn').addEventListener('click', closeCart);
+$('#cartOverlay').addEventListener('click', closeCart);
+
+/* ── Checkout triggers ── */
+$('#checkoutBtn').addEventListener('click', openCheckout);
+$('#confirmPayBtn').addEventListener('click', confirmPayment);
+
+/* ── Top up demo wallet ── */
+$('#topUpBtn').addEventListener('click', function () {
+  setWallet(getWallet() + 1000);
+  toast('Wallet Topped Up', '+1,000 ETB added to your Zemen Wallet', 'success');
+  renderCheckout();
+});
+
+/* ── Rating submit ── */
+$('#submitRatingBtn').addEventListener('click', submitRating);
+
+/* ── Escape key closes overlays ── */
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Escape') return;
+  hideModal('ratingModal');
+  hideModal('trackModal');
+  hideModal('checkoutModal');
+  closeCart();
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   INITIALISATION
+   ═══════════════════════════════════════════════════════════════ */
+function init() {
+  // Hydrate persistent state
+  state.favorites = loadJSON(LS.FAVS, []);
+  state.orders    = loadJSON(LS.ORDERS, []);
+  if (!Array.isArray(state.favorites)) state.favorites = [];
+  if (!Array.isArray(state.orders))    state.orders = [];
+
+  // Wallet (creates default if absent)
+  getWallet();
+  renderWallet();
+
+  // UI
+  renderCategories();
+  renderRestaurants();
+  renderLandmarkChips();
+  renderCartBadge();
+  renderCart();
+  switchView('home');
+}
+
+/* ── Splash sequence ── */
+function runSplash() {
+  const bar = $('#splashBar');
+  requestAnimationFrame(() => {
+    setTimeout(() => { if (bar) bar.style.width = '100%'; }, 80);
+  });
+
+  setTimeout(() => {
+    const splash = $('#splash');
+    const app = $('#app');
+    if (splash) {
+      splash.style.opacity = '0';
+      splash.style.visibility = 'hidden';
+    }
+    if (app) app.classList.remove('opacity-0');
+    setTimeout(() => { if (splash) splash.remove(); }, 750);
+  }, 2000);
+}
+
+/* ── Boot ── */
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => { init(); runSplash(); });
+} else {
+  init();
+  runSplash();
+}
+
+})();
+</script>
+</body>
+</html>
