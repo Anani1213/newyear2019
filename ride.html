@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#020617">
+<title>Zemen Ride & Travel</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *{ -webkit-tap-highlight-color: transparent; }
+  html,body{ font-family:'Inter',system-ui,-apple-system,sans-serif; }
+  body{ overscroll-behavior-y:none; }
+
+  .glass{ background:rgba(15,23,42,.62); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); }
+
+  .input{
+    width:100%; background:rgba(2,6,23,.65); border:1px solid rgba(255,255,255,.08);
+    border-radius:.9rem; padding:.7rem .9rem; font-size:.82rem; font-weight:600;
+    color:#e2e8f0; outline:none; transition:all .2s ease; appearance:none;
+    background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3e%3cpath d='M6 9l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat:no-repeat; background-position:right .7rem center; background-size:1rem;
+    padding-right:2rem;
+  }
+  input.input{ background-image:none; padding-right:.9rem; }
+  .input:focus{ border-color:rgba(168,85,247,.75); box-shadow:0 0 0 3px rgba(168,85,247,.15); }
+  select.input option{ background:#0b1220; color:#e2e8f0; }
+  input[type="date"].input, input[type="time"].input{ color-scheme:dark; }
+
+  ::-webkit-scrollbar{ width:0px; height:0px; }
+
+  @keyframes pop{ 0%{transform:scale(.4);opacity:0} 60%{transform:scale(1.12)} 100%{transform:scale(1);opacity:1} }
+  .animate-pop{ animation:pop .45s cubic-bezier(.34,1.56,.64,1) both; }
+
+  @keyframes floaty{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-9px)} }
+  .animate-floaty{ animation:floaty 3.2s ease-in-out infinite; }
+
+  @keyframes glowPulse{ 0%,100%{ box-shadow:0 0 32px rgba(168,85,247,.55), 0 0 70px rgba(34,211,238,.25);} 50%{ box-shadow:0 0 52px rgba(168,85,247,.9), 0 0 110px rgba(34,211,238,.45);} }
+  .animate-glow{ animation:glowPulse 2.4s ease-in-out infinite; }
+
+  @keyframes shimmer{ 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+  .shimmer{ background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent); background-size:200% 100%; animation:shimmer 1.8s linear infinite; }
+
+  @keyframes ringPing{ 0%{transform:scale(.8);opacity:.8} 100%{transform:scale(2.2);opacity:0} }
+  .ring-ping::after{ content:''; position:absolute; inset:0; border-radius:9999px; border:2px solid rgba(52,211,153,.8); animation:ringPing 1.6s ease-out infinite; }
+
+  .class-card{ transition:all .28s cubic-bezier(.34,1.56,.64,1); }
+  .seat{ transition:all .18s ease; }
+
+  .fade-up{ animation:fadeUp .4s ease both; }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
+</style>
+</head>
+
+<body class="bg-slate-950 text-slate-100 antialiased selection:bg-purple-500/30">
+
+<!-- ══════════ AMBIENT BACKGROUND ══════════ -->
+<div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+  <div class="absolute -top-32 -left-32 w-80 h-80 rounded-full bg-purple-600/20 blur-[110px]"></div>
+  <div class="absolute top-1/4 -right-32 w-80 h-80 rounded-full bg-cyan-500/15 blur-[110px]"></div>
+  <div class="absolute bottom-0 left-1/4 w-72 h-72 rounded-full bg-fuchsia-600/10 blur-[110px]"></div>
+</div>
+
+<!-- ══════════ SPLASH SCREEN ══════════ -->
+<div id="splash" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-slate-950 transition-opacity duration-700">
+  <div class="absolute w-64 h-64 rounded-full bg-purple-600/25 blur-[90px]"></div>
+  <div class="absolute w-40 h-40 rounded-full bg-cyan-500/20 blur-[70px] translate-y-16"></div>
+
+  <div class="relative animate-floaty">
+    <div class="w-24 h-24 rounded-[1.75rem] bg-gradient-to-br from-purple-600 via-fuchsia-600 to-cyan-500 flex items-center justify-center animate-glow">
+      <i class="fa-solid fa-car-side text-4xl text-white drop-shadow-lg"></i>
+    </div>
+    <div class="absolute -bottom-2 -right-2 w-9 h-9 rounded-2xl bg-slate-950 border border-cyan-400/40 flex items-center justify-center">
+      <i class="fa-solid fa-bolt text-cyan-300 text-xs"></i>
+    </div>
+  </div>
+
+  <h1 class="relative mt-8 text-[2rem] font-black tracking-tight leading-none">
+    Zemen <span class="bg-gradient-to-r from-purple-400 via-fuchsia-400 to-cyan-400 bg-clip-text text-transparent">Ride</span>
+  </h1>
+  <p class="relative mt-3 text-[10px] font-bold uppercase tracking-[0.42em] text-slate-500">Fast • Safe • Reliable</p>
+
+  <div class="relative mt-12 w-56 h-1.5 rounded-full bg-slate-800/80 overflow-hidden">
+    <div id="splashBar" class="h-full w-0 rounded-full bg-gradient-to-r from-purple-500 via-fuchsia-500 to-cyan-400" style="transition:width 1900ms cubic-bezier(.4,0,.2,1);"></div>
+  </div>
+  <p class="relative mt-4 text-[10px] text-slate-600 font-semibold tracking-wider">ZEMEN SUPER APP ECOSYSTEM</p>
+</div>
+
+<!-- ══════════ APP SHELL ══════════ -->
+<div class="relative z-10 max-w-md mx-auto min-h-screen pb-16">
+
+  <!-- ─── TOP BAR ─── -->
+  <header class="sticky top-0 z-40 backdrop-blur-xl bg-slate-950/85 border-b border-white/5">
+    <div class="flex items-center justify-between px-4 h-14 gap-2">
+      <a href="index.html" class="group flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-full bg-white/5 border border-white/10 active:scale-95 transition">
+        <i class="fa-solid fa-arrow-left text-[11px] text-purple-300 transition group-hover:-translate-x-0.5"></i>
+        <span class="text-[11px] font-bold text-slate-200 leading-none whitespace-nowrap">Exit to Zemen</span>
+      </a>
+
+      <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-purple-600/25 to-cyan-500/20 border border-purple-400/25">
+        <i class="fa-solid fa-wallet text-[11px] text-cyan-300"></i>
+        <span id="walletBalance" class="text-xs font-extrabold tracking-tight">Br 0</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─── HERO ─── -->
+  <section class="px-4 pt-5">
+    <div class="flex items-start justify-between gap-3">
+      <div>
+        <h1 class="text-[1.6rem] font-black leading-tight tracking-tight">
+          Where to, <span class="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">today?</span>
+        </h1>
+        <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">Hail a city ride or reserve an inter-city bus seat — instantly.</p>
+      </div>
+      <div class="shrink-0 w-11 h-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+        <i class="fa-solid fa-route text-cyan-300"></i>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── TABS ─── -->
+  <div class="px-4 mt-4">
+    <div class="p-1 rounded-2xl bg-white/5 border border-white/10 flex gap-1">
+      <button id="tabCity" class="tab-btn">City Ride</button>
+      <button id="tabBus" class="tab-btn">Bus Ticket</button>
+    </div>
+  </div>
+
+  <!-- ══════════ PANEL: CITY RIDE ══════════ -->
+  <div id="panelCity" class="px-4 mt-4 space-y-4">
+
+    <!-- Vehicle class -->
+    <div>
+      <div class="flex items-center justify-between mb-2 px-0.5">
+        <span class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Vehicle Class</span>
+        <span class="text-[9px] text-slate-500 font-semibold">fare updates live</span>
+      </div>
+      <div id="cityClassGrid" class="grid grid-cols-3 gap-2"></div>
+    </div>
+
+    <!-- Route -->
+    <div class="rounded-3xl bg-white/5 border border-white/10 backdrop-blur-xl p-4">
+      <div class="flex gap-3">
+        <div class="flex flex-col items-center pt-6 pb-6">
+          <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,.9)]"></span>
+          <span class="flex-1 w-px bg-gradient-to-b from-cyan-400/70 to-purple-500/70 my-1.5"></span>
+          <span class="w-2.5 h-2.5 rounded-[3px] bg-purple-400 shadow-[0_0_10px_rgba(168,85,247,.9)]"></span>
+        </div>
+        <div class="flex-1 space-y-3">
+          <div>
+            <label class="block text-[9px] font-black uppercase tracking-[0.18em] text-slate-500 mb-1.5">Pickup · መነሻ</label>
+            <select id="cityPickup" class="input"></select>
+          </div>
+          <div>
+            <label class="block text-[9px] font-black uppercase tracking-[0.18em] text-slate-500 mb-1.5">Destination · መድረሻ</label>
+            <select id="cityDropoff" class="input"></select>
+          </div>
+        </div>
+      </div>
+      <button id="swapCity" class="mt-3 w-full py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-bold text-slate-300 active:scale-[0.98] transition">
+        <i class="fa-solid fa-arrow-up-down mr-1.5 text-purple-300"></i> Swap route
+      </button>
+    </div>
+
+    <!-- Date / time / pax -->
+    <div class="grid grid-cols-2 gap-2">
+      <div class="rounded-2xl bg-white/5 border border-white/10 p-3">
+        <label class="block text-[9px] font-black uppercase tracking-[0.18em] text-slate-500 mb-1.5">Date</label>
+        <input id="cityDate" type="date" class="input !py-2 !text-[11px]">
+      </div>
+      <div class="rounded-2xl bg-white/5 border border-white/10 p-3">
+        <label class="block text-[9px] font-black uppercase tracking-[0.18em] text-slate-500 mb-1.5">Pickup Time</label>
+        <input id="cityTime" type="time" class="input !py-2 !text-[11px]">
+      </div>
+    </div>
+
+    <div class="rounded-2xl bg-white/5 border border-white/10 p-3 flex items-center justify-between">
+      <div>
+        <div class="text-[9px] font-black uppercase tracking-[0.18em] text-slate-500">Passengers</div>
+        <div class="text-[10px] text-slate-500 mt-0.5">Fare is per vehicle</div>
+      </div>
+      <div class="flex items-center gap-3">
+        <button data-pax="city:-1" class="pax-btn w-8 h-8 rounded-xl bg-white/5 border border-white/10 text-slate-300 active:scale-90 transition"><i class="fa-solid fa-minus text-[10px]"></i></button>
+        <span id="cityPax" class="w-6 text-center text-sm font-black">1</span>
+        <button data-pax="city:1" class="pax-btn w-8 h-8 rounded-xl bg-white/5 border border-white/10 text-slate-300 active:scale-90 transition"><i class="fa-solid fa-plus text-[10px]"></i></button>
+      </div>
+    </div>
+
+    <!-- Fare card -->
+    <div class="rounded-3xl bg-gradient-to-br from-purple-600/20 via-white/5 to-cyan-500/10 border border-white/10 p-4">
+      <div class="flex items-center justify-between">
+        <span class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-300">Estimated Fare</span>
+        <span id="cityEta" class="text-[9px] font-bold px-2 py-1 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-400/20">ETA 3 min</span>
+      </div>
+      <div class="mt-2 flex items-end gap-2">
+        <span id="cityFare" class="text-[2rem] font-black tracking-tight leading-none">Br 0</span>
+        <span class="text-[10px] text-slate-400 mb-1 font-semibold">total / vehicle</span>
+      </div>
+      <div id="cityBreakdown" class="mt-3.5 space-y-1.5 text-[10px] text-slate-400 font-medium"></div>
+      <button id="cityBookBtn" class="mt-4 w-full py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 to-cyan-500 font-black text-[13px] shadow-lg shadow-purple-900/40 active:scale-[0.98] transition">
+        <i class="fa-solid fa-bolt mr-1.5"></i> Confirm Ride
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════ PANEL: BUS TICKET ══════════ -->
+  <div id="panelBus" class="px-4 mt-4 space-y-4 hidden">
+
+    <!-- Bus class -->
+    <div>
+      <div class="flex items-center justify-between mb-2 px-0.5">
+        <span class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Coach Class</span>
+        <span class="text-[9px] text-slate-500 font-semibold">seat map changes</span>
+      </div>
+      <div id="busClassGrid" class="grid grid-cols-3 gap-2"></div>
+    </div>
+
+    <!-- Route -->
+    <div class="rounded-3xl bg-white/5 border border-white/10 backdrop-blur-xl p-4">
+      <div class="flex gap-3">
+        <div class="flex flex-col items-center pt-6 pb-6">
+          <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,.9)]"></span>
+          <span class="flex-1 w-px bg-gradient-to-b from-cyan-400/70 to-purple-500/70 my-1.5"></span>
+          <span class="w-2.5 h-2.5 rounded-[3px] bg-purple-400 shadow-[0_0_10px_rgba(168,85,247,.9)]"></span>
+        </div>
+        <div class="flex-1 space-y-3">
+          <div>
+            <label class="block text-[9px] font-black uppercase tracking-[0.18em] text-slate-500 mb-1.5">Departure City · መነሻ</label>
+            <select id="busFrom" class="input"></select>
+          </div>
+          <div>
+            <label class="block text-[9px] font-black uppercase tracking-[0.18em] text-slate-500 mb-1.5">Arrival City · መድረሻ</label>
+            <select id="busTo" class="input"></select>
+          </div>
+        </div>
+      </div>
+      <button id="swapBus" class="mt-3 w-full py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-bold text-slate-300 active:scale-[0.98] transition">
+        <i class="fa-solid fa-arrow-up-down mr-1.5 text-purple-300"></i> Swap cities
+      </button>
+    </div>
+
+    <!-- Date / time -->
+    <div class="grid grid-cols-2 gap-2">
+      <div class="rounded-2xl bg-white/5 border border-white/10 p-3">
+        <label class="block text-[9px] font-black uppercase tracking-[0.18em] text-slate-500 mb-1.5">Travel Date</label>
+        <input id="busDate" type="date" class="input !py-2 !text-[11px]">
+      </div>
+      <div class="rounded-2xl bg-white/5 border border-white/10 p-3">
+        <label class="block text-[9px] font-black uppercase tracking-[0.18em] text-slate-500 mb-1.5">Departure</label>
+        <input id="busTime" type="time" class="input !py-2 !text-[11px]">
+      </div>
+    </div>
+
+    <!-- Passengers -->
+    <div class="rounded-2xl bg-white/5 border border-white/10 p-3 flex items-center justify-between">
+      <div>
+        <div class="text-[9px] font-black uppercase tracking-[0.18em] text-slate-500">Passengers</div>
+        <div class="text-[10px] text-slate-500 mt-0.5">Select matching seats below</div>
+      </div>
+      <div class="flex items-center gap-3">
+        <button data-pax="bus:-1" class="pax-btn w-8 h-8 rounded-xl bg-white/5 border border-white/10 text-slate-300 active:scale-90 transition"><i class="fa-solid fa-minus text-[10px]"></i></button>
+        <span id="busPax" class="w-6 text-center text-sm font-black">1</span>
+        <button data-pax="bus:1" class="pax-btn w-8 h-8 rounded-xl bg-white/5 border border-white/10 text-slate-300 active:scale-90 transition"><i class="fa-solid fa-plus text-[10px]"></i></button>
+      </div>
+    </div>
+
+    <!-- Seat map -->
+    <div class="rounded-3xl bg-white/5 border border-white/10 p-4">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-300">
+          <i class="fa-solid fa-chair mr-1.5 text-purple-300"></i> Seat Selection
+        </span>
+        <span id="seatCounter" class="text-[10px] font-bold text-cyan-300">0 / 1 selected</span>
+      </div>
+
+      <div id="seatMap" class="py-1"></div>
+
+      <div class="mt-3 pt-3 border-t border-white/5 flex items-center justify-center gap-4 text-[9px] font-semibold text-slate-500">
+        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-white/5 border border-white/15"></span>Available</span>
+        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-gradient-to-br from-purple-600 to-cyan-500"></span>Selected</span>
+        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-slate-800/70 border border-slate-700/40"></span>Taken</span>
+      </div>
+    </div>
+
+    <!-- Fare card -->
+    <div class="rounded-3xl bg-gradient-to-br from-purple-600/20 via-white/5 to-cyan-500/10 border border-white/10 p-4">
+      <div class="flex items-center justify-between">
+        <span class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-300">Ticket Total</span>
+        <span id="busDistChip" class="text-[9px] font-bold px-2 py-1 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-400/20">0 km</span>
+      </div>
+      <div class="mt-2 flex items-end gap-2">
+        <span id="busFare" class="text-[2rem] font-black tracking-tight leading-none">Br 0</span>
+        <span class="text-[10px] text-slate-400 mb-1 font-semibold">total</span>
+      </div>
+      <div id="busBreakdown" class="mt-3.5 space-y-1.5 text-[10px] text-slate-400 font-medium"></div>
+      <button id="busBookBtn" class="mt-4 w-full py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 to-cyan-500 font-black text-[13px] shadow-lg shadow-purple-900/40 active:scale-[0.98] transition">
+        <i class="fa-solid fa-ticket mr-1.5"></i> Reserve Seat
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════ MY TICKETS ══════════ -->
+  <section class="px-4 mt-7">
+    <div class="flex items-center justify-between mb-3 px-0.5">
+      <h2 class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Recent Trips & Tickets</h2>
+      <button id="clearTickets" class="text-[9px] font-bold text-slate-500 active:scale-95 transition">Clear all</button>
+    </div>
+    <div id="ticketList" class="space-y-2"></div>
+  </section>
+
+  <footer class="px-4 mt-8 text-center">
+    <p class="text-[9px] text-slate-600 font-semibold tracking-wide">ZEMEN RIDE & TRAVEL · PART OF THE ZEMEN SUPER APP</p>
+  </footer>
+</div>
+
+<!-- ══════════ MODAL ROOT ══════════ -->
+<div id="modal" class="fixed inset-0 z-[80] hidden">
+  <div id="modalBackdrop" class="absolute inset-0 bg-black/75 backdrop-blur-sm opacity-0 transition-opacity duration-300"></div>
+  <div class="absolute inset-0 flex items-end justify-center overflow-y-auto">
+    <div id="modalContent" class="relative w-full max-w-md bg-slate-900 border border-white/10 rounded-t-[1.75rem] sm:rounded-[1.75rem] translate-y-full transition-transform duration-300 ease-out max-h-[94vh] overflow-y-auto"></div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   ZEMEN RIDE & TRAVEL — Core Engine
+   ═══════════════════════════════════════════════════════════════ */
+
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const money = n => 'Br ' + Math.round(Number(n) || 0).toLocaleString('en-US');
+
+const LS_WALLET  = 'zemen_wallet_balance';
+const LS_TICKETS = 'zemen_ride_tickets';
+const LS_NAME    = 'zemen_user_name';
+
+/* ─────────── GEO DATA ─────────── */
+const CITY_SPOTS = [
+  { id:'bole',      name:'Bole',            am:'ቦሌ',            lat:8.985, lng:38.787 },
+  { id:'megenagna', name:'Megenagna',       am:'መገናኛ',         lat:9.019, lng:38.802 },
+  { id:'piassa',    name:'Piassa',          am:'ፒያሳ',           lat:9.035, lng:38.752 },
+  { id:'mexico',    name:'Meskel Square',   am:'መስቀል አደባባይ',   lat:9.010, lng:38.761 },
+  { id:'cmc',       name:'CMC',             am:'ሲኤምሲ',          lat:9.032, lng:38.842 },
+  { id:'ayat',      name:'Ayat',            am:'አያት',           lat:9.055, lng:38.896 },
+  { id:'kality',    name:'Kality',          am:'ካሊቲ',           lat:8.925, lng:38.770 },
+  { id:'jemo',      name:'Jemo',            am:'ጀሞ',            lat:8.975, lng:38.665 },
+  { id:'summit',    name:'Summit',          am:'ሰሚት',           lat:9.045, lng:38.855 },
+  { id:'saris',     name:'Saris',           am:'ሳሪስ',           lat:8.960, lng:38.750 },
+  { id:'gerji',     name:'Gerji',           am:'ገርጂ',           lat:9.005, lng:38.820 },
+  { id:'torhailoch',name:'Torhailoch',      am:'ቶርሃይሎች',       lat:9.005, lng:38.700 },
+  { id:'merkato',   name:'Merkato',         am:'መርካቶ',          lat:9.035, lng:38.740 },
+  { id:'entoto',    name:'Entoto',          am:'እንጦጦ',          lat:9.075, lng:38.760 },
+  { id:'lebu',      name:'Lebu',            am:'ለቡ',            lat:8.955, lng:38.680 },
+  { id:'alemgena',  name:'Alem Gena',       am:'አለም ገና',        lat:8.970, lng:38.630 },
+  { id:'burayu',    name:'Burayu',          am:'ቡራዩ',           lat:9.045, lng:38.670 },
+  { id:'gulele',    name:'Gulele',          am:'ጉለሌ',           lat:9.065, lng:38.735 }
+];
+
+const CITIES = [
+  { id:'addis',     name:'Addis Ababa',  am:'አዲስ አበባ',  lat:9.030, lng:38.740 },
+  { id:'bishoftu',  name:'Bishoftu',     am:'ቢሾፍቱ',     lat:8.750, lng:38.980 },
+  { id:'adama',     name:'Adama',        am:'አዳማ',      lat:8.540, lng:39.270 },
+  { id:'shashemene',name:'Shashemene',   am:'ሻሸመኔ',     lat:7.200, lng:38.600 },
+  { id:'hawassa',   name:'Hawassa',      am:'ሀዋሳ',      lat:7.060, lng:38.480 },
+  { id:'sodo',      name:'Wolaita Sodo', am:'ወላይታ ሶዶ',  lat:6.860, lng:37.760 },
+  { id:'arbaminch', name:'Arba Minch',   am:'አርባ ምንጭ',  lat:6.030, lng:37.550 },
+  { id:'jimma',     name:'Jimma',        am:'ጅማ',       lat:7.670, lng:36.830 },
+  { id:'nekemte',   name:'Nekemte',      am:'ነከምቴ',     lat:9.090, lng:36.550 },
+  { id:'ambu',      name:'Ambo',         am:'አምቦ',      lat:8.980, lng:37.850 },
+  { id:'bahirdar',  name:'Bahir Dar',    am:'ባህር ዳር',   lat:11.590, lng:37.390 },
+  { id:'gondar',    name:'Gondar',       am:'ጎንደር',     lat:12.600, lng:37.470 },
+  { id:'dessie',    name:'Dessie',       am:'ደሴ',       lat:11.130, lng:39.630 },
+  { id:'mekelle',   name:'Mekelle',      am:'መቀሌ',      lat:13.500, lng:39.470 },
+  { id:'diredawa',  name:'Dire Dawa',    am:'ድሬዳዋ',     lat:9.600,  lng:41.870 }
+];
+
+/* ─────────── CLASS CONFIG ─────────── */
+const CITY_CLASSES = {
+  standard: { name:'Standard', icon:'fa-car',        mult:1.00, seats:4, eta:'3 min', desc:'Economy sedan' },
+  comfort:  { name:'Comfort',  icon:'fa-car-side',   mult:1.35, seats:4, eta:'5 min', desc:'AC · Newer car' },
+  vip:      { name:'VIP',      icon:'fa-crown',      mult:1.90, seats:6, eta:'8 min', desc:'Premium SUV' }
+};
+
+const BUS_CLASSES = {
+  standard: { name:'Standard', icon:'fa-bus',        rate:2.20, layout:{left:2,right:2,rows:10}, desc:'2+2 · No AC' },
+  comfort:  { name:'Comfort',  icon:'fa-bus-simple', rate:3.20, layout:{left:2,right:2,rows:11}, desc:'2+2 · AC · Reclining' },
+  vip:      { name:'VIP',      icon:'fa-crown',      rate:4.60, layout:{left:1,right:2,rows:10}, desc:'2+1 · Lounge · WiFi' }
+};
+
+const DRIVERS = [
+  { name:'Abebe Kebede',   rating:4.9, trips:2140, plate:'AA 3-B12345', car:'Toyota Corolla',  phone:'+251 911 234 567' },
+  { name:'Selam Tesfaye',  rating:4.8, trips:1780, plate:'AA 2-A45231', car:'Hyundai Elantra', phone:'+251 912 876 543' },
+  { name:'Dawit Mekonnen', rating:5.0, trips:3120, plate:'AA 3-C77812', car:'Toyota Vitz',     phone:'+251 913 555 121' },
+  { name:'Hanna Girma',    rating:4.7, trips:960,  plate:'AA 2-D11093', car:'Kia Rio',         phone:'+251 914 332 908' },
+  { name:'Yonas Bekele',   rating:4.9, trips:2650, plate:'AA 3-E55210', car:'Suzuki Dzire',    phone:'+251 915 774 320' }
+];
+
+const BUS_DRIVERS = [
+  { name:'Getachew Alemu', rating:4.9, trips:890,  plate:'BUS-3-4021', car:'Scania Touring',  phone:'+251 911 445 210' },
+  { name:'Tigist Hailu',   rating:4.8, trips:1240, plate:'BUS-3-1188', car:'Golden Dragon',   phone:'+251 912 660 774' },
+  { name:'Solomon Girma',  rating:5.0, trips:2010, plate:'BUS-3-9077', car:'Yutong ZK6122',   phone:'+251 913 220 145' }
+];
+
+/* ─────────── STATE ─────────── */
+const todayISO = () => new Date().toISOString().slice(0,10);
+const nowTime  = () => { const d = new Date(); return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); };
+
+const state = {
+  tab: 'city',
+  city: { cls:'standard', pickup:'bole', dropoff:'megenagna', date: todayISO(), time: nowTime(), pax:1 },
+  bus:  { cls:'standard', from:'addis', to:'hawassa', date: todayISO(), time:'06:30', pax:1, seats:[], occupied:new Set() }
+};
+
+/* ═══════════ UTILITIES ═══════════ */
+function hashStr(s){ let h = 2166136261 >>> 0; for(let i=0;i<s.length;i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+function mulberry32(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+function haversine(a,b){
+  const R = 6371, toRad = d => d * Math.PI / 180;
+  const dLat = toRad(b.lat - a.lat), dLng = toRad(b.lng - a.lng);
+  const s = Math.sin(dLat/2)**2 + Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng/2)**2;
+  return 2 * R * Math.asin(Math.sqrt(s));
+}
+
+function isNight(t){
+  const h = parseInt((t || '12:00').split(':')[0], 10);
+  return h >= 22 || h < 6;
+}
+
+function genRef(prefix){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let s = '';
+  for(let i=0;i<6;i++) s += chars[Math.floor(Math.random()*chars.length)];
+  return prefix + '-' + s;
+}
+
+/* ═══════════ WALLET ═══════════ */
+function getWallet(){
+  let raw = localStorage.getItem(LS_WALLET);
+  let v = parseFloat(raw);
+  if(raw === null || isNaN(v)){ v = 5000; localStorage.setItem(LS_WALLET, v.toFixed(2)); }
+  return v;
+}
+function setWallet(v){
+  localStorage.setItem(LS_WALLET, Math.max(0, v).toFixed(2));
+  renderWallet();
+}
+function renderWallet(){
+  const el = $('#walletBalance');
+  if(el) el.textContent = money(getWallet());
+}
+
+/* ═══════════ TICKET STORE ═══════════ */
+function getTickets(){
+  try{ const t = JSON.parse(localStorage.getItem(LS_TICKETS) || '[]'); return Array.isArray(t) ? t : []; }
+  catch(e){ return []; }
+}
+function saveTicket(t){
+  const list = getTickets();
+  list.push(t);
+  localStorage.setItem(LS_TICKETS, JSON.stringify(list.slice(-30)));
+  renderTickets();
+}
+
+/* ═══════════ TOAST ═══════════ */
+function toast(msg, iconClass){
+  const el = document.createElement('div');
+  el.className = 'fixed left-1/2 -translate-x-1/2 bottom-8 z-[120] px-4 py-3 rounded-2xl bg-slate-900/95 border border-white/10 backdrop-blur-xl text-[11px] font-bold flex items-center gap-2.5 shadow-2xl transition-all duration-300 opacity-0 translate-y-3 max-w-[90vw]';
+  el.innerHTML = `<i class="fa-solid ${iconClass || 'fa-circle-info text-cyan-400'}"></i><span>${msg}</span>`;
+  document.body.appendChild(el);
+  requestAnimationFrame(() => el.classList.remove('opacity-0','translate-y-3'));
+  setTimeout(() => {
+    el.classList.add('opacity-0','translate-y-3');
+    setTimeout(() => el.remove(), 320);
+  }, 2400);
+}
+
+/* ═══════════ MODAL ═══════════ */
+const modal = $('#modal');
+const modalContent = $('#modalContent');
+const modalBackdrop = $('#modalBackdrop');
+
+function openModal(html){
+  modalContent.innerHTML = html;
+  modal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  requestAnimationFrame(() => {
+    modalBackdrop.classList.remove('opacity-0');
+    modalContent.classList.remove('translate-y-full');
+  });
+}
+function closeModal(){
+  modalBackdrop.classList.add('opacity-0');
+  modalContent.classList.add('translate-y-full');
+  document.body.style.overflow = '';
+  if(window.__trackTimer){ clearInterval(window.__trackTimer); window.__trackTimer = null; }
+  setTimeout(() => { modal.classList.add('hidden'); modalContent.innerHTML = ''; }, 320);
+}
+window.closeModal = closeModal;
+modalBackdrop.addEventListener('click', closeModal);
+
+/* ═══════════ FARE ENGINES ═══════════ */
+function cityDistance(){
+  const a = CITY_SPOTS.find(s => s.id === state.city.pickup);
+  const b = CITY_SPOTS.find(s => s.id === state.city.dropoff);
+  if(!a || !b || a.id === b.id) return 0;
+  return +(haversine(a,b) * 1.45 + 1.2).toFixed(1);
+}
+
+function calcCityFare(){
+  const d = cityDistance();
+  const cfg = CITY_CLASSES[state.city.cls];
+  const base = 45;
+  const perKm = 16;
+  const raw = base + d * perKm;
+  const clsExtra = raw * (cfg.mult - 1);
+  const night = isNight(state.city.time) ? (raw + clsExtra) * 0.15 : 0;
+  const service = 15;
+  return { dist:d, base, perKm, raw, clsExtra, night, service, total: raw + clsExtra + night + service, cfg };
+}
+
+function busDistance(){
+  const a = CITIES.find(c => c.id === state.bus.from);
+  const b = CITIES.find(c => c.id === state.bus.to);
+  if(!a || !b || a.id === b.id) return 0;
+  return Math.round(haversine(a,b) * 1.35);
+}
+
+function calcBusFare(){
+  const d = busDistance();
+  const cfg = BUS_CLASSES[state.bus.cls];
+  const perPax = Math.max(120, d * cfg.rate);
+  const pax = state.bus.pax;
+  const sub = perPax * pax;
+  const service = 25;
+  return { dist:d, perPax, pax, sub, service, total: sub + service, cfg };
+}
+
+/* ═══════════ SELECT BUILDERS ═══════════ */
+function fillSelect(el, items, selectedId, showAm){
+  el.innerHTML = items.map(i =>
+    `<option value="${i.id}" ${i.id === selectedId ? 'selected' : ''}>${i.name}${showAm ? ' · ' + i.am : ''}</option>`
+  ).join('');
+}
+
+/* ═══════════ CLASS GRIDS ═══════════ */
+const CARD_ON  = 'class-card rounded-2xl p-3 text-left border border-purple-500/60 bg-gradient-to-br from-purple-600/30 to-cyan-500/10 shadow-[0_0_22px_rgba(168,85,247,.28)] scale-[1.02]';
+const CARD_OFF = 'class-card rounded-2xl p-3 text-left border border-white/10 bg-white/5';
+
+function buildClassGrid(container, config, activeKey, dataAttr){
+  container.innerHTML = Object.entries(config).map(([key, c]) => `
+    <button data-${dataAttr}="${key}" class="${key === activeKey ? CARD_ON : CARD_OFF}">
+      <i class="fa-solid ${c.icon} text-base ${key === activeKey ? 'text-cyan-300' : 'text-slate-400'}"></i>
+      <div class="mt-2 text-[11px] font-black leading-none">${c.name}</div>
+      <div class="mt-1 text-[8.5px] text-slate-400 font-semibold leading-tight">${c.desc}</div>
+    </button>
+  `).join('');
+}
+
+function refreshClassGrid(container, activeKey, dataAttr){
+  $$('#' + container.id + ' [data-' + dataAttr + ']').forEach(b => {
+    const on = b.dataset[dataAttr] === activeKey;
+    b.className = on ? CARD_ON : CARD_OFF;
+    const icon = b.querySelector('i');
+    if(icon){ icon.className = icon.className.replace(on ? 'text-slate-400' : 'text-cyan-300', on ? 'text-cyan-300' : 'text-slate-400'); }
+  });
+}
+
+/* ═══════════ SEAT MAP ═══════════ */
+function seatClass(id, occupied, selected){
+  let c = 'seat w-8 h-8 rounded-lg text-[9px] font-black flex items-center justify-center border ';
+  if(occupied) c += 'bg-slate-800/70 border-slate-700/40 text-slate-600 cursor-not-allowed';
+  else if(selected) c += 'bg-gradient-to-br from-purple-600 to-cyan-500 border-transparent text-white shadow-[0_0_14px_rgba(168,85,247,.65)] scale-105';
+  else c += 'bg-white/5 border-white/10 text-slate-400 active:scale-90';
+  return c;
+}
+
+function buildSeatMap(){
+  const cfg = BUS_CLASSES[state.bus.cls];
+  const { left, right, rows } = cfg.layout;
+  const letters = ['A','B','C'];
+  const seed = `${state.bus.from}|${state.bus.to}|${state.bus.date}|${state.bus.cls}`;
+  const rnd = mulberry32(hashStr(seed));
+  const occ = new Set();
+
+  let html = `<div class="flex justify-end mb-2 pr-1">
+      <div class="flex items-center gap-1.5 text-[9px] font-bold text-slate-500">
+        <i class="fa-solid fa-steering-wheel text-slate-600"></i> Driver
+      </div>
+    </div>`;
+
+  for(let r = 1; r <= rows; r++){
+    html += `<div class="flex items-center justify-center gap-1.5 mb-1.5">`;
+    for(let i = 0; i < left; i++){
+      const id = r + letters[i];
+      const isOcc = rnd() < 0.32;
+      if(isOcc) occ.add(id);
+      html += `<button class="${seatClass(id, isOcc, false)}" data-seat="${id}" ${isOcc ? 'disabled' : ''}>${id}</button>`;
+    }
+    html += `<div class="w-4 sm:w-6"></div>`;
+    for(let i = 0; i < right; i++){
+      const id = r + letters[left + i];
+      const isOcc = rnd() < 0.32;
+      if(isOcc) occ.add(id);
+      html += `<button class="${seatClass(id, isOcc, false)}" data-seat="${id}" ${isOcc ? 'disabled' : ''}>${id}</button>`;
+    }
+    html += `</div>`;
+  }
+
+  $('#seatMap').innerHTML = html;
+  state.bus.occupied = occ;
+  updateSeatCounter();
+}
+
+function refreshSeatUI(){
+  $$('#seatMap [data-seat]').forEach(b => {
+    const id = b.dataset.seat;
+    b.className = seatClass(id, state.bus.occupied.has(id), state.bus.seats.includes(id));
+  });
+  updateSeatCounter();
+}
+
+function updateSeatCounter(){
+  const el = $('#seatCounter');
+  if(el) el.textContent = `${state.bus.seats.length} / ${state.bus.pax} selected`;
+}
+
+/* ═══════════ RENDER: CITY ═══════════ */
+function renderCity(){
+  refreshClassGrid($('#cityClassGrid'), state.city.cls, 'cls');
+
+  const f = calcCityFare();
+  $('#cityPax').textContent = state.city.pax;
+  $('#cityEta').textContent = 'ETA ' + f.cfg.eta;
+  $('#cityFare').textContent = f.dist > 0 ? money(f.total) : '—';
+
+  const clsLabel = f.cfg.name;
+  $('#cityBreakdown').innerHTML = f.dist > 0 ? `
+    <div class="flex justify-between"><span>Distance</span><span class="text-slate-200 font-bold">${f.dist} km</span></div>
+    <div class="flex justify-between"><span>Base + distance</span><span class="text-slate-200 font-bold">${money(f.raw)}</span></div>
+    ${f.clsExtra > 0 ? `<div class="flex justify-between"><span>${clsLabel} upgrade (×${f.cfg.mult})</span><span class="text-slate-200 font-bold">+${money(f.clsExtra)}</span></div>` : ''}
+    ${f.night > 0 ? `<div class="flex justify-between text-amber-400"><span><i class="fa-solid fa-moon text-[9px] mr-1"></i>Night surcharge</span><span class="font-bold">+${money(f.night)}</span></div>` : ''}
+    <div class="flex justify-between"><span>Service fee</span><span class="text-slate-200 font-bold">${money(f.service)}</span></div>
+  ` : `<div class="text-center py-1 text-slate-500 font-semibold">Choose two different locations to see your fare</div>`;
+
+  const btn = $('#cityBookBtn');
+  btn.disabled = f.dist <= 0;
+  btn.classList.toggle('opacity-40', f.dist <= 0);
+  btn.classList.toggle('pointer-events-none', f.dist <= 0);
+}
+
+/* ═══════════ RENDER: BUS ═══════════ */
+function renderBus(){
+  refreshClassGrid($('#busClassGrid'), state.bus.cls, 'cls');
+
+  const f = calcBusFare();
+  $('#busPax').textContent = state.bus.pax;
+  $('#busDistChip').textContent = f.dist > 0 ? f.dist + ' km' : 'Select route';
+  $('#busFare').textContent = f.dist > 0 ? money(f.total) : '—';
+
+  const seatTxt = state.bus.seats.length ? state.bus.seats.join(', ') : '—';
+  $('#busBreakdown').innerHTML = f.dist > 0 ? `
+    <div class="flex justify-between"><span>Route distance</span><span class="text-slate-200 font-bold">${f.dist} km</span></div>
+    <div class="flex justify-between"><span>${f.cfg.name} fare / passenger</span><span class="text-slate-200 font-bold">${money(f.perPax)}</span></div>
+    <div class="flex justify-between"><span>Passengers</span><span class="text-slate-200 font-bold">× ${f.pax}</span></div>
+    <div class="flex justify-between"><span>Seats</span><span class="text-slate-200 font-bold">${seatTxt}</span></div>
+    <div class="flex justify-between"><span>Booking fee</span><span class="text-slate-200 font-bold">${money(f.service)}</span></div>
+  ` : `<div class="text-center py-1 text-slate-500 font-semibold">Choose two different cities to see ticket price</div>`;
+
+  updateSeatCounter();
+
+  const btn = $('#busBookBtn');
+  btn.disabled = f.dist <= 0;
+  btn.classList.toggle('opacity-40', f.dist <= 0);
+  btn.classList.toggle('pointer-events-none', f.dist <= 0);
+}
+
+/* ═══════════ QR CODE RENDERER ═══════════ */
+function drawQR(canvas, text){
+  const ctx = canvas.getContext('2d');
+  const S = canvas.width;
+  const N = 25, M = 2, T = N + M * 2;
+  const cell = S / T;
+
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, S, S);
+
+  const rnd = mulberry32(hashStr(text));
+  const grid = [];
+  for(let y = 0; y < N; y++){
+    grid[y] = [];
+    for(let x = 0; x < N; x++) grid[y][x] = rnd() > 0.52 ? 1 : 0;
+  }
+
+  function finder(ox, oy){
+    for(let y = 0; y < 7; y++){
+      for(let x = 0; x < 7; x++){
+        const edge = (x === 0 || x === 6 || y === 0 || y === 6);
+        const core = (x >= 2 && x <= 4 && y >= 2 && y <= 4);
+        if(oy + y < N && ox + x < N) grid[oy + y][ox + x] = (edge || core) ? 1 : 0;
+      }
+    }
+    // quiet separator
+    for(let k = -1; k < 8; k++){
+      if(oy + k >= 0 && oy + k < N && ox - 1 >= 0) grid[oy + k][ox - 1] = 0;
+      if(oy + k >= 0 && oy + k < N && ox + 7 < N)     grid[oy + k][ox + 7] = 0;
+      if(ox + k >= 0 && ox + k < N && oy - 1 >= 0)    grid[oy - 1][ox + k] = 0;
+      if(ox + k >= 0 && ox + k < N && oy + 7 < N)     grid[oy + 7][ox + k] = 0;
+    }
+  }
+  finder(0, 0); finder(N - 7, 0); finder(0, N - 7);
+
+  ctx.fillStyle = '#0f172a';
+  for(let y = 0; y < N; y++){
+    for(let x = 0; x < N; x++){
+      if(grid[y][x]) ctx.fillRect(Math.round((x + M) * cell), Math.round((y + M) * cell), Math.ceil(cell), Math.ceil(cell));
+    }
+  }
+}
+
+/* ═══════════ TICKET LIST ═══════════ */
+function renderTickets(){
+  const list = getTickets();
+  const el = $('#ticketList');
+
+  if(!list.length){
+    el.innerHTML = `
+      <div class="rounded-3xl border border-dashed border-white/10 bg-white/[0.02] py-9 text-center">
+        <i class="fa-solid fa-ticket-simple text-2xl text-slate-700"></i>
+        <p class="mt-3 text-[11px] font-bold text-slate-500">No trips booked yet</p>
+        <p class="text-[9px] text-slate-600 mt-1">Your tickets & boarding passes appear here</p>
+      </div>`;
+    return;
+  }
+
+  el.innerHTML = list.slice().reverse().map(t => `
+    <button onclick="viewTicket('${t.id}')" class="fade-up w-full text-left rounded-2xl bg-white/5 border border-white/10 p-3 flex items-center gap-3 active:scale-[0.98] transition">
+      <div class="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-purple-600/30 to-cyan-500/20 border border-white/10 flex items-center justify-center">
+        <i class="fa-solid ${t.type === 'bus' ? 'fa-bus' : 'fa-car-side'} text-[13px] text-cyan-300"></i>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="text-[11.5px] font-black truncate">${t.from} <span class="text-slate-500">→</span> ${t.to}</div>
+        <div class="text-[9px] text-slate-500 font-semibold mt-0.5">${t.date} · ${t.time} · ${t.cls}${t.seats && t.seats.length ? ' · Seat ' + t.seats.join(',') : ''}</div>
+      </div>
+      <div class="text-right shrink-0">
+        <div class="text-[11.5px] font-black text-cyan-300">${money(t.fare)}</div>
+        <div class="text-[8.5px] text-slate-500 font-bold mt-0.5">${t.id}</div>
+      </div>
+    </button>
+  `).join('');
+}
+
+/* ═══════════ LIVE TRIP TRACKER SIMULATOR ═══════════ */
+function startTracker(type){
+  if(window.__trackTimer){ clearInterval(window.__trackTimer); window.__trackTimer = null; }
+
+  const steps = type === 'bus'
+    ? ['Seat reserved & confirmed', 'Boarding open — Gate 4', 'Departed on schedule', 'On the highway', 'Arrived at destination']
+    : ['Driver assigned', 'Driver arriving at pickup', 'Trip started', 'Approaching destination', 'Trip completed'];
+
+  let i = 0;
+  const bar = document.getElementById('trackBar');
+  const box = document.getElementById('trackSteps');
+  if(!bar || !box) return;
+
+  function paint(){
+    bar.style.width = Math.round((i / (steps.length - 1)) * 100) + '%';
+    box.innerHTML = steps.map((s, idx) => {
+      const done = idx < i, active = idx === i;
+      return `<div class="flex items-center gap-2 ${done ? 'text-emerald-400' : active ? 'text-cyan-300' : 'text-slate-600'}">
+        <i class="fa-solid ${done ? 'fa-circle-check' : active ? 'fa-circle-dot' : 'fa-circle'} text-[9px]"></i>
+        <span class="font-semibold">${s}</span>
+        ${active ? '<span class="ml-auto text-[8.5px] font-black uppercase tracking-wider text-slate-500">now</span>' : ''}
+      </div>`;
+    }).join('');
+  }
+
+  paint();
+  window.__trackTimer = setInterval(() => {
+    if(i >= steps.length - 1){ clearInterval(window.__trackTimer); window.__trackTimer = null; return; }
+    i++; paint();
+  }, 2200);
+}
+
+/* ═══════════ BOARDING PASS ═══════════ */
+function boardingPassHTML(t){
+  const d = t.driver || {};
+  return `
+  <div class="relative rounded-3xl overflow-hidden bg-slate-950 border border-white/10 shadow-2xl">
+    <!-- header -->
+    <div class="bg-gradient-to-r from-purple-600 via-fuchsia-600 to-cyan-500 px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center">
+          <i class="fa-solid ${t.type === 'bus' ? 'fa-bus' : 'fa-car-side'} text-[11px] text-white"></i>
+        </div>
+        <span class="text-[11px] font-black tracking-widest text-white">ZEMEN ${t.type === 'bus' ? 'TRAVEL' : 'RIDE'}</span>
+      </div>
+      <span class="text-[9px] font-black px-2 py-1 rounded-full bg-black/30 text-white tracking-wider">${t.type === 'bus' ? 'BUS TICKET' : 'RIDE PASS'}</span>
+    </div>
+
+    <!-- route -->
+    <div class="px-4 pt-4">
+      <div class="flex items-center gap-3">
+        <div class="flex-1 min-w-0">
+          <div class="text-[8.5px] font-black uppercase tracking-[0.18em] text-slate-500">From</div>
+          <div class="text-[13px] font-black truncate mt-0.5">${t.from}</div>
+        </div>
+        <div class="shrink-0 flex items-center gap-1 text-cyan-400">
+          <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+          <span class="w-6 h-px bg-gradient-to-r from-cyan-400 to-purple-500"></span>
+          <i class="fa-solid fa-plane text-[9px] rotate-90"></i>
+        </div>
+        <div class="flex-1 min-w-0 text-right">
+          <div class="text-[8.5px] font-black uppercase tracking-[0.18em] text-slate-500">To</div>
+          <div class="text-[13px] font-black truncate mt-0.5">${t.to}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- details grid -->
+    <div class="px-4 py-4 grid grid-cols-3 gap-y-3.5 gap-x-2">
+      ${[
+        ['Passenger', t.passenger],
+        ['Date', t.date],
+        ['Departure', t.time],
+        ['Class', t.cls],
+        ['Seat' + (t.seats && t.seats.length > 1 ? 's' : ''), t.seats && t.seats.length ? t.seats.join(', ') : (t.type === 'city' ? 'Auto' : '—')],
+        ['Passengers', t.pax]
+      ].map(([k, v]) => `
+        <div class="min-w-0">
+          <div class="text-[8px] font-black uppercase tracking-[0.16em] text-slate-500">${k}</div>
+          <div class="text-[11px] font-bold text-slate-100 truncate mt-0.5">${v}</div>
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- driver badge -->
+    <div class="mx-4 mb-4 rounded-2xl bg-white/5 border border-white/10 p-3 flex items-center gap-3">
+      <div class="relative w-10 h-10 shrink-0 rounded-full bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center text-[12px] font-black text-white">
+        ${(d.name || 'ZR').split(' ').map(x => x[0]).slice(0,2).join('')}
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-1.5">
+          <span class="text-[11.5px] font-black truncate">${d.name || 'Zemen Partner'}</span>
+          <i class="fa-solid fa-circle-check text-[9px] text-cyan-400"></i>
+        </div>
+        <div class="flex items-center gap-2 mt-0.5">
+          <span class="text-[9px] font-bold text-amber-400"><i class="fa-solid fa-star text-[8px]"></i> ${d.rating || '4.9'}</span>
+          <span class="text-[9px] text-slate-500 font-semibold">${(d.trips || 0).toLocaleString()} trips</span>
+          <span class="text-[9px] text-slate-500 font-semibold truncate">${d.car || ''}</span>
+        </div>
+      </div>
+      <div class="shrink-0 text-right">
+        <div class="text-[9px] font-black text-slate-300 tracking-wider">${d.plate || ''}</div>
+        <a href="tel:${(d.phone || '').replace(/\s/g,'')}" class="mt-1 inline-flex items-center gap-1 text-[9px] font-bold text-cyan-300">
+          <i class="fa-solid fa-phone text-[8px]"></i> Call
+        </a>
+      </div>
+    </div>
+
+    <!-- perforation -->
+    <div class="relative border-t border-dashed border-white/15">
+      <div class="absolute -left-3 -top-3 w-6 h-6 rounded-full bg-slate-900"></div>
+      <div class="absolute -right-3 -top-3 w-6 h-6 rounded-full bg-slate-900"></div>
+      <div class="px-4 py-4 flex items-center gap-4">
+        <div class="shrink-0 rounded-xl bg-white p-1.5">
+          <canvas id="qrCanvas" width="240" height="240" class="w-[74px] h-[74px] block"></canvas>
+        </div>
+        <div class="min-w-0">
+          <div class="text-[8px] font-black uppercase tracking-[0.18em] text-slate-500">Booking Reference</div>
+          <div class="text-[13px] font-black text-cyan-300 tracking-wider mt-0.5">${t.id}</div>
+          <p class="text-[9px] text-slate-500 font-semibold mt-1.5 leading-relaxed">Scan this code at boarding. Valid for one journey only.</p>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ═══════════ SHOW TICKET MODAL ═══════════ */
+function showTicket(t){
+  openModal(`
+    <div class="p-5">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="text-base font-black">Your Ticket</h3>
+          <p class="text-[10px] text-slate-500 font-semibold mt-0.5">Booking confirmed successfully</p>
+        </div>
+        <button onclick="closeModal()" class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center active:scale-90 transition">
+          <i class="fa-solid fa-xmark text-slate-400 text-sm"></i>
+        </button>
+      </div>
+
+      ${boardingPassHTML(t)}
+
+      <!-- tracker -->
+      <div class="mt-4 rounded-2xl bg-white/5 border border-white/10 p-4">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-300">Live Trip Tracker</span>
+          <span class="text-[9px] font-bold text-emerald-400 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> DEMO
+          </span>
+        </div>
+        <div class="h-1.5 rounded-full bg-slate-800 overflow-hidden">
+          <div id="trackBar" class="h-full w-0 rounded-full bg-gradient-to-r from-purple-500 to-cyan-400 transition-all duration-1000 ease-out"></div>
+        </div>
+        <div id="trackSteps" class="mt-3.5 space-y-2 text-[10.5px]"></div>
+      </div>
+
+      <div class="mt-4 grid grid-cols-2 gap-2">
+        <button onclick="closeModal()" class="py-3 rounded-2xl bg
