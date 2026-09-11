@@ -1,1 +1,1495 @@
 
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#020617">
+<title>Zemen Work — Hire Verified Local Professionals</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'] }
+    }
+  }
+}
+</script>
+<style>
+  html, body { background:#020617; }
+  body { -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
+
+  .glass {
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(99, 102, 241, 0.16);
+  }
+  .glass-strong {
+    background: rgba(2, 6, 23, 0.88);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  @keyframes loadbar { 0% { width: 0%; } 100% { width: 100%; } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  @keyframes popIn { from { opacity: 0; transform: scale(.93); } to { opacity: 1; transform: scale(1); } }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(-18px) scale(.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  @keyframes pulseGlow { 0%,100% { opacity: .35; transform: scale(1); } 50% { opacity: .75; transform: scale(1.08); } }
+  @keyframes dotPulse { 0%,100% { opacity:.25; transform: translateY(0);} 50% { opacity:1; transform: translateY(-2px);} }
+
+  .anim-up { animation: fadeUp .38s cubic-bezier(.22,1,.36,1) both; }
+  .sheet-up { animation: sheetUp .34s cubic-bezier(.22,1,.36,1) both; }
+  .pop-in { animation: popIn .26s cubic-bezier(.22,1,.36,1) both; }
+  .toast-in { animation: toastIn .3s cubic-bezier(.22,1,.36,1) both; }
+  .glow-pulse { animation: pulseGlow 2.4s ease-in-out infinite; }
+
+  .typing span { animation: dotPulse 1s infinite; display:inline-block; }
+  .typing span:nth-child(2) { animation-delay: .15s; }
+  .typing span:nth-child(3) { animation-delay: .3s; }
+
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.7) sepia(1) saturate(4) hue-rotate(200deg);
+    cursor: pointer;
+  }
+  ::selection { background: rgba(99,102,241,.35); }
+</style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased">
+
+<!-- ══════════════════ SPLASH SCREEN ══════════════════ -->
+<div id="splash" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-slate-950 transition-opacity duration-700">
+  <div class="absolute w-80 h-80 rounded-full bg-indigo-600/20 blur-[90px] glow-pulse"></div>
+  <div class="absolute w-56 h-56 rounded-full bg-blue-500/10 blur-[70px]"></div>
+
+  <div class="relative flex flex-col items-center">
+    <div class="relative mb-7">
+      <div class="absolute inset-0 rounded-[28px] bg-indigo-500/40 blur-2xl"></div>
+      <div class="relative w-24 h-24 rounded-[28px] bg-gradient-to-br from-indigo-500 via-indigo-600 to-blue-700 flex items-center justify-center shadow-2xl shadow-indigo-900/60 border border-white/10">
+        <i class="fa-solid fa-briefcase text-4xl text-white drop-shadow"></i>
+      </div>
+      <div class="absolute -right-2 -bottom-2 w-10 h-10 rounded-2xl bg-slate-900 border border-indigo-500/40 flex items-center justify-center shadow-lg">
+        <i class="fa-solid fa-screwdriver-wrench text-indigo-400 text-sm"></i>
+      </div>
+      <div class="absolute -left-2 -top-2 w-8 h-8 rounded-xl bg-slate-900 border border-blue-500/30 flex items-center justify-center shadow-lg">
+        <i class="fa-solid fa-shield-halved text-blue-400 text-[11px]"></i>
+      </div>
+    </div>
+
+    <h1 class="text-[32px] font-extrabold tracking-tight leading-none">
+      Zemen <span class="bg-gradient-to-r from-indigo-400 to-blue-400 bg-clip-text text-transparent">Work</span>
+    </h1>
+    <p class="text-slate-400 text-[13px] mt-2 tracking-wide">Hire Verified Local Professionals</p>
+    <p class="text-slate-600 text-[11px] mt-1">የተረጋገጡ ባለሙያዎችን ይቀጥሩ</p>
+
+    <div class="mt-9 w-56 h-1.5 rounded-full bg-slate-800/90 overflow-hidden">
+      <div class="h-full rounded-full bg-gradient-to-r from-indigo-500 via-blue-500 to-indigo-400 shadow-[0_0_12px_rgba(99,102,241,.9)]" style="animation: loadbar 2s cubic-bezier(.4,0,.2,1) forwards;"></div>
+    </div>
+    <p id="splashStatus" class="text-[10px] text-slate-500 mt-3 tracking-[0.2em] uppercase">Securing escrow…</p>
+  </div>
+</div>
+
+<!-- ══════════════════ APP SHELL ══════════════════ -->
+<div class="max-w-md mx-auto min-h-screen relative pb-28">
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-40 glass-strong border-b border-white/5">
+    <div class="px-4 pt-3 pb-3">
+      <!-- Row 1 -->
+      <div class="flex items-center gap-2.5">
+        <a href="index.html"
+           class="flex items-center gap-1.5 px-2.5 py-2 rounded-xl bg-white/5 border border-white/10 text-[11px] font-semibold text-slate-300 active:scale-95 transition shrink-0">
+          <i class="fa-solid fa-arrow-left text-indigo-400 text-[10px]"></i>
+          <span>Exit</span>
+        </a>
+
+        <div class="flex-1 min-w-0 flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-briefcase text-white text-[11px]"></i>
+          </div>
+          <div class="min-w-0">
+            <h1 class="text-[13px] font-bold leading-tight truncate">Zemen <span class="text-indigo-400">Work</span></h1>
+            <p class="text-[9px] text-slate-500 leading-tight truncate">Verified Professionals</p>
+          </div>
+        </div>
+
+        <button onclick="switchTab('wallet')"
+                class="flex items-center gap-1.5 px-2.5 py-2 rounded-xl bg-gradient-to-r from-indigo-500/15 to-blue-500/15 border border-indigo-500/30 active:scale-95 transition shrink-0">
+          <i class="fa-solid fa-wallet text-indigo-400 text-[10px]"></i>
+          <span id="walletChip" class="text-[11px] font-bold text-white tabular-nums">0</span>
+          <span class="text-[9px] text-indigo-300/70 font-semibold">ETB</span>
+        </button>
+      </div>
+
+      <!-- Row 2 : Search -->
+      <div class="relative mt-3">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-[12px]"></i>
+        <input id="searchInput" oninput="renderWorkers()" type="text" autocomplete="off"
+               placeholder="Search skill, name or location…"
+               class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-white/5 border border-white/10 text-[13px] placeholder-slate-500 focus:outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/30 transition">
+        <button onclick="clearSearch()" id="clearSearchBtn" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-[12px]">
+          <i class="fa-solid fa-circle-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Row 3 : Category pills -->
+      <div id="catRow" class="flex gap-2 overflow-x-auto no-scrollbar mt-3 -mx-1 px-1"></div>
+    </div>
+  </header>
+
+  <!-- ══════════════ EXPLORE TAB ══════════════ -->
+  <section data-tab-section="explore">
+    <div class="mx-4 mt-4 glass rounded-2xl p-3 flex items-start gap-3">
+      <div class="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center shrink-0">
+        <i class="fa-solid fa-shield-halved text-emerald-400 text-[12px]"></i>
+      </div>
+      <p class="text-[11px] text-slate-400 leading-snug pt-0.5">
+        Your payment is held in <span class="text-emerald-400 font-semibold">Escrow Protection</span> and only released to the worker once you approve the completed job.
+      </p>
+    </div>
+
+    <div class="px-4 mt-4 flex items-center justify-between">
+      <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+        <span id="workerCount">0</span> Professionals
+      </p>
+      <p class="text-[11px] text-slate-600">Near Addis Ababa</p>
+    </div>
+
+    <div id="workerList" class="px-4 mt-3 space-y-3"></div>
+  </section>
+
+  <!-- ══════════════ MY JOBS TAB ══════════════ -->
+  <section data-tab-section="jobs" class="hidden">
+    <div class="px-4 mt-4">
+      <h2 class="text-lg font-bold">My Jobs</h2>
+      <p class="text-[11px] text-slate-500 mt-0.5">Track escrow, approve work & release payments.</p>
+    </div>
+    <div id="jobsList" class="px-4 mt-4 space-y-3"></div>
+  </section>
+
+  <!-- ══════════════ WALLET TAB ══════════════ -->
+  <section data-tab-section="wallet" class="hidden">
+    <div class="px-4 mt-4">
+      <div class="relative overflow-hidden rounded-3xl p-5 border border-indigo-500/25 bg-gradient-to-br from-indigo-600/25 via-slate-900/60 to-blue-700/20">
+        <div class="absolute -right-8 -top-10 w-40 h-40 rounded-full bg-indigo-500/25 blur-3xl"></div>
+        <div class="relative">
+          <p class="text-[10px] uppercase tracking-[0.18em] text-indigo-200/70 font-semibold">Demo Wallet Balance</p>
+          <p class="mt-2 text-[34px] font-extrabold leading-none tabular-nums">
+            <span id="walletBig">0</span>
+            <span class="text-base font-bold text-indigo-300/80 ml-1">ETB</span>
+          </p>
+          <div class="flex items-center gap-2 mt-3">
+            <span class="px-2 py-1 rounded-lg bg-white/10 border border-white/10 text-[10px] font-semibold text-slate-200">
+              <i class="fa-solid fa-lock text-emerald-400 mr-1"></i> Zemen Escrow Ready
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 mt-3">
+        <div class="glass rounded-2xl p-3.5">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-hourglass-half text-amber-400 text-[11px]"></i>
+            <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">In Escrow</p>
+          </div>
+          <p class="mt-1.5 text-lg font-bold tabular-nums"><span id="escrowTotal">0</span> <span class="text-[10px] text-slate-500">ETB</span></p>
+        </div>
+        <div class="glass rounded-2xl p-3.5">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-arrow-up-right-dots text-indigo-400 text-[11px]"></i>
+            <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Total Spent</p>
+          </div>
+          <p class="mt-1.5 text-lg font-bold tabular-nums"><span id="spentTotal">0</span> <span class="text-[10px] text-slate-500">ETB</span></p>
+        </div>
+      </div>
+
+      <p class="mt-5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Transaction History</p>
+      <div id="txList" class="mt-3 space-y-2"></div>
+    </div>
+  </section>
+
+  <!-- ══════════════ BOTTOM NAV ══════════════ -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40">
+    <div class="max-w-md mx-auto glass-strong border-t border-white/10 rounded-t-2xl">
+      <div class="flex items-stretch">
+        <button data-nav="explore" onclick="switchTab('explore')" class="flex-1 flex flex-col items-center gap-1 py-2.5 text-indigo-400 transition">
+          <i class="fa-solid fa-compass text-[17px]"></i>
+          <span class="text-[10px] font-semibold">Explore</span>
+        </button>
+        <button data-nav="jobs" onclick="switchTab('jobs')" class="flex-1 flex flex-col items-center gap-1 py-2.5 text-slate-500 transition relative">
+          <i class="fa-solid fa-clipboard-list text-[17px]"></i>
+          <span class="text-[10px] font-semibold">My Jobs</span>
+          <span id="jobsBadge" class="hidden absolute top-1.5 right-1/4 min-w-[16px] h-4 px-1 rounded-full bg-indigo-500 text-white text-[9px] font-bold flex items-center justify-center">0</span>
+        </button>
+        <button data-nav="wallet" onclick="switchTab('wallet')" class="flex-1 flex flex-col items-center gap-1 py-2.5 text-slate-500 transition">
+          <i class="fa-solid fa-wallet text-[17px]"></i>
+          <span class="text-[10px] font-semibold">Wallet</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- ══════════════════ MODAL : BOOKING ══════════════════ -->
+<div id="modal-booking" class="fixed inset-0 z-[90] hidden">
+  <div class="absolute inset-0 bg-black/75 backdrop-blur-sm" onclick="closeModal('modal-booking')"></div>
+  <div class="absolute inset-x-0 bottom-0 mx-auto w-full max-w-md sheet-up">
+    <div class="bg-slate-900 border-t border-white/10 rounded-t-3xl max-h-[93vh] overflow-y-auto no-scrollbar">
+      <div class="sticky top-0 bg-slate-900/95 backdrop-blur-xl pt-3 pb-3 px-5 border-b border-white/5 z-10">
+        <div class="w-10 h-1 rounded-full bg-slate-700 mx-auto mb-3"></div>
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-[15px]">Book a Professional</h3>
+          <button onclick="closeModal('modal-booking')" class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 active:scale-95">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="px-5 py-4">
+        <!-- Worker summary -->
+        <div class="glass rounded-2xl p-3 flex items-center gap-3">
+          <div id="bkAvatar" class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white font-bold"></div>
+          <div class="flex-1 min-w-0">
+            <p id="bkName" class="font-semibold text-[14px] truncate"></p>
+            <p id="bkSkill" class="text-[10px] text-indigo-300/80 mt-0.5"></p>
+          </div>
+          <p id="bkRate" class="text-[12px] font-bold text-indigo-300 text-right shrink-0"></p>
+        </div>
+
+        <!-- Task description -->
+        <label class="block mt-4 text-[11px] font-semibold text-slate-400">Task Description</label>
+        <textarea id="bkDesc" rows="3" placeholder="e.g. Kitchen sink is leaking under the cabinet, needs urgent fixing…"
+                  class="w-full mt-1.5 p-3 rounded-xl bg-white/5 border border-white/10 text-[13px] placeholder-slate-600 focus:outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/25 resize-none transition"></textarea>
+
+        <!-- Date / Time -->
+        <div class="grid grid-cols-2 gap-3 mt-3">
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-400">Date</label>
+            <input id="bkDate" type="date" class="w-full mt-1.5 px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-[12px] text-slate-200 focus:outline-none focus:border-indigo-500/60 transition">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-400">Time</label>
+            <input id="bkTime" type="time" class="w-full mt-1.5 px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-[12px] text-slate-200 focus:outline-none focus:border-indigo-500/60 transition">
+          </div>
+        </div>
+
+        <!-- Location -->
+        <label class="block mt-3 text-[11px] font-semibold text-slate-400">Delivery / Service Location</label>
+        <div class="relative mt-1.5">
+          <i class="fa-solid fa-location-dot absolute left-3.5 top-1/2 -translate-y-1/2 text-indigo-400 text-[12px]"></i>
+          <input id="bkLocation" type="text" placeholder="Sub-city, Woreda, landmark…"
+                 class="w-full pl-10 pr-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-[13px] placeholder-slate-600 focus:outline-none focus:border-indigo-500/60 transition">
+        </div>
+
+        <!-- Hours stepper -->
+        <div id="hoursWrap" class="mt-3">
+          <label class="block text-[11px] font-semibold text-slate-400">Estimated Hours</label>
+          <div class="flex items-center gap-3 mt-1.5">
+            <button onclick="changeHours(-1)" class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center active:scale-95 transition">
+              <i class="fa-solid fa-minus text-sm text-slate-300"></i>
+            </button>
+            <div class="flex-1 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+              <span id="hoursVal" class="font-bold text-[15px]">2</span>
+              <span class="text-[11px] text-slate-500 ml-1.5">hours</span>
+            </div>
+            <button onclick="changeHours(1)" class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center active:scale-95 transition">
+              <i class="fa-solid fa-plus text-sm text-slate-300"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="mt-4 rounded-2xl bg-slate-950/60 border border-white/10 p-4">
+          <p class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mb-2.5">Payment Summary</p>
+          <div class="flex items-center justify-between text-[12px] py-1">
+            <span class="text-slate-400">Base Fee</span>
+            <span class="font-semibold tabular-nums"><span id="qBase">0</span> ETB</span>
+          </div>
+          <div class="flex items-center justify-between text-[12px] py-1">
+            <span class="text-slate-400">Service Charge (5%)</span>
+            <span class="font-semibold tabular-nums"><span id="qService">0</span> ETB</span>
+          </div>
+          <div class="flex items-center justify-between text-[12px] py-1">
+            <span class="text-slate-400">Escrow Protection</span>
+            <span class="font-semibold text-emerald-400">Free</span>
+          </div>
+          <div class="h-px bg-white/10 my-2.5"></div>
+          <div class="flex items-center justify-between">
+            <span class="text-[13px] font-bold">Total</span>
+            <span class="text-[17px] font-extrabold text-indigo-300 tabular-nums"><span id="qTotal">0</span> ETB</span>
+          </div>
+        </div>
+
+        <div id="bkWalletNote" class="mt-3 flex items-center gap-2 text-[11px] text-slate-500">
+          <i class="fa-solid fa-wallet text-slate-600"></i>
+          <span>Wallet balance: <span id="qWallet" class="font-semibold text-slate-300">0</span> ETB</span>
+        </div>
+
+        <button id="bkConfirmBtn" onclick="confirmBooking()"
+                class="w-full mt-4 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-500 to-blue-600 font-bold text-[14px] shadow-lg shadow-indigo-700/30 active:scale-[0.98] transition">
+          <i class="fa-solid fa-lock mr-2"></i> Confirm & Hold in Escrow
+        </button>
+        <p class="text-[10px] text-slate-600 text-center mt-2.5 leading-relaxed">
+          Funds are held securely and released only when you mark the job complete.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ MODAL : CHAT ══════════════════ -->
+<div id="modal-chat" class="fixed inset-0 z-[92] hidden">
+  <div class="absolute inset-0 bg-black/75 backdrop-blur-sm" onclick="closeModal('modal-chat')"></div>
+  <div class="absolute inset-x-0 bottom-0 mx-auto w-full max-w-md sheet-up">
+    <div class="bg-slate-900 border-t border-white/10 rounded-t-3xl flex flex-col" style="height: 78vh;">
+      <div class="flex items-center gap-3 px-4 py-3 border-b border-white/5 shrink-0">
+        <div id="chatAvatar" class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white font-bold text-[13px]"></div>
+        <div class="flex-1 min-w-0">
+          <p id="chatName" class="font-semibold text-[13px] truncate"></p>
+          <p class="text-[10px] text-emerald-400 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Online now
+          </p>
+        </div>
+        <button onclick="closeModal('modal-chat')" class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 active:scale-95">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <div id="chatBody" class="flex-1 overflow-y-auto no-scrollbar px-4 py-4 space-y-3 bg-slate-950/40"></div>
+
+      <div class="px-3 py-3 border-t border-white/5 shrink-0 flex items-center gap-2">
+        <input id="chatInput" type="text" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendChat()"
+               class="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-[13px] placeholder-slate-600 focus:outline-none focus:border-indigo-500/60 transition">
+        <button onclick="sendChat()" class="w-11 h-11 rounded-xl bg-gradient-to-r from-indigo-500 to-blue-600 flex items-center justify-center active:scale-95 transition shadow-lg shadow-indigo-700/30">
+          <i class="fa-solid fa-paper-plane text-white text-sm"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ MODAL : CERTIFICATES ══════════════════ -->
+<div id="modal-certs" class="fixed inset-0 z-[92] hidden">
+  <div class="absolute inset-0 bg-black/75 backdrop-blur-sm" onclick="closeModal('modal-certs')"></div>
+  <div class="absolute inset-x-0 bottom-0 mx-auto w-full max-w-md sheet-up">
+    <div class="bg-slate-900 border-t border-white/10 rounded-t-3xl max-h-[85vh] overflow-y-auto no-scrollbar">
+      <div class="sticky top-0 bg-slate-900/95 backdrop-blur-xl pt-3 pb-3 px-5 border-b border-white/5 z-10">
+        <div class="w-10 h-1 rounded-full bg-slate-700 mx-auto mb-3"></div>
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-[15px]">Skill Certificates</h3>
+          <button onclick="closeModal('modal-certs')" class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 active:scale-95">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+        </div>
+      </div>
+      <div id="certsBody" class="px-5 py-4"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ MODAL : TIMELINE ══════════════════ -->
+<div id="modal-timeline" class="fixed inset-0 z-[92] hidden">
+  <div class="absolute inset-0 bg-black/75 backdrop-blur-sm" onclick="closeModal('modal-timeline')"></div>
+  <div class="absolute inset-x-0 bottom-0 mx-auto w-full max-w-md sheet-up">
+    <div class="bg-slate-900 border-t border-white/10 rounded-t-3xl max-h-[85vh] overflow-y-auto no-scrollbar">
+      <div class="sticky top-0 bg-slate-900/95 backdrop-blur-xl pt-3 pb-3 px-5 border-b border-white/5 z-10">
+        <div class="w-10 h-1 rounded-full bg-slate-700 mx-auto mb-3"></div>
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-[15px]">Job Status Timeline</h3>
+          <button onclick="closeModal('modal-timeline')" class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 active:scale-95">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+        </div>
+      </div>
+      <div id="timelineBody" class="px-5 py-5"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ MODAL : REVIEW ══════════════════ -->
+<div id="modal-review" class="fixed inset-0 z-[95] hidden">
+  <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal('modal-review')"></div>
+  <div class="absolute inset-0 flex items-center justify-center p-5">
+    <div class="w-full max-w-sm bg-slate-900 border border-white/10 rounded-3xl p-5 pop-in">
+      <div class="text-center">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
+          <i class="fa-solid fa-check text-emerald-400 text-xl"></i>
+        </div>
+        <h3 class="mt-3 font-bold text-lg">Job Completed</h3>
+        <p id="reviewSub" class="text-[11px] text-slate-400 mt-1">Escrow released to the worker.</p>
+      </div>
+
+      <div id="starRow" class="flex justify-center gap-2.5 mt-5"></div>
+      <p id="starLabel" class="text-center text-[11px] text-slate-500 mt-2 h-4">Tap to rate</p>
+
+      <textarea id="reviewText" rows="3" placeholder="Share details of your experience (optional)…"
+                class="w-full mt-3 p-3 rounded-xl bg-white/5 border border-white/10 text-[13px] placeholder-slate-600 focus:outline-none focus:border-indigo-500/60 resize-none transition"></textarea>
+
+      <button onclick="submitReview()" class="w-full mt-4 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-500 to-blue-600 font-bold text-[13px] shadow-lg shadow-indigo-700/30 active:scale-[0.98] transition">
+        Submit Review
+      </button>
+      <button onclick="closeModal('modal-review')" class="w-full mt-2 py-2.5 rounded-xl text-slate-500 text-[12px] font-medium active:scale-[0.98] transition">
+        Skip for now
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ MODAL : DISPUTE ══════════════════ -->
+<div id="modal-dispute" class="fixed inset-0 z-[95] hidden">
+  <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal('modal-dispute')"></div>
+  <div class="absolute inset-0 flex items-center justify-center p-5">
+    <div class="w-full max-w-sm bg-slate-900 border border-white/10 rounded-3xl p-5 pop-in">
+      <div class="w-12 h-12 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center">
+        <i class="fa-solid fa-triangle-exclamation text-rose-400 text-lg"></i>
+      </div>
+      <h3 class="mt-3 font-bold text-[16px]">Raise a Dispute</h3>
+      <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">
+        Your escrow funds will remain frozen while the Zemen Trust Team reviews this job within 24 hours.
+      </p>
+
+      <label class="block mt-4 text-[11px] font-semibold text-slate-400">Reason</label>
+      <select id="disputeReason" class="w-full mt-1.5 px-3 py-3 rounded-xl bg-white/5 border border-white/10 text-[13px] text-slate-200 focus:outline-none focus:border-indigo-500/60 transition">
+        <option>Work not completed</option>
+        <option>Poor quality of work</option>
+        <option>Worker did not show up</option>
+        <option>Overcharged / price mismatch</option>
+        <option>Damaged property</option>
+        <option>Other</option>
+      </select>
+
+      <button onclick="confirmDispute()" class="w-full mt-4 py-3.5 rounded-2xl bg-gradient-to-r from-rose-500 to-red-600 font-bold text-[13px] shadow-lg shadow-rose-900/30 active:scale-[0.98] transition">
+        Submit Dispute
+      </button>
+      <button onclick="closeModal('modal-dispute')" class="w-full mt-2 py-2.5 rounded-xl text-slate-500 text-[12px] font-medium active:scale-[0.98] transition">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ TOASTS ══════════════════ -->
+<div id="toastWrap" class="fixed top-3 left-0 right-0 z-[200] px-4 pointer-events-none flex flex-col items-center gap-2"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   ZEMEN WORK — Core Application Logic
+   ═══════════════════════════════════════════════════════ */
+
+const LS_BALANCE = 'zemen_wallet_balance';
+const LS_BOOKINGS = 'zemen_work_bookings';
+const LS_TX = 'zemen_work_tx';
+const DEFAULT_BALANCE = 12500;
+
+/* ---------- CATEGORIES ---------- */
+const CATEGORIES = [
+  { id: 'all',        label: 'All',         am: 'ሁሉም',       icon: 'fa-layer-group' },
+  { id: 'plumbing',   label: 'Plumbing',    am: 'የቧንቧ',      icon: 'fa-faucet-drip' },
+  { id: 'electrical', label: 'Electrical',  am: 'ኤሌክትሪክ',    icon: 'fa-bolt' },
+  { id: 'cleaning',   label: 'Cleaning',    am: 'ጽዳት',       icon: 'fa-broom' },
+  { id: 'tutoring',   label: 'Tutoring',    am: 'ትምህርት',     icon: 'fa-book-open' },
+  { id: 'auto',       label: 'Auto Repair', am: 'መኪና',       icon: 'fa-car' },
+  { id: 'tech',       label: 'Tech Support',am: 'ቴክኖሎጂ',    icon: 'fa-laptop-code' }
+];
+
+/* ---------- CERTIFICATE LIBRARY (by category) ---------- */
+const CERTS = {
+  plumbing: [
+    { name: 'Licensed Plumber — Level 3', issuer: 'Addis Ababa TVET Agency', year: 2023, icon: 'fa-faucet-drip' },
+    { name: 'Pipe Fitting & Welding', issuer: 'Ethiopian TVET Institute', year: 2022, icon: 'fa-screwdriver-wrench' },
+    { name: 'Workplace Safety & Hygiene', issuer: 'Zemen Skills Academy', year: 2024, icon: 'fa-helmet-safety' }
+  ],
+  electrical: [
+    { name: 'Certified Electrician — Grade 2', issuer: 'Ethiopian Energy Authority', year: 2023, icon: 'fa-bolt' },
+    { name: 'Solar PV Installation', issuer: 'Green Energy Institute', year: 2022, icon: 'fa-solar-panel' },
+    { name: 'Electrical Safety Code', issuer: 'Zemen Skills Academy', year: 2024, icon: 'fa-helmet-safety' }
+  ],
+  cleaning: [
+    { name: 'Professional Cleaning Operations', issuer: 'Addis TVET Agency', year: 2023, icon: 'fa-broom' },
+    { name: 'Chemical Handling & Safety', issuer: 'Ethiopian Standards Agency', year: 2023, icon: 'fa-flask' },
+    { name: 'Customer Service Excellence', issuer: 'Zemen Skills Academy', year: 2024, icon: 'fa-handshake' }
+  ],
+  tutoring: [
+    { name: 'Certified Educator — Level 4', issuer: 'Ministry of Education', year: 2023, icon: 'fa-graduation-cap' },
+    { name: 'Child Safeguarding Certificate', issuer: 'UNICEF Ethiopia', year: 2024, icon: 'fa-shield-heart' },
+    { name: 'Modern Teaching Methods', issuer: 'Addis Ababa University', year: 2022, icon: 'fa-book-open' }
+  ],
+  auto: [
+    { name: 'Automotive Technician — Level 3', issuer: 'Ethiopian TVET Institute', year: 2022, icon: 'fa-car' },
+    { name: 'Engine Diagnostics Specialist', issuer: 'Bosch Training Centre', year: 2023, icon: 'fa-gauge-high' },
+    { name: 'Hybrid & EV Systems', issuer: 'Zemen Skills Academy', year: 2024, icon: 'fa-charging-station' }
+  ],
+  tech: [
+    { name: 'CompTIA A+ Certified', issuer: 'CompTIA International', year: 2023, icon: 'fa-laptop-code' },
+    { name: 'Network Administration', issuer: 'Cisco Networking Academy', year: 2022, icon: 'fa-network-wired' },
+    { name: 'Data Recovery Specialist', issuer: 'Zemen Skills Academy', year: 2024, icon: 'fa-hard-drive' }
+  ]
+};
+
+/* ---------- WORKER DIRECTORY ---------- */
+const WORKERS = [
+  { id:1, name:'Abebe Tesfaye', cat:'plumbing', skill:'Plumbing', am:'የቧንቧ', rating:4.9, jobs:214, rate:350, rateType:'hourly', verified:true, location:'Bole, Addis Ababa', initials:'AT', grad:'from-indigo-500 to-blue-600', tags:'pipe leak water heater bathroom sink tap', reply:'Selam! I can be there within the hour. I bring all my own tools and give a 30-day guarantee on the work.' },
+  { id:2, name:'Selam Bekele', cat:'cleaning', skill:'Cleaning', am:'ጽዳት', rating:4.8, jobs:389, rate:180, rateType:'hourly', verified:true, location:'Piassa, Addis Ababa', initials:'SB', grad:'from-blue-500 to-cyan-500', tags:'deep clean house office sofa carpet', reply:'Hello! I specialize in deep cleaning. Do you need the whole apartment or just specific rooms?' },
+  { id:3, name:'Dawit Mekonnen', cat:'electrical', skill:'Electrical', am:'ኤሌክትሪክ', rating:5.0, jobs:142, rate:500, rateType:'hourly', verified:true, location:'Kazanchis, Addis Ababa', initials:'DM', grad:'from-violet-500 to-indigo-600', tags:'wiring breaker socket short circuit inverter', reply:'Hi! I am a certified Grade-2 electrician. Please describe the issue so I can bring the right parts.' },
+  { id:4, name:'Hana Girma', cat:'tutoring', skill:'Tutoring', am:'ትምህርት', rating:4.9, jobs:96, rate:400, rateType:'hourly', verified:true, location:'Gerji, Addis Ababa', initials:'HG', grad:'from-fuchsia-500 to-indigo-600', tags:'math physics chemistry exam grade 12 university', reply:'Hello! I tutor Grade 9–12 Mathematics and Physics. Which subject and grade level do you need?' },
+  { id:5, name:'Yonas Alemu', cat:'auto', skill:'Auto Repair', am:'መኪና', rating:4.7, jobs:178, rate:1200, rateType:'fixed', verified:true, location:'Megenagna, Addis Ababa', initials:'YA', grad:'from-sky-500 to-blue-600', tags:'engine brake toyota diagnostics oil change car', reply:'Hi! I offer mobile diagnostics. What is the car model and what symptoms are you seeing?' },
+  { id:6, name:'Meron Tadesse', cat:'tech', skill:'Tech Support', am:'ቴክኖሎጂ', rating:4.9, jobs:121, rate:450, rateType:'hourly', verified:true, location:'CMC, Addis Ababa', initials:'MT', grad:'from-cyan-500 to-indigo-600', tags:'laptop computer wifi printer network data recovery', reply:'Hi there! I can help remotely first — if that fails, I will come on-site the same day.' },
+  { id:7, name:'Kalkidan Assefa', cat:'cleaning', skill:'Cleaning', am:'ጽዳት', rating:4.6, jobs:203, rate:150, rateType:'hourly', verified:false, location:'Ayat, Addis Ababa', initials:'KA', grad:'from-teal-500 to-blue-600', tags:'cleaning laundry moving house helper', reply:'Selam! I am available tomorrow morning. I charge per hour with a minimum of 2 hours.' },
+  { id:8, name:'Biruk Haile', cat:'plumbing', skill:'Plumbing', am:'የቧንቧ', rating:4.8, jobs:167, rate:380, rateType:'hourly', verified:true, location:'Summit, Addis Ababa', initials:'BH', grad:'from-indigo-500 to-purple-600', tags:'water tank pump toilet blockage pipe', reply:'Hello! I handle water tank and pump installations too. Send me a photo of the problem if possible.' },
+  { id:9, name:'Sara Wolde', cat:'tutoring', skill:'Tutoring', am:'ትምህርት', rating:5.0, jobs:74, rate:350, rateType:'hourly', verified:true, location:'Old Airport, Addis Ababa', initials:'SW', grad:'from-pink-500 to-indigo-600', tags:'english biology tutorial kids reading', reply:'Hi! I offer both in-person and online sessions. Which days work best for you?' },
+  { id:10, name:'Tewodros Getu', cat:'electrical', skill:'Electrical', am:'ኤሌክትሪክ', rating:4.5, jobs:88, rate:420, rateType:'hourly', verified:false, location:'Gulele, Addis Ababa', initials:'TG', grad:'from-amber-500 to-indigo-600', tags:'lighting installation wiring fan repair', reply:'Selam! I can come and inspect the issue free of charge before quoting.' },
+  { id:11, name:'Lidya Fikru', cat:'tech', skill:'Tech Support', am:'ቴክኖሎጂ', rating:4.7, jobs:63, rate:400, rateType:'hourly', verified:true, location:'CMC, Addis Ababa', initials:'LF', grad:'from-blue-500 to-violet-600', tags:'software setup phone repair cctv pos system', reply:'Hello! I set up POS and CCTV systems for small businesses. Happy to give a free consultation.' },
+  { id:12, name:'Nahom Desta', cat:'auto', skill:'Auto Repair', am:'መኪና', rating:4.6, jobs:112, rate:900, rateType:'fixed', verified:true, location:'Kality, Addis Ababa', initials:'ND', grad:'from-slate-500 to-indigo-600', tags:'car battery tyre suspension brake mechanic', reply:'Hi! I run a fully equipped garage in Kality. Bring the car in or I can come to you.' }
+];
+
+/* ---------- STATE ---------- */
+const state = { category: 'all', tab: 'explore', chatWorker: null, reviewBooking: null, disputeBooking: null, reviewStars: 0 };
+const draft = { workerId: null, hours: 2 };
+
+/* ---------- STORAGE HELPERS ---------- */
+function getBalance() {
+  let v = parseFloat(localStorage.getItem(LS_BALANCE));
+  if (isNaN(v)) { v = DEFAULT_BALANCE; localStorage.setItem(LS_BALANCE, String(v)); }
+  return v;
+}
+function setBalance(v) {
+  v = Math.round(v * 100) / 100;
+  localStorage.setItem(LS_BALANCE, String(v));
+  updateWalletUI();
+}
+function getBookings() {
+  try { return JSON.parse(localStorage.getItem(LS_BOOKINGS)) || []; } catch (e) { return []; }
+}
+function saveBookings(list) { localStorage.setItem(LS_BOOKINGS, JSON.stringify(list)); }
+function getTx() {
+  try { return JSON.parse(localStorage.getItem(LS_TX)) || []; } catch (e) { return []; }
+}
+function addTx(entry) {
+  const list = getTx();
+  list.unshift(Object.assign({ ts: Date.now() }, entry));
+  localStorage.setItem(LS_TX, JSON.stringify(list.slice(0, 40)));
+}
+
+/* ---------- FORMATTERS ---------- */
+const fmtNum = n => Math.round(n).toLocaleString('en-US');
+function fmtDate(ts) {
+  if (!ts) return '—';
+  return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+}
+function fmtDateTime(ts) {
+  if (!ts) return '—';
+  const d = new Date(ts);
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + ' · ' +
+         d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+}
+function prettyDate(str) {
+  if (!str) return '—';
+  const d = new Date(str + 'T00:00:00');
+  if (isNaN(d)) return str;
+  return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+}
+
+/* ══════════════ TOAST SYSTEM ══════════════ */
+function toast(msg, type = 'success') {
+  const wrap = document.getElementById('toastWrap');
+  const map = {
+    success: { icon: 'fa-circle-check', color: 'text-emerald-400', ring: 'border-emerald-500/30', bg: 'from-emerald-500/15' },
+    info:    { icon: 'fa-circle-info',  color: 'text-indigo-400',  ring: 'border-indigo-500/30',  bg: 'from-indigo-500/15' },
+    warn:    { icon: 'fa-triangle-exclamation', color: 'text-amber-400', ring: 'border-amber-500/30', bg: 'from-amber-500/15' },
+    error:   { icon: 'fa-circle-xmark', color: 'text-rose-400', ring: 'border-rose-500/30', bg: 'from-rose-500/15' }
+  };
+  const c = map[type] || map.info;
+
+  const el = document.createElement('div');
+  el.className = `toast-in pointer-events-auto w-full max-w-sm rounded-2xl border ${c.ring} bg-slate-900/95 backdrop-blur-xl px-4 py-3 flex items-start gap-3 shadow-2xl shadow-black/50`;
+  el.innerHTML = `
+    <div class="w-7 h-7 rounded-lg bg-gradient-to-br ${c.bg} to-transparent border ${c.ring} flex items-center justify-center shrink-0 mt-0.5">
+      <i class="fa-solid ${c.icon} ${c.color} text-[12px]"></i>
+    </div>
+    <p class="text-[12px] leading-snug text-slate-200 flex-1 pt-1">${msg}</p>
+  `;
+  wrap.appendChild(el);
+
+  setTimeout(() => {
+    el.style.transition = 'opacity .3s ease, transform .3s ease';
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(-12px) scale(.96)';
+    setTimeout(() => el.remove(), 320);
+  }, 3200);
+}
+
+/* ══════════════ MODAL HELPERS ══════════════ */
+function openModal(id) {
+  const m = document.getElementById(id);
+  if (!m) return;
+  m.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  const m = document.getElementById(id);
+  if (!m) return;
+  m.classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+/* ══════════════ CATEGORY PILLS ══════════════ */
+function renderCategories() {
+  const row = document.getElementById('catRow');
+  row.innerHTML = CATEGORIES.map(c => {
+    const active = state.category === c.id;
+    return `<button onclick="setCategory('${c.id}')"
+      class="cat-pill shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl border text-[11px] font-semibold transition active:scale-95 ${
+        active
+          ? 'bg-gradient-to-r from-indigo-500 to-blue-600 border-transparent text-white shadow-lg shadow-indigo-700/30'
+          : 'bg-white/5 border-white/10 text-slate-400'
+      }">
+      <i class="fa-solid ${c.icon} text-[10px] ${active ? 'text-white' : 'text-indigo-400/70'}"></i>
+      <span>${c.label}</span>
+      <span class="text-[9px] ${active ? 'text-white/70' : 'text-slate-600'}">${c.am}</span>
+    </button>`;
+  }).join('');
+}
+function setCategory(id) {
+  state.category = id;
+  renderCategories();
+  renderWorkers();
+}
+
+/* ══════════════ SEARCH ══════════════ */
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('clearSearchBtn').classList.add('hidden');
+  renderWorkers();
+}
+
+/* ══════════════ WORKER DIRECTORY ══════════════ */
+function renderWorkers() {
+  const input = document.getElementById('searchInput');
+  const q = (input.value || '').toLowerCase().trim();
+  document.getElementById('clearSearchBtn').classList.toggle('hidden', !q);
+
+  const list = WORKERS.filter(w => {
+    const catOk = state.category === 'all' || w.cat === state.category;
+    const hay = `${w.name} ${w.skill} ${w.am} ${w.location} ${w.tags}`.toLowerCase();
+    const qOk = !q || hay.includes(q);
+    return catOk && qOk;
+  });
+
+  document.getElementById('workerCount').textContent = list.length;
+  const wrap = document.getElementById('workerList');
+
+  if (!list.length) {
+    wrap.innerHTML = `
+      <div class="glass rounded-2xl p-8 text-center anim-up">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+          <i class="fa-solid fa-user-slash text-slate-600 text-lg"></i>
+        </div>
+        <p class="mt-3 font-semibold text-[13px] text-slate-300">No professionals found</p>
+        <p class="text-[11px] text-slate-500 mt-1">Try a different skill, name or location.</p>
+      </div>`;
+    return;
+  }
+
+  wrap.innerHTML = list.map((w, i) => `
+    <div class="glass rounded-2xl p-4 anim-up" style="animation-delay:${Math.min(i * 40, 240)}ms">
+      <div class="flex gap-3">
+        <div class="relative shrink-0">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br ${w.grad} flex items-center justify-center text-white font-bold text-[16px] shadow-lg shadow-black/30">
+            ${w.initials}
+          </div>
+          ${w.verified ? `
+            <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-slate-950 flex items-center justify-center border border-slate-800">
+              <i class="fa-solid fa-circle-check text-indigo-400 text-[12px]"></i>
+            </div>` : ''}
+        </div>
+
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-1.5">
+            <h3 class="font-semibold text-[15px] truncate">${w.name}</h3>
+            ${w.verified
+              ? '<i class="fa-solid fa-circle-check text-indigo-400 text-[11px] shrink-0"></i>'
+              : '<span class="text-[8px] px-1.5 py-[1px] rounded bg-slate-700/60 text-slate-400 font-bold shrink-0">UNVERIFIED</span>'}
+          </div>
+
+          <div class="mt-1.5">
+            <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-md bg-indigo-500/12 border border-indigo-500/25 text-indigo-300 text-[10px] font-medium">
+              <i class="fa-solid fa-briefcase text-[8px]"></i> ${w.skill} · ${w.am}
+            </span>
+          </div>
+
+          <div class="flex items-center gap-1.5 mt-2 text-[10.5px] text-slate-400">
+            <span class="text-amber-400 font-bold"><i class="fa-solid fa-star text-[8px]"></i> ${w.rating.toFixed(1)}</span>
+            <span class="text-slate-700">•</span>
+            <span>${w.jobs} jobs</span>
+            <span class="text-slate-700">•</span>
+            <span class="truncate"><i class="fa-solid fa-location-dot text-[8px] text-slate-500"></i> ${w.location}</span>
+          </div>
+        </div>
+
+        <div class="text-right shrink-0 pl-1">
+          <p class="text-indigo-300 font-extrabold text-[14px] tabular-nums leading-none">${fmtNum(w.rate)}</p>
+          <p class="text-[9px] text-slate-500 mt-1 font-medium">ETB/${w.rateType === 'hourly' ? 'hr' : 'job'}</p>
+        </div>
+      </div>
+
+      <div class="flex gap-2 mt-3.5">
+        <button onclick="openChat(${w.id})" title="Chat"
+          class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 active:scale-95 transition">
+          <i class="fa-regular fa-comment-dots text-[13px]"></i>
+        </button>
+        <button onclick="openCerts(${w.id})" title="Certificates"
+          class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 active:scale-95 transition">
+          <i class="fa-solid fa-certificate text-[13px]"></i>
+        </button>
+        <button onclick="openBooking(${w.id})"
+          class="flex-1 h-10 rounded-xl bg-gradient-to-r from-indigo-500 to-blue-600 text-white text-[13px] font-bold shadow-lg shadow-indigo-700/25 active:scale-[0.98] transition">
+          <i class="fa-solid fa-handshake-angle mr-1.5 text-[11px]"></i>Hire Now
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ══════════════ BOOKING FLOW ══════════════ */
+function openBooking(id) {
+  const w = WORKERS.find(x => x.id === id);
+  if (!w) return;
+
+  draft.workerId = id;
+  draft.hours = w.rateType === 'hourly' ? 2 : 1;
+
+  const av = document.getElementById('bkAvatar');
+  av.className = `w-12 h-12 rounded-2xl bg-gradient-to-br ${w.grad} flex items-center justify-center text-white font-bold text-[14px]`;
+  av.textContent = w.initials;
+
+  document.getElementById('bkName').textContent = w.name;
+  document.getElementById('bkSkill').innerHTML = `${w.skill} · ${w.am} &nbsp;<span class="text-amber-400">★ ${w.rating.toFixed(1)}</span>`;
+  document.getElementById('bkRate').innerHTML = `${fmtNum(w.rate)} ETB<span class="text-slate-500 font-medium">/${w.rateType === 'hourly' ? 'hr' : 'job'}</span>`;
+
+  document.getElementById('hoursWrap').classList.toggle('hidden', w.rateType !== 'hourly');
+  document.getElementById('hoursVal').textContent = draft.hours;
+
+  // sensible defaults
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  document.getElementById('bkDate').value = d.toISOString().slice(0, 10);
+  document.getElementById('bkTime').value = '09:00';
+  document.getElementById('bkDesc').value = '';
+  document.getElementById('bkLocation').value = '';
+
+  updateQuote();
+  openModal('modal-booking');
+}
+
+function changeHours(delta) {
+  draft.hours = Math.max(1, Math.min(12, draft.hours + delta));
+  document.getElementById('hoursVal').textContent = draft.hours;
+  updateQuote();
+}
+
+function quote() {
+  const w = WORKERS.find(x => x.id === draft.workerId);
+  if (!w) return { base: 0, service: 0, total: 0 };
+  const base = w.rateType === 'hourly' ? w.rate * draft.hours : w.rate;
+  const service = Math.round(base * 0.05);
+  return { base, service, total: base + service };
+}
+
+function updateQuote() {
+  const w = WORKERS.find(x => x.id === draft.workerId);
+  if (!w) return;
+  const q = quote();
+  const bal = getBalance();
+
+  document.getElementById('qBase').textContent = fmtNum(q.base);
+  document.getElementById('qService').textContent = fmtNum(q.service);
+  document.getElementById('qTotal').textContent = fmtNum(q.total);
+  document.getElementById('qWallet').textContent = fmtNum(bal);
+
+  const note = document.getElementById('bkWalletNote');
+  const btn = document.getElementById('bkConfirmBtn');
+  const enough = bal >= q.total;
+
+  if (enough) {
+    note.className = 'mt-3 flex items-center gap-2 text-[11px] text-slate-500';
+    note.innerHTML = `<i class="fa-solid fa-wallet text-slate-600"></i>
+      <span>Wallet balance: <span class="font-semibold text-slate-300">${fmtNum(bal)} ETB</span></span>`;
+    btn.disabled = false;
+    btn.className = 'w-full mt-4 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-500 to-blue-600 font-bold text-[14px] shadow-lg shadow-indigo-700/30 active:scale-[0.98] transition';
+    btn.innerHTML = '<i class="fa-solid fa-lock mr-2"></i> Confirm & Hold in Escrow';
+  } else {
+    note.className = 'mt-3 flex items-center gap-2 text-[11px] text-rose-400';
+    note.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i>
+      <span>Insufficient balance — short by <span class="font-semibold">${fmtNum(q.total - bal)} ETB</span></span>`;
+    btn.disabled = true;
+    btn.className = 'w-full mt-4 py-3.5 rounded-2xl bg-slate-800 border border-white/5 text-slate-500 font-bold text-[14px] cursor-not-allowed';
+    btn.innerHTML = '<i class="fa-solid fa-ban mr-2"></i> Insufficient Funds';
+  }
+}
+
+function confirmBooking() {
+  const w = WORKERS.find(x => x.id === draft.workerId);
+  if (!w) return;
+
+  const desc = document.getElementById('bkDesc').value.trim();
+  const date = document.getElementById('bkDate').value;
+  const time = document.getElementById('bkTime').value;
+  const loc = document.getElementById('bkLocation').value.trim();
+
+  if (!desc) { toast('Please describe the task first.', 'warn'); return; }
+  if (!date) { toast('Please select a service date.', 'warn'); return; }
+  if (!time) { toast('Please select a start time.', 'warn'); return; }
+  if (!loc) { toast('Please enter the service location.', 'warn'); return; }
+
+  const q = quote();
+  const bal = getBalance();
+  if (bal < q.total) { toast('Insufficient wallet balance.', 'error'); return; }
+
+  setBalance(bal - q.total);
+
+  const booking = {
+    id: 'ZW-' + Date.now().toString().slice(-7),
+    workerId: w.id,
+    workerName: w.name,
+    workerInitials: w.initials,
+    workerGrad: w.grad,
+    skill: w.skill,
+    am: w.am,
+    desc, date, time, location: loc,
+    hours: w.rateType === 'hourly' ? draft.hours : null,
+    base: q.base,
+    service: q.service,
+    total: q.total,
+    status: 'escrow',
+    createdAt: Date.now(),
+    completedAt: null,
+    rating: null,
+    review: null
+  };
+
+  const list = getBookings();
+  list.unshift(booking);
+  saveBookings(list);
+
+  addTx({
+    label: `Escrow hold — ${w.name}`,
+    sub: booking.id,
+    amount: -q.total,
+    kind: 'hold'
+  });
+
+  closeModal('modal-booking');
+  toast(`<span class="font-semibold">${w.name}</span> hired! ${fmtNum(q.total)} ETB secured in escrow.`, 'success');
+
+  renderWorkers();
+  updateWalletUI();
+  renderJobs();
+  switchTab('jobs');
+}
+
+/* ══════════════ MY JOBS ══════════════ */
+function statusMeta(status) {
+  if (status === 'escrow')    return { label: 'In Escrow',  cls: 'bg-amber-500/15 border-amber-500/30 text-amber-300',     icon: 'fa-hourglass-half' };
+  if (status === 'completed') return { label: 'Completed',  cls: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300', icon: 'fa-circle-check' };
+  return { label: 'Disputed', cls: 'bg-rose-500/15 border-rose-500/30 text-rose-300', icon: 'fa-triangle-exclamation' };
+}
+
+function renderJobs() {
+  const bookings = getBookings();
+  const wrap = document.getElementById('jobsList');
+  const activeCount = bookings.filter(b => b.status === 'escrow').length;
+
+  const badge = document.getElementById('jobsBadge');
+  if (activeCount > 0) {
+    badge.textContent = activeCount;
+    badge.classList.remove('hidden');
+  } else {
+    badge.classList.add('hidden');
+  }
+
+  if (!bookings.length) {
+    wrap.innerHTML = `
+      <div class="glass rounded-2xl p-8 text-center anim-up">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
+          <i class="fa-solid fa-clipboard-list text-indigo-400 text-lg"></i>
+        </div>
+        <p class="mt-3 font-semibold text-[13px] text-slate-300">No jobs yet</p>
+        <p class="text-[11px] text-slate-500 mt-1 leading-relaxed">Browse verified professionals and hire your first one — your payment stays protected in escrow.</p>
+        <button onclick="switchTab('explore')" class="mt-4 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-blue-600 text-[12px] font-bold shadow-lg shadow-indigo-700/25 active:scale-95 transition">
+          Explore Professionals
+        </button>
+      </div>`;
+    return;
+  }
+
+  const active = bookings.filter(b => b.status === 'escrow');
+  const history = bookings.filter(b => b.status !== 'escrow');
+
+  let html = '';
+
+  if (active.length) {
+    html += `<p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Active (${active.length})</p>`;
+    html += active.map(jobCard).join('');
+  }
+  if (history.length) {
+    html += `<p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mt-5 mb-2">History (${history.length})</p>`;
+    html += history.map(jobCard).join('');
+  }
+
+  wrap.innerHTML = html;
+}
+
+function jobCard(b) {
+  const m = statusMeta(b.status);
+  const rateLine = b.rating
+    ? `<span class="text-amber-400 font-bold text-[11px]"><i class="fa-solid fa-star text-[9px]"></i> ${b.rating}.0 rated</span>`
+    : '';
+
+  let actions = '';
+  if (b.status === 'escrow') {
+    actions = `
+      <div class="flex gap-2 mt-3.5">
+        <button onclick="openTimeline('${b.id}')" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 active:scale-95 transition">
+          <i class="fa-solid fa-timeline text-[12px]"></i>
+        </button>
+        <button onclick="openChat(${b.workerId})" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 active:scale-95 transition">
+          <i class="fa-regular fa-comment-dots text-[12px]"></i>
+        </button>
+        <button onclick="openDispute('${b.id}')" class="px-3 h-10 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-300 text-[11px] font-semibold active:scale-95 transition">
+          Dispute
+        </button>
+        <button onclick="completeJob('${b.id}')" class="flex-1 h-10 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-[12px] font-bold shadow-lg shadow-emerald-900/25 active:scale-[0.98] transition">
+          <i class="fa-solid fa-check mr-1.5 text-[10px]"></i>Mark Complete
+        </button>
+      </div>`;
+  } else if (b.status === 'completed') {
+    actions = `
+      <div class="flex gap-2 mt-3.5">
+        <button onclick="openTimeline('${b.id}')" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 active:scale-95 transition">
+          <i class="fa-solid fa-timeline text-[12px]"></i>
+        </button>
+        <button onclick="openChat(${b.workerId})" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 active:scale-95 transition">
+          <i class="fa-regular fa-comment-dots text-[12px]"></i>
+        </button>
+        ${b.rating
+          ? `<div class="flex-1 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
+               <i class="fa-solid fa-star text-amber-400 text-[10px]"></i> You rated ${b.rating}.0
+             </div>`
+          : `<button onclick="openReview('${b.id}')" class="flex-1 h-10 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white text-[12px] font-bold shadow-lg shadow-amber-900/25 active:scale-[0.98] transition">
+               <i class="fa-solid fa-star mr-1.5 text-[10px]"></i>Rate Worker
+             </button>`}
+      </div>`;
+  } else {
+    actions = `
+      <div class="flex gap-2 mt-3.5">
+        <button onclick="openTimeline('${b.id}')" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 active:scale-95 transition">
+          <i class="fa-solid fa-timeline text-[12px]"></i>
+        </button>
+        <div class="flex-1 h-10 rounded-xl bg-rose-500/10 border border-rose-500/25 flex items-center justify-center gap-2 text-[11px] text-rose-300 font-semibold">
+          <i class="fa-solid fa-shield-halved text-[10px]"></i> Under Trust Team Review
+        </div>
+      </div>`;
+  }
+
+  return `
+    <div class="glass rounded-2xl p-4 anim-up">
+      <div class="flex items-start gap-3">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br ${b.workerGrad} flex items-center justify-center text-white font-bold text-[13px] shrink-0">
+          ${b.workerInitials}
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2">
+            <h3 class="font-semibold text-[14px] truncate">${b.workerName}</h3>
+            <span class="shrink-0 px-2 py-[2px] rounded-md border text-[9px] font-bold ${m.cls}">
+              <i class="fa-solid ${m.icon} text-[8px] mr-0.5"></i>${m.label}
+            </span>
+          </div>
+          <p class="text-[10px] text-indigo-300/80 mt-1">${b.skill} · ${b.am} <span class="text-slate-600">|</span> <span class="text-slate-500">${b.id}</span></p>
+        </div>
+      </div>
+
+      <p class="mt-3 text-[12px] text-slate-300 leading-snug line-clamp-2">${b.desc}</p>
+
+      <div class="mt-3 grid grid-cols-2 gap-2 text-[10.5px] text-slate-400">
+        <div class="flex items-center gap-1.5">
+          <i class="fa-regular fa-calendar text-indigo-400/70"></i>
+          <span>${prettyDate(b.date)} · ${b.time}</span>
+        </div>
+        <div class="flex items-center gap-1.5 min-w-0">
+          <i class="fa-solid fa-location-dot text-indigo-400/70"></i>
+          <span class="truncate">${b.location}</span>
+        </div>
+      </div>
+
+      <div class="mt-3 flex items-center justify-between rounded-xl bg-slate-950/50 border border-white/5 px-3 py-2.5">
+        <div>
+          <p class="text-[9px] uppercase tracking-wider text-slate-500 font-semibold">${b.status === 'completed' ? 'Released' : b.status === 'disputed' ? 'Frozen' : 'Held in Escrow'}</p>
+          <p class="text-[14px] font-extrabold tabular-nums ${b.status === 'completed' ? 'text-emerald-400' : b.status === 'disputed' ? 'text-rose-400' : 'text-amber-300'}">
+            ${fmtNum(b.total)} <span class="text-[10px] font-semibold opacity-70">ETB</span>
+          </p>
+        </div>
+        <div class="text-right">
+          ${rateLine}
+          <p class="text-[9px] text-slate-500 mt-0.5">${b.hours ? b.hours + ' hrs @ ' + fmtNum(b.base / b.hours) : 'Fixed price'}</p>
+        </div>
+      </div>
+
+      ${actions}
+    </div>`;
+}
+
+/* ══════════════ JOB ACTIONS ══════════════ */
+function completeJob(id) {
+  const list = getBookings();
+  const b = list.find(x => x.id === id);
+  if (!b || b.status !== 'escrow') return;
+
+  b.status = 'completed';
+  b.completedAt = Date.now();
+  saveBookings(list);
+
+  addTx({
+    label: `Escrow released — ${b.workerName}`,
+    sub: b.id,
+    amount: 0,
+    kind: 'release'
+  });
+
+  renderJobs();
+  updateWalletUI();
+  toast(`Escrow released. <span class="font-semibold">${fmtNum(b.total)} ETB</span> paid to ${b.workerName}.`, 'success');
+
+  setTimeout(() => openReview(id), 700);
+}
+
+function openDispute(id) {
+  state.disputeBooking = id;
+  document.getElementById('disputeReason').selectedIndex = 0;
+  openModal('modal-dispute');
+}
+
+function confirmDispute() {
+  const id = state.disputeBooking;
+  const list = getBookings();
+  const b = list.find(x => x.id === id);
+  if (!b) return;
+
+  const reason = document.getElementById('disputeReason').value;
+  b.status = 'disputed';
+  b.disputeReason = reason;
+  saveBookings(list);
+
+  addTx({
+    label: `Dispute opened — ${b.workerName}`,
+    sub: b.id,
+    amount: 0,
+    kind: 'dispute'
+  });
+
+  closeModal('modal-dispute');
+  renderJobs();
+  updateWalletUI();
+  toast(`Dispute submitted (${reason}). Funds remain frozen pending review.`, 'warn');
+}
+
+/* ══════════════ REVIEW FLOW ══════════════ */
+const STAR_LABELS = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+
+function openReview(id) {
+  state.reviewBooking = id;
+  state.reviewStars = 0;
+
+  const b = getBookings().find(x => x.id === id);
+  if (b) {
+    document.getElementById('reviewSub').innerHTML =
+      `Escrow released to <span class="text-slate-200 font-semibold">${b.workerName}</span> · ${fmtNum(b.total)} ETB`;
+  }
+  document.getElementById('reviewText').value = '';
+  renderStars();
+  openModal('modal-review');
+}
+
+function renderStars() {
+  const row = document.getElementById('starRow');
+  row.innerHTML = [1, 2, 3, 4, 5].map(i => `
+    <button onclick="setStars(${i})" class="active:scale-90 transition">
+      <i class="fa-solid fa-star text-[26px] ${i <= state.reviewStars ? 'text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,.5)]' : 'text-slate-700'}"></i>
+    </button>
+  `).join('');
+  document.getElementById('starLabel').textContent = state.reviewStars ? STAR_LABELS[state.reviewStars] : 'Tap to rate';
+}
+
+function setStars(n) {
+  state.reviewStars = n;
+  renderStars();
+}
+
+function submitReview() {
+  const id = state.reviewBooking;
+  if (!state.reviewStars) { toast('Please select a star rating.', 'warn'); return; }
+
+  const list = getBookings();
+  const b = list.find(x => x.id === id);
+  if (!b) return;
+
+  b.rating = state.reviewStars;
+  b.review = document.getElementById('reviewText').value.trim();
+  saveBookings(list);
+
+  closeModal('modal-review');
+  renderJobs();
+  toast(`Thank you! Your ${state.reviewStars}-star review for ${b.workerName} was posted.`, 'success');
+}
+
+/* ══════════════ CHAT SIMULATOR ══════════════ */
+function openChat(workerId) {
+  const w = WORKERS.find(x => x.id === workerId);
+  if (!w) return;
+  state.chatWorker = workerId;
+
+  const av = document.getElementById('chatAvatar');
+  av.className = `w-10 h-10 rounded-xl bg-gradient-to-br ${w.grad} flex items-center justify-center text-white font-bold text-[12px]`;
+  av.textContent = w.initials;
+  document.getElementById('chatName').textContent = w.name;
+
+  const body = document.getElementById('chatBody');
+  body.innerHTML = `
+    <div class="flex justify-center">
+      <span class="text-[9px] text-slate-600 bg-white/5 px-2.5 py-1 rounded-full">Today</span>
+    </div>
+    <div class="flex gap-2 max-w-[85%]">
+      <div class="w-7 h-7 rounded-lg bg-gradient-to-br ${w.grad} flex items-center justify-center text-white text-[10px] font-bold shrink-0">${w.initials}</div>
+      <div class="px-3.5 py-2.5 rounded-2xl rounded-tl-md bg-white/5 border border-white/10 text-[12px] text-slate-200 leading-snug">
+        Selam! Thanks for reaching out. How can I help you today? 🙌
+      </div>
+    </div>
+    <div class="flex gap-2 max-w-[85%]">
+      <div class="w-7 h-7 rounded-lg bg-gradient-to-br ${w.grad} flex items-center justify-center text-white text-[10px] font-bold shrink-0">${w.initials}</div>
+      <div class="px-3.5 py-2.5 rounded-2xl rounded-tl-md bg-white/5 border border-white/10 text-[12px] text-slate-200 leading-snug">
+        ${w.reply}
+      </div>
+    </div>
+  `;
+  document.getElementById('chatInput').value = '';
+  openModal('modal-chat');
+  setTimeout(() => { body.scrollTop = body.scrollHeight; }, 60);
+}
+
+function sendChat() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  const w = WORKERS.find(x => x.id === state.chatWorker);
+  const body = document.getElementById('chatBody');
+
+  body.insertAdjacentHTML('beforeend', `
+    <div class="flex justify-end">
+      <div class="px-3.5 py-2.5 rounded-2xl rounded-tr-md bg-gradient-to-br from-indigo-500 to-blue-600 text-[12px] text-white leading-snug max-w-[85%] shadow-lg shadow-indigo-900/30">
+        ${escapeHtml(text)}
+      </div>
+    </div>
+  `);
+  input.value = '';
+  body.scrollTop = body.scrollHeight;
+
+  // typing indicator
+  const typingId = 'typing-' + Date.now();
+  body.insertAdjacentHTML('beforeend', `
+    <div id="${typingId}" class="flex gap-2 max-w-[85%]">
+      <div class="w-7 h-7 rounded-lg bg-gradient-to-br ${w.grad} flex items-center justify-center text-white text-[10px] font-bold shrink-0">${w.initials}</div>
+      <div class="px-4 py-3 rounded-2xl rounded-tl-md bg-white/5 border border-white/10 typing">
+        <span class="w-1.5 h-1.5 rounded-full bg-slate-400 inline-block"></span>
+        <span class="w-1.5 h-1.5 rounded-full bg-slate-400 inline-block ml-1"></span>
+        <span class="w-1.5 h-1.5 rounded-full bg-slate-400 inline-block ml-1"></span>
+      </div>
+    </div>
+  `);
+  body.scrollTop = body.scrollHeight;
+
+  const replies = [
+    'Got it — that works for me. I will confirm the exact time shortly. 👍',
+    'No problem at all. I can bring the necessary materials with me.',
+    'Sure! My rate includes a 30-day workmanship guarantee.',
+    'Understood. Please share the location pin when you get a chance.',
+    'Perfect. I will be there on time, Insha’Allah. Thank you!'
+  ];
+
+  setTimeout(() => {
+    const t = document.getElementById(typingId);
+    if (t) t.remove();
+    body.insertAdjacentHTML('beforeend', `
+      <div class="flex gap-2 max-w-[85%]">
+        <div class="w-7 h-7 rounded-lg bg-gradient-to-br ${w.grad} flex items-center justify-center text-white text-[10px] font-bold shrink-0">${w.initials}</div>
+        <div class="px-3.5 py-2.5 rounded-2xl rounded-tl-md bg-white/5 border border-white/10 text-[12px] text-slate-200 leading-snug">
+          ${replies[Math.floor(Math.random() * replies.length)]}
+        </div>
+      </div>
+    `);
+    body.scrollTop = body.scrollHeight;
+  }, 1100);
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+/* ══════════════ CERTIFICATES ══════════════ */
+function openCerts(workerId) {
+  const w = WORKERS.find(x => x.id === workerId);
+  if (!w) return;
+  const certs = CERTS[w.cat] || [];
+
+  document.getElementById('certsBody').innerHTML = `
+    <div class="glass rounded-2xl p-3.5 flex items-center gap-3">
+      <div class="w-12 h-12 rounded-2xl bg-gradient-to-br ${w.grad} flex items-center justify-center text-white font-bold">${w.initials}</div>
+      <div class="flex-1 min-w-0">
+        <p class="font-semibold text-[14px] truncate">${w.name}</p>
+        <p class="text-[10px] text-slate-500 mt-0.5">${w.skill} · ${w.am} · ${w.jobs} jobs completed</p>
+      </div>
+      ${w.verified
+        ? '<span class="px-2 py-1 rounded-lg bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 text-[9px] font-bold shrink-0"><i class="fa-solid fa-circle-check mr-1"></i>VERIFIED</span>'
+        : '<span class="px-2 py-1 rounded-lg bg-slate-700/50 border border-white/10 text-slate-400 text-[9px] font-bold shrink-0">PENDING</span>'}
+    </div>
+
+    <div class="mt-3 grid grid-cols-2 gap-2.5">
+      <div class="glass rounded-2xl p-3">
+        <i class="fa-solid fa-id-card text-indigo-400 text-[13px]"></i>
+        <p class="text-[11px] font-semibold mt-2">National ID</p>
+        <p class="text-[9px] text-emerald-400 mt-0.5"><i class="fa-solid fa-check text-[8px]"></i> Verified by Zemen</p>
+      </div>
+      <div class="glass rounded-2xl p-3">
+        <i class="fa-solid fa-fingerprint text-blue-400 text-[13px]"></i>
+        <p class="text-[11px] font-semibold mt-2">Background Check</p>
+        <p class="text-[9px] text-emerald-400 mt-0.5"><i class="fa-solid fa-check text-[8px]"></i> Cleared ${w.verified ? '2024' : 'Pending'}</p>
+      </div>
+    </div>
+
+    <p class="mt-5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Professional Certificates</p>
+    <div class="mt-2.5 space-y-2.5">
+      ${certs.map(c => `
+        <div class="rounded-2xl bg-slate-950/50 border border-white/10 p-3.5 flex items-start gap-3">
+          <div class="w-9 h-9 rounded-xl bg-indigo-500/12 border border-indigo-500/25 flex items-center justify-center shrink-0">
+            <i class="fa-solid ${c.icon} text-indigo-400 text-[12px]"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-[12.5px] font-semibold leading-snug">${c.name}</p>
+            <p class="text-[10px] text-slate-500 mt-0.5">${c.issuer} · ${c.year}</p>
+          </div>
+          <i class="fa-solid fa-circle-check text-emerald-400 text-[13px] shrink-0 mt-0.5"></i>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="mt-4 rounded-2xl bg-emerald-500/8 border border-emerald-500/20 p-3.5 flex items-start gap-3">
+      <i class="fa-solid fa-shield-halved text-emerald-400 text-[13px] mt-0.5"></i>
+      <p class="text-[10.5px] text-emerald-200/70 leading-snug">
+        All documents were reviewed by the Zemen Trust Team. Skill certificates are valid through 2026.
+      </p>
+    </div>
+  `;
+  openModal('modal-certs');
+}
+
+/* ══════════════ JOB TIMELINE ══════════════ */
+function openTimeline(id) {
+  const b = getBookings().find(x => x.id === id);
+  if (!b) return;
+
+  const isDone = b.status === 'completed';
+  const isDisputed = b.status === 'disputed';
+
+  const steps = [
+    { title: 'Request Posted', sub: fmtDateTime(b.createdAt), state: 'done' },
+    { title: 'Escrow Funded', sub: `${fmtNum(b.total)} ETB secured by Zemen`, state: 'done' },
+    { title: 'Worker Assigned', sub: `${b.workerName} accepted the job`, state: 'done' },
+    { title: 'Work In Progress', sub: `${prettyDate(b.date)} at ${b.time}`, state: isDone ? 'done' : (isDisputed ? 'warn' : 'active') },
+    { title: isDisputed ? 'Dispute Under Review' : 'Completed & Payment Released',
+      sub: isDone ? fmtDateTime(b.completedAt) : (isDisputed ? b.disputeReason || 'Under review' : 'Awaiting your approval'),
+      state: isDone ? 'done' : (isDisputed ? 'error' : 'pending') }
+  ];
+
+  const dotFor = s => {
+    if (s.state === 'done')  return '<div class="w-7 h-7 rounded-full bg-emerald-500/15 border-2 border-emerald-500 flex items-center justify-center"><i class="fa-solid fa-check text-emerald-400 text-[10px]"></i></div>';
+    if (s.state === 'active')return '<div class="w-7 h-7 rounded-full bg-indigo-500/15 border-2 border-indigo-500 flex items-center justify-center"><span class="w-2.5 h-2.5 rounded-full bg-indigo-400 animate-ping absolute"></span><span class="w-2.5 h-2.5 rounded-full bg-indigo-400"></span></div>';
+    if (s.state === 'warn')  return '<div class="w-7 h-7 rounded-full bg-amber-500/15 border-2 border-amber-500 flex items-center justify-center"><i class="fa-solid fa-ellipsis text-amber-400 text-[10px]"></i></div>';
+    if (s.state === 'error') return '<div class="w-7 h-7 rounded-full bg-rose-500/15 border-2 border-rose-500 flex items-center justify-center"><i class="fa-solid fa-exclamation text-rose-400 text-[10px]"></i></div>';
+    return '<div class="w-7 h-7 rounded-full bg-slate-800 border-2 border-slate-700"></div>';
+  };
+
+  document.getElementById('timelineBody').innerHTML = `
+    <div class="glass rounded-2xl p-3.5 flex items-center gap-3 mb-5">
+      <div class="w-11 h-11 rounded-xl bg-gradient-to-br ${b.workerGrad} flex items-center justify-center text-white font-bold text-[13px]">${b.workerInitials}</div>
+      <div class="flex-1 min-w-0">
+        <p class="font-semibold text-[13.5px] truncate">${b.workerName}</p>
+        <p class="text-[10px] text-slate-500 mt-0.5">${b.id} · ${b.skill}</p>
+      </div>
+      <span class="px-2 py-1 rounded-lg border text-[9px] font-bold ${statusMeta(b.status).cls}">${statusMeta(b.status).label}</span>
+    </div>
+
+    <div class="relative pl-1">
+      ${steps.map((s, i) => `
+        <div class="flex gap-3.5 relative pb-6">
+          ${i < steps.length - 1 ? `<div class="absolute left-[13px] top-8 bottom-0 w-0.5 ${s.state === 'done' ? 'bg-emerald-500/40' : 'bg-slate-800'}"></div>` : ''}
+          <div class="relative shrink-0">${dotFor(s)}</div>
+          <div class="pt-0.5 flex-1 min-w-0">
+            <p class="text-[12.5px] font-semibold ${s.state === 'pending' ? 'text-slate-500' : 'text-slate-200'}">${s.title}</p>
+            <p class="text-[10.5px] text-slate-500 mt-0.5 leading-snug">${s.sub}</p>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="rounded-2xl bg-slate-950/60 border border-white/10 p-4 mt-1">
+      <p class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mb-2.5">Payment Breakdown</p>
+      <div class="flex justify-between text-[12px] py-1"><span class="text-slate-400">Base Fee</span><span class="font-semibold tabular-nums">${fmtNum(b.base)} ETB</span></div>
+      <div class="flex justify-between text-[12px] py-1"><span class="text-slate-400">Service Charge (5%)</span><span class="font-semibold tabular-nums">${fmtNum(b.service)} ETB</span></div>
+      <div class="h-px bg-white/10 my-2"></div>
+      <div class="flex justify-between items-center">
+        <span class="text-[13px] font-bold">Total</span>
+        <span class="text-[16px] font-extrabold tabular-nums ${isDone ? 'text-emerald-400' : isDisputed ? 'text-rose-400' : 'text-amber-300'}">${fmtNum(b.total)} ETB</span>
+      </div>
+    </div>
+  `;
+  openModal('modal-timeline');
+}
+
+/* ══════════════ WALLET ══════════════ */
+function updateWalletUI() {
+  const bal = getBalance();
+  const bookings = getBookings();
+
+  const escrow = bookings.filter(b => b.status === 'escrow').reduce((s, b) => s + b.total, 0);
+  const spent = bookings.filter(b => b.status === 'completed').reduce((s, b) => s + b.total, 0);
+
+  const chip = document.getElementById('walletChip');
+  if (chip) chip.textContent = fmtNum(bal);
+
+  const big = document.getElementById('walletBig');
+  if (big) big.textContent = fmtNum(bal);
+
+  const e = document.getElementById('escrowTotal');
+  if (e) e.textContent = fmtNum(escrow);
+
+  const sp = document.getElementById('spentTotal');
+  if (sp) sp.textContent = fmtNum(spent);
+
+  renderTx();
+}
+
+function renderTx() {
+  const wrap = document.getElementById('txList');
+  if (!wrap) return;
+  const list = getTx();
+
+  if (!list.length) {
+    wrap.innerHTML = `
+      <div class="glass rounded-2xl p-6 text-center">
+        <i class="fa-solid fa-receipt text-slate-700 text-xl"></i>
+        <p class="text-[11px] text-slate-500 mt-2">No transactions yet.</p>
+      </div>`;
+    return;
+  }
+
+  const kindMeta = {
+    hold:    { icon: 'fa-lock',            color: 'text-amber-400',   bg: 'bg-amber-500/12 border-amber-500/25' },
+    release: { icon: 'fa-arrow-up-right-dots', color: 'text-emerald-400', bg: 'bg-emerald-500/12 border-emerald-500/25' },
+    dispute: { icon: 'fa-triangle-exclamation', color: 'text-rose-400', bg: 'bg-rose-500/12 border-rose-500/25' },
+    topup:   { icon: 'fa-plus',            color: 'text-indigo-400',  bg: 'bg-indigo-500/12 border-indigo-500/25' }
+  };
+
+  wrap.innerHTML = list.map(t => {
+    const m = kindMeta[t.kind] || kindMeta.topup;
+    const amt = t.amount === 0
+      ? '<span class="text-[11px] text-slate-500 font-semibold">—</span>'
+      : `<span class="text-[13px] font-bold tabular-nums ${t.amount < 0 ? 'text-rose-300' : 'text-emerald-300'}">${t.amount < 0 ? '' : '+'}${fmtNum(t.amount)}</span>`;
+
+    return `
+      <div class="glass rounded-2xl p-3 flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl border ${m.bg} flex items-center justify-center shrink-0">
+          <i class="fa-solid ${m.icon} ${m.color} text-[11px]"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-[12px] font-semibold truncate">${t.label}</p>
+          <p class="text-[9.5px] text-slate-500 mt-0.5">${t.sub || ''} · ${fmtDateTime(t.ts)}</p>
+        </div>
+        <div class="text-right shrink-0">
+          ${amt}
+          <p class="text-[8.5px] text-slate-600 mt-0.5">ETB</p>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+/* ══════════════ NAVIGATION ══════════════ */
+function switchTab(tab) {
+  state.tab = tab;
+
+  document.querySelectorAll('[data-tab-section]').forEach(s => {
+    s.classList.toggle('hidden', s.dataset.tabSection !== tab);
+  });
+
+  document.querySelectorAll('[data-nav]').forEach(n => {
+    const on = n.dataset.nav === tab;
+    n.classList.toggle('text-indigo-400', on);
+    n.classList.toggle('text-slate-500', !on);
+  });
+
+  if (tab === 'jobs') renderJobs();
+  if (tab === 'wallet') updateWalletUI();
+  if (tab === 'explore') renderWorkers();
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ══════════════ BOOT ══════════════ */
+function boot() {
+  getBalance();                       // sync + initialise wallet from localStorage
+  renderCategories();
+  renderWorkers();
+  renderJobs();
+  updateWalletUI();
+  switchTab('explore');
+}
+
+/* Splash lifecycle */
+window.addEventListener('load', () => {
+  boot();
+
+  const status = document.getElementById('splashStatus');
+  const msgs = ['Securing escrow…', 'Verifying professionals…', 'Loading directory…'];
+  let i = 0;
+  const int = setInterval(() => {
+    i++;
+    if (i < msgs.length) status.textContent = msgs[i];
+  }, 700);
+
+  setTimeout(() => {
+    clearInterval(int);
+    const splash = document.getElementById('splash');
+    splash.style.opacity = '0';
+    splash.style.pointerEvents = 'none';
+    setTimeout(() => {
+      splash.remove();
+      toast('Welcome to Zemen Work — escrow protection is active.', 'info');
+    }, 700);
+  }, 2000);
+});
+
+/* Escape closes modals on desktop */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    ['modal-booking', 'modal-chat', 'modal-certs', 'modal-timeline', 'modal-review', 'modal-dispute']
+      .forEach(closeModal);
+  }
+});
+</script>
+</body>
+</html>
