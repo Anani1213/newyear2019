@@ -2,914 +2,1149 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<meta name="theme-color" content="#10b981" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#22c55e" />
 <title>Zemen Super App</title>
 
-<!-- ==================== SPLASH GATE (runs before paint) ==================== -->
-<script>
-  (function () {
-    try {
-      if (sessionStorage.getItem('zemen_splash_shown') === '1') {
-        document.documentElement.classList.add('skip-splash');
-      }
-    } catch (e) { /* storage disabled — fall through to splash */ }
-  })();
-</script>
-
-<!-- Tailwind -->
 <script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: { sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'] }
-      }
-    }
-  };
-</script>
-
-<!-- FontAwesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-<!-- Inter -->
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
 <style>
-  html, body { -webkit-tap-highlight-color: transparent; }
-  body { overscroll-behavior-y: none; }
+  *{ -webkit-tap-highlight-color: transparent; }
+  html, body{ overscroll-behavior-y: contain; }
+  body{
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background:#f1f5f9;
+  }
+  .no-scrollbar::-webkit-scrollbar{ display:none; }
+  .no-scrollbar{ -ms-overflow-style:none; scrollbar-width:none; }
 
-  /* Splash skip (returning within the same session) — killed before first paint */
-  html.skip-splash #splash { display: none !important; }
-
-  /* ---------- Splash animations ---------- */
-  @keyframes zGlow {
-    0%, 100% { transform: scale(1);    opacity: .55; }
-    50%      { transform: scale(1.18); opacity: .95; }
+  /* ---------- Yellow ribbon marquee ---------- */
+  @keyframes marquee{
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
   }
-  @keyframes zBar {
-    0%   { transform: translateX(-100%); }
-    100% { transform: translateX(320%); }
+  .marquee-track{
+    display:flex;
+    width:max-content;
+    animation: marquee 18s linear infinite;
   }
-  @keyframes zPop {
-    0%   { transform: scale(.6); opacity: 0; }
-    60%  { transform: scale(1.08); opacity: 1; }
-    100% { transform: scale(1); opacity: 1; }
-  }
-  @keyframes zFadeUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes zPulseRing {
-    0%   { transform: scale(.9); opacity: .7; }
-    100% { transform: scale(1.9); opacity: 0; }
-  }
-  @keyframes zRipple {
-    0%   { transform: scale(.85); opacity: .9; }
-    100% { transform: scale(2.1); opacity: 0; }
-  }
-  @keyframes zSpin { to { transform: rotate(360deg); } }
-
-  .splash-logo   { animation: zPop .7s cubic-bezier(.2,.9,.3,1.4) both; }
-  .splash-glow   { animation: zGlow 2.2s ease-in-out infinite; }
-  .splash-bar    { animation: zBar 1.25s ease-in-out infinite; }
-  .card-in       { animation: zFadeUp .45s ease both; }
-
-  .pulse-ring::after {
-    content: '';
-    position: absolute; inset: 0;
-    border-radius: 9999px;
-    border: 2px solid rgba(16,185,129,.6);
-    animation: zPulseRing 1.5s ease-out infinite;
-  }
-  .ripple::before {
-    content: '';
-    position: absolute; inset: 0;
-    border-radius: 9999px;
-    background: rgba(16,185,129,.35);
-    animation: zRipple 1.4s ease-out infinite;
+  .marquee-item{
+    flex:0 0 auto;
+    white-space:nowrap;
+    padding-right:2.5rem;
+    font-weight:800;
+    letter-spacing:.06em;
+    font-size:11px;
+    color:#713f12;
   }
 
-  /* Hide scrollbars but keep scroll */
-  .no-bar::-webkit-scrollbar { display: none; }
-  .no-bar { -ms-overflow-style: none; scrollbar-width: none; }
+  /* ---------- Splash ---------- */
+  #splash{ transition: opacity .55s ease, visibility .55s ease; }
 
-  /* Mic button must never be selectable / callout-able */
-  #micBtn { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+  /* ---------- Glass cards ---------- */
+  .glass-card{
+    background: rgba(255,255,255,.82);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.9);
+    box-shadow: 0 2px 10px -4px rgba(15,23,42,.15);
+  }
+
+  /* ---------- QR scanner line ---------- */
+  @keyframes scanline{
+    0%   { top: 0%; }
+    50%  { top: calc(100% - 4px); }
+    100% { top: 0%; }
+  }
+  .scanline{ animation: scanline 2.2s ease-in-out infinite; }
+
+  /* ---------- Mic listening pulse ---------- */
+  @keyframes pulseRing{
+    0%   { box-shadow: 0 0 0 0 rgba(239,68,68,.65); }
+    70%  { box-shadow: 0 0 0 20px rgba(239,68,68,0); }
+    100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+  }
+  .mic-listening{
+    background: linear-gradient(135deg,#ef4444,#b91c1c) !important;
+    animation: pulseRing 1.3s infinite;
+  }
+
+  /* ---------- Small floating animations ---------- */
+  @keyframes floaty{
+    0%,100%{ transform: translateY(0); }
+    50%    { transform: translateY(-4px); }
+  }
+  .floaty{ animation: floaty 3.2s ease-in-out infinite; }
+
+  .nav-item i{ transition: transform .18s ease; }
+  .nav-item:active i{ transform: scale(.86); }
 </style>
 </head>
 
-<body class="bg-gray-100 font-sans antialiased text-gray-800">
+<body class="bg-slate-100 text-slate-800 antialiased selection:bg-green-200">
 
-<!-- ============================================================ -->
-<!--  SPLASH SCREEN                                               -->
-<!-- ============================================================ -->
+<!-- ============================================================
+     SPLASH SCREEN (session based)
+============================================================ -->
 <div id="splash"
-     class="fixed inset-0 z-[999] flex flex-col items-center justify-center
-            bg-gradient-to-br from-emerald-500 via-emerald-600 to-green-500
-            transition-opacity duration-500">
-
-  <div class="relative flex items-center justify-center">
-    <div class="absolute w-32 h-32 rounded-[2rem] bg-white/40 blur-2xl splash-glow"></div>
-    <div class="relative w-24 h-24 rounded-[1.75rem] bg-white flex items-center justify-center
-                shadow-[0_20px_60px_-15px_rgba(0,0,0,.45)] splash-logo">
-      <span class="text-4xl font-extrabold bg-gradient-to-br from-emerald-500 to-green-500
-                   bg-clip-text text-transparent">Z</span>
+     class="fixed inset-0 z-[200] flex flex-col items-center justify-center
+            bg-gradient-to-b from-green-400 via-green-600 to-emerald-800">
+  <div class="relative">
+    <div class="absolute inset-0 blur-2xl bg-green-300/40 rounded-full"></div>
+    <div class="relative w-24 h-24 rounded-[28px] bg-white/15 border border-white/30
+                flex items-center justify-center shadow-2xl backdrop-blur-sm">
+      <i class="fa-solid fa-bolt text-white text-5xl"></i>
     </div>
   </div>
-
-  <h1 class="mt-7 text-white text-[26px] font-extrabold tracking-tight splash-logo">Zemen Super App</h1>
-  <p class="mt-1 text-emerald-50/90 text-[13px] font-medium tracking-wide">One App. Every Service.</p>
-
-  <div class="mt-9 w-44 h-1.5 bg-white/25 rounded-full overflow-hidden">
-    <div class="h-full w-1/3 bg-white rounded-full splash-bar"></div>
-  </div>
-
-  <p class="absolute bottom-10 text-emerald-50/70 text-[11px] font-medium tracking-widest uppercase">
-    Loading your dashboard
-  </p>
+  <h1 class="mt-6 text-white text-4xl font-extrabold tracking-tight">Zemen</h1>
+  <p class="mt-1 text-[11px] tracking-[0.45em] text-white/80 uppercase font-semibold">Super App</p>
+  <div class="mt-9 w-9 h-9 rounded-full border-4 border-white/25 border-t-white animate-spin"></div>
+  <p class="absolute bottom-10 text-white/60 text-xs">One app for all your needs</p>
 </div>
 
 
-<!-- ============================================================ -->
-<!--  MAIN APP SHELL                                              -->
-<!-- ============================================================ -->
-<div id="app" class="relative mx-auto max-w-md min-h-screen bg-gray-100 pb-32">
+<!-- ============================================================
+     SMART COLLAPSING TOP BAR (Green header + Yellow ribbon)
+============================================================ -->
+<header id="topBar" class="fixed top-0 left-0 right-0 z-40 will-change-transform"
+        style="transform: translateY(0);">
 
-  <!-- ================= HEADER ================= -->
-  <header class="relative bg-gradient-to-br from-emerald-500 via-emerald-600 to-green-500
-                 text-white rounded-b-[2rem] px-5 pt-6 pb-20 shadow-lg shadow-emerald-600/20">
+  <!-- ---- GREEN HEADER ---- -->
+  <div class="bg-gradient-to-b from-green-400 to-green-500 text-white px-5 pt-4 pb-6 shadow-lg shadow-green-900/10 relative overflow-hidden">
+    <!-- decorative blobs -->
+    <div class="pointer-events-none absolute -right-10 -top-12 w-40 h-40 rounded-full bg-white/10"></div>
+    <div class="pointer-events-none absolute -left-12 top-10 w-32 h-32 rounded-full bg-white/5"></div>
 
-    <!-- decorative circles -->
-    <div class="pointer-events-none absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/10"></div>
-    <div class="pointer-events-none absolute top-16 -left-12 w-32 h-32 rounded-full bg-white/10"></div>
+    <!-- Row 1 : avatar + greeting + icons -->
+    <div class="relative flex items-center gap-3">
+      <button id="headerAvatarBtn"
+              class="w-11 h-11 rounded-full ring-2 ring-white/60 shadow-md flex items-center justify-center active:scale-95 transition shrink-0"
+              aria-label="Open account settings">
+        <i id="headerAvatarIcon" class="fa-solid fa-user text-white text-lg"></i>
+      </button>
 
-    <div class="relative flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-11 h-11 rounded-full bg-white/20 border border-white/40
-                    flex items-center justify-center backdrop-blur-sm">
-          <i class="fa-solid fa-user text-white text-[15px]"></i>
-        </div>
-        <div class="leading-tight">
-          <p class="text-[11px] text-emerald-50/85 font-medium">Welcome back 👋</p>
-          <p id="userName" class="text-[15px] font-bold tracking-tight">Abebe Tesfaye</p>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-2">
-        <button type="button" data-toast="No new notifications"
-                class="w-10 h-10 rounded-full bg-white/15 border border-white/25
-                       flex items-center justify-center active:scale-95 transition">
-          <i class="fa-regular fa-bell text-[15px]"></i>
-          <span class="absolute mt-[-14px] ml-[14px] w-2 h-2 rounded-full bg-amber-300 ring-2 ring-emerald-600"></span>
-        </button>
-        <button type="button" data-toast="Settings coming soon"
-                class="w-10 h-10 rounded-full bg-white/15 border border-white/25
-                       flex items-center justify-center active:scale-95 transition">
-          <i class="fa-solid fa-gear text-[15px]"></i>
-        </button>
-      </div>
-    </div>
-  </header>
-
-
-  <!-- ================= WALLET CARD ================= -->
-  <section class="px-5 -mt-14 relative z-10">
-    <div class="bg-white rounded-3xl shadow-xl shadow-emerald-900/5 border border-gray-100 p-5 card-in">
-
-      <div class="flex items-start justify-between">
-        <div>
-          <p class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Demo Wallet Balance</p>
-          <div class="mt-1.5 flex items-baseline gap-1.5">
-            <span class="text-emerald-600 font-bold text-lg">ETB</span>
-            <span id="balanceValue" class="text-[28px] leading-none font-extrabold text-gray-800 tabular-nums">0.00</span>
-          </div>
-        </div>
-        <button id="toggleBal" type="button" aria-label="Toggle balance visibility"
-                class="w-9 h-9 rounded-full bg-emerald-50 text-emerald-600
-                       flex items-center justify-center active:scale-95 transition">
-          <i id="eyeIcon" class="fa-regular fa-eye text-[13px]"></i>
-        </button>
-      </div>
-
-      <!-- QUICK ACTIONS -->
-      <div class="mt-5 grid grid-cols-3 gap-2.5">
-        <button id="btnCashIn" type="button"
-                class="group flex flex-col items-center gap-2 py-3 rounded-2xl bg-emerald-50
-                       hover:bg-emerald-100 active:scale-95 transition">
-          <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-green-500
-                       flex items-center justify-center shadow-sm shadow-emerald-500/30">
-            <i class="fa-solid fa-plus text-white text-[13px]"></i>
-          </span>
-          <span class="text-[10.5px] font-semibold text-gray-700">Add Money</span>
-        </button>
-
-        <button id="btnTransfer" type="button"
-                class="group flex flex-col items-center gap-2 py-3 rounded-2xl bg-emerald-50
-                       hover:bg-emerald-100 active:scale-95 transition">
-          <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-400 to-emerald-500
-                       flex items-center justify-center shadow-sm shadow-emerald-500/30">
-            <i class="fa-solid fa-right-left text-white text-[13px]"></i>
-          </span>
-          <span class="text-[10.5px] font-semibold text-gray-700">Transfer</span>
-        </button>
-
-        <button id="btnScan" type="button"
-                class="group flex flex-col items-center gap-2 py-3 rounded-2xl bg-emerald-50
-                       hover:bg-emerald-100 active:scale-95 transition">
-          <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-green-400 to-emerald-600
-                       flex items-center justify-center shadow-sm shadow-emerald-500/30">
-            <i class="fa-solid fa-qrcode text-white text-[13px]"></i>
-          </span>
-          <span class="text-[10.5px] font-semibold text-gray-700">Scan QR</span>
-        </button>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ================= PROMO STRIP ================= -->
-  <section class="px-5 mt-4">
-    <a href="shield.html"
-       class="flex items-center gap-3 bg-gradient-to-r from-emerald-500 to-green-500
-              rounded-2xl px-4 py-3.5 shadow-lg shadow-emerald-600/15 active:scale-[.98] transition">
-      <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
-        <i class="fa-solid fa-shield-halved text-white text-[15px]"></i>
-      </div>
       <div class="flex-1 min-w-0">
-        <p class="text-white text-[13px] font-bold leading-tight">Protect what matters</p>
-        <p class="text-emerald-50/90 text-[11px] leading-tight">Get covered with Zemen Shield from 15 ETB/week</p>
+        <p id="greetName" class="text-[15px] font-bold leading-tight truncate">Selam, Abebe</p>
+        <p class="text-[11px] text-white/80 leading-tight">Welcome back to Zemen</p>
       </div>
-      <i class="fa-solid fa-chevron-right text-white/80 text-xs"></i>
-    </a>
-  </section>
+
+      <button id="searchBtn" aria-label="Search"
+              class="w-9 h-9 rounded-full bg-white/20 backdrop-blur flex items-center justify-center active:scale-90 transition">
+        <i class="fa-solid fa-magnifying-glass text-[13px]"></i>
+      </button>
+      <button id="bellBtn" aria-label="Notifications"
+              class="relative w-9 h-9 rounded-full bg-white/20 backdrop-blur flex items-center justify-center active:scale-90 transition">
+        <i class="fa-solid fa-bell text-[13px]"></i>
+        <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full ring-2 ring-green-500"></span>
+      </button>
+    </div>
+
+    <!-- Row 2 : main balance -->
+    <div class="relative mt-5">
+      <div class="flex items-center gap-2">
+        <span class="text-[11px] uppercase tracking-wider text-white/85 font-semibold">Main Balance</span>
+        <button id="eyeBtn" aria-label="Toggle balance visibility"
+                class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center active:scale-90 transition">
+          <i id="eyeIcon" class="fa-solid fa-eye text-[10px]"></i>
+        </button>
+      </div>
+      <div class="flex items-end gap-2 mt-0.5">
+        <span class="text-[13px] font-semibold text-white/90 mb-1">ETB</span>
+        <span id="mainBalance" class="text-[32px] leading-none font-extrabold tracking-tight">12,450.00</span>
+      </div>
+    </div>
+
+    <!-- Row 3 : secondary balances -->
+    <div class="relative mt-4 grid grid-cols-2 gap-3">
+      <button id="endekiseCard"
+              class="text-left bg-white/15 backdrop-blur border border-white/20 rounded-2xl px-3 py-2 active:scale-[.97] transition">
+        <div class="flex items-center gap-1.5">
+          <i class="fa-solid fa-people-group text-[10px] text-white/90"></i>
+          <span class="text-[10px] uppercase tracking-wide text-white/85 font-semibold">Endekise</span>
+        </div>
+        <p class="mt-1 text-[15px] font-bold leading-none">
+          <span class="text-[10px] font-medium text-white/80">ETB</span>
+          <span id="endekiseBalance">3,200.00</span>
+        </p>
+      </button>
+
+      <button id="rewardCard"
+              class="text-left bg-white/15 backdrop-blur border border-white/20 rounded-2xl px-3 py-2 active:scale-[.97] transition">
+        <div class="flex items-center gap-1.5">
+          <i class="fa-solid fa-gift text-[10px] text-white/90"></i>
+          <span class="text-[10px] uppercase tracking-wide text-white/85 font-semibold">Reward</span>
+        </div>
+        <p class="mt-1 text-[15px] font-bold leading-none">
+          <span class="text-[10px] font-medium text-white/80">ETB</span>
+          <span id="rewardBalance">150.00</span>
+        </p>
+      </button>
+    </div>
+  </div>
+
+  <!-- ---- YELLOW SCROLLING RIBBON ---- -->
+  <div class="bg-yellow-400 overflow-hidden border-b border-yellow-500/40">
+    <div class="marquee-track py-[6px]">
+      <span class="marquee-item">⭐ ONE APP FOR ALL YOUR NEEDS!</span>
+      <span class="marquee-item">⭐ ONE APP FOR ALL YOUR NEEDS!</span>
+    </div>
+  </div>
+</header>
 
 
-  <!-- ================= SUPER APP GRID ================= -->
-  <section id="appsSection" class="px-5 mt-6">
+<!-- ============================================================
+     MAIN CONTENT
+============================================================ -->
+<main id="main" class="px-4 pb-44">
+
+  <!-- ---------- 9 SUPER APP MODULES ---------- -->
+  <section id="appsSection" class="pt-5">
     <div class="flex items-center justify-between mb-3">
-      <h2 class="text-[15px] font-extrabold text-gray-800 tracking-tight">All Services</h2>
-      <span class="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
-        9 Mini Apps
-      </span>
+      <h2 class="text-[15px] font-extrabold text-slate-800">Super Apps</h2>
+      <button id="seeAllApps" class="text-[11px] font-semibold text-green-600 active:opacity-60">
+        See all <i class="fa-solid fa-chevron-right text-[9px]"></i>
+      </button>
     </div>
 
-    <div id="appGrid" class="grid grid-cols-3 gap-2.5"></div>
-  </section>
-
-
-  <!-- ================= TRUST FOOTER ================= -->
-  <section class="px-5 mt-7">
-    <div class="flex items-center justify-center gap-2 text-[10.5px] text-gray-400 font-medium">
-      <i class="fa-solid fa-lock text-emerald-500"></i>
-      <span>Secured by Zemen Pay · Demo Environment</span>
+    <div id="appGrid" class="grid grid-cols-3 gap-3">
+      <!-- injected by JS -->
     </div>
   </section>
-</div>
+
+  <!-- ---------- PROMO BANNER ---------- -->
+  <section class="mt-6">
+    <button id="promoBanner"
+            class="w-full text-left rounded-3xl p-4 relative overflow-hidden shadow-lg shadow-emerald-900/10 active:scale-[.98] transition"
+            style="background:linear-gradient(120deg,#059669 0%,#10b981 45%,#34d399 100%);">
+      <div class="pointer-events-none absolute -right-8 -bottom-10 w-36 h-36 rounded-full bg-white/15"></div>
+      <div class="pointer-events-none absolute right-10 -top-8 w-20 h-20 rounded-full bg-white/10"></div>
+
+      <div class="relative flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-white/20 border border-white/25 flex items-center justify-center shrink-0 floaty">
+          <i class="fa-solid fa-tags text-white text-xl"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-white font-extrabold text-[15px] leading-tight">50% OFF your first order</p>
+          <p class="text-white/85 text-[11px] mt-0.5 leading-snug">
+            Shop on Zemen Gebeya &amp; get free delivery inside Addis.
+          </p>
+        </div>
+        <span class="shrink-0 bg-white text-emerald-700 text-[11px] font-extrabold px-3 py-2 rounded-full shadow">
+          Shop Now
+        </span>
+      </div>
+    </button>
+  </section>
+
+  <!-- ---------- QUICK STRIP ---------- -->
+  <section class="mt-6">
+    <h2 class="text-[15px] font-extrabold text-slate-800 mb-3">Quick Actions</h2>
+    <div class="grid grid-cols-4 gap-3">
+      <button data-quick="Top Up" class="quick-btn glass-card rounded-2xl py-3 flex flex-col items-center gap-1.5 active:scale-95 transition">
+        <i class="fa-solid fa-plus text-green-600"></i>
+        <span class="text-[10px] font-semibold text-slate-600">Top Up</span>
+      </button>
+      <button data-quick="Send Money" class="quick-btn glass-card rounded-2xl py-3 flex flex-col items-center gap-1.5 active:scale-95 transition">
+        <i class="fa-solid fa-paper-plane text-blue-600"></i>
+        <span class="text-[10px] font-semibold text-slate-600">Send</span>
+      </button>
+      <button data-quick="Pay Bill" class="quick-btn glass-card rounded-2xl py-3 flex flex-col items-center gap-1.5 active:scale-95 transition">
+        <i class="fa-solid fa-file-invoice-dollar text-amber-600"></i>
+        <span class="text-[10px] font-semibold text-slate-600">Pay Bill</span>
+      </button>
+      <button data-quick="History" class="quick-btn glass-card rounded-2xl py-3 flex flex-col items-center gap-1.5 active:scale-95 transition">
+        <i class="fa-solid fa-clock-rotate-left text-purple-600"></i>
+        <span class="text-[10px] font-semibold text-slate-600">History</span>
+      </button>
+    </div>
+  </section>
+
+  <p class="text-center text-[10px] text-slate-400 mt-8">
+    Zemen Super App • v1.0.0
+  </p>
+</main>
 
 
-<!-- ============================================================ -->
-<!--  VOICE ASSISTANT — MIC FAB                                   -->
-<!-- ============================================================ -->
-<div class="fixed bottom-24 inset-x-0 mx-auto max-w-md px-5 z-50 pointer-events-none">
-  <div class="flex justify-end">
-    <button id="micBtn" type="button" aria-label="Press and hold to speak"
-            class="pointer-events-auto relative w-16 h-16 rounded-full
-                   bg-gradient-to-br from-emerald-500 to-green-500
-                   shadow-[0_12px_30px_-6px_rgba(16,185,129,.7)]
-                   flex items-center justify-center
-                   active:scale-95 transition-transform duration-150
-                   ring-4 ring-white">
-      <span id="micRipple" class="hidden absolute inset-0 rounded-full ripple"></span>
-      <i id="micIcon" class="fa-solid fa-microphone text-white text-[20px] relative z-10"></i>
+<!-- ============================================================
+     FLOATING SCAN QR BUTTON
+============================================================ -->
+<button id="scanBtn" aria-label="Scan QR code"
+        class="fixed left-1/2 -translate-x-1/2 bottom-[78px] z-40
+               w-[72px] h-[72px] rounded-full text-white
+               flex flex-col items-center justify-center gap-[2px]
+               border-4 border-white shadow-2xl shadow-blue-600/40
+               active:scale-90 transition"
+        style="background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 60%,#1e40af 100%);">
+  <i class="fa-solid fa-qrcode text-[22px] leading-none"></i>
+  <span class="text-[8px] font-extrabold tracking-wider">SCAN QR</span>
+</button>
+
+
+<!-- ============================================================
+     FLOATING MIC BUTTON (Voice Assistant)
+============================================================ -->
+<button id="micBtn" aria-label="Voice assistant — press and hold"
+        class="fixed right-4 bottom-[92px] z-40
+               w-14 h-14 rounded-full text-white
+               flex items-center justify-center
+               border-4 border-white shadow-xl shadow-green-900/20
+               active:scale-90 transition select-none"
+        style="background:linear-gradient(135deg,#22c55e 0%,#15803d 100%);">
+  <i id="micIcon" class="fa-solid fa-microphone text-lg pointer-events-none"></i>
+</button>
+
+
+<!-- ============================================================
+     VOICE STATUS BAR (with TTS Stop)
+============================================================ -->
+<div id="voiceBar" class="fixed left-4 right-4 bottom-[164px] z-50 hidden">
+  <div class="bg-slate-900/95 backdrop-blur text-white rounded-2xl px-4 py-3
+              flex items-center gap-3 shadow-2xl border border-white/10">
+    <i id="voiceBarIcon" class="fa-solid fa-microphone text-green-400"></i>
+    <span id="voiceBarText" class="text-[12px] flex-1 leading-snug">Listening…</span>
+    <button id="ttsStopBtn"
+            class="text-[11px] font-bold bg-white/15 hover:bg-white/25 px-3 py-1.5 rounded-full active:scale-95 transition">
+      Stop
     </button>
   </div>
 </div>
 
 
-<!-- ============================================================ -->
-<!--  VOICE ASSISTANT — STATUS PANEL                              -->
-<!-- ============================================================ -->
-<div id="voicePanel"
-     class="hidden fixed bottom-[9.5rem] inset-x-0 mx-auto max-w-md px-5 z-[70]">
-  <div class="bg-white rounded-2xl shadow-2xl shadow-emerald-900/15 border border-emerald-100 p-3.5
-              flex items-center gap-3">
+<!-- ============================================================
+     BOTTOM NAVIGATION
+============================================================ -->
+<nav class="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-100 shadow-[0_-6px_24px_-12px_rgba(15,23,42,.25)]"
+     style="padding-bottom: env(safe-area-inset-bottom);">
+  <div class="grid grid-cols-5 h-16">
 
-    <div id="voicePulse"
-         class="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center shrink-0
-                transition-colors duration-200">
-      <i id="voicePulseIcon" class="fa-solid fa-microphone text-emerald-600 text-[14px]"></i>
-    </div>
-
-    <div class="flex-1 min-w-0">
-      <p id="voiceStatus" class="text-[12.5px] font-bold text-gray-800 leading-tight">Listening…</p>
-      <p id="voiceText" class="text-[11px] text-gray-500 truncate leading-tight mt-0.5">Speak now</p>
-    </div>
-
-    <button id="stopSpeakBtn" type="button"
-            class="hidden shrink-0 px-3 py-2 rounded-xl bg-rose-50 text-rose-600
-                   text-[11px] font-bold active:scale-95 transition">
-      <i class="fa-solid fa-stop mr-1"></i>Stop
-    </button>
-  </div>
-</div>
-
-
-<!-- ============================================================ -->
-<!--  BOTTOM NAVIGATION                                           -->
-<!-- ============================================================ -->
-<nav class="fixed bottom-0 inset-x-0 mx-auto max-w-md z-40
-            bg-white/95 backdrop-blur border-t border-gray-100
-            pb-[env(safe-area-inset-bottom)]">
-  <div class="grid grid-cols-4 px-1 pt-1.5 pb-1.5">
-
-    <button data-nav="home" type="button"
-            class="nav-item flex flex-col items-center gap-1 py-1.5 rounded-xl text-emerald-600">
-      <i class="fa-solid fa-house text-[16px]"></i>
+    <button data-nav="home" class="nav-item flex flex-col items-center justify-center gap-1 text-green-600">
+      <i class="fa-solid fa-house text-[17px]"></i>
       <span class="text-[10px] font-bold">Home</span>
     </button>
 
-    <button data-nav="finance" type="button"
-            class="nav-item flex flex-col items-center gap-1 py-1.5 rounded-xl text-gray-400">
-      <i class="fa-solid fa-wallet text-[16px]"></i>
-      <span class="text-[10px] font-semibold">Finance</span>
+    <button data-nav="payment" class="nav-item flex flex-col items-center justify-center gap-1 text-slate-400">
+      <i class="fa-solid fa-credit-card text-[17px]"></i>
+      <span class="text-[10px] font-semibold">Payment</span>
     </button>
 
-    <button data-nav="apps" type="button"
-            class="nav-item flex flex-col items-center gap-1 py-1.5 rounded-xl text-gray-400">
-      <i class="fa-solid fa-grip text-[16px]"></i>
+    <button data-nav="apps" class="nav-item flex flex-col items-center justify-center gap-1 text-slate-400">
+      <i class="fa-solid fa-grip text-[17px]"></i>
       <span class="text-[10px] font-semibold">Apps</span>
     </button>
 
-    <button data-nav="profile" type="button"
-            class="nav-item flex flex-col items-center gap-1 py-1.5 rounded-xl text-gray-400">
-      <i class="fa-solid fa-circle-user text-[16px]"></i>
-      <span class="text-[10px] font-semibold">Profile</span>
+    <button data-nav="engage" class="nav-item flex flex-col items-center justify-center gap-1 text-slate-400">
+      <i class="fa-solid fa-comment-dots text-[17px]"></i>
+      <span class="text-[10px] font-semibold">Engage</span>
     </button>
+
+    <button data-nav="account" class="nav-item flex flex-col items-center justify-center gap-1 text-slate-400">
+      <i class="fa-solid fa-user text-[17px]"></i>
+      <span class="text-[10px] font-semibold">Account</span>
+    </button>
+
   </div>
 </nav>
 
 
-<!-- ============================================================ -->
-<!--  TOAST                                                       -->
-<!-- ============================================================ -->
+<!-- ============================================================
+     ACCOUNT SLIDE-UP MODAL
+============================================================ -->
+<div id="accountModal" class="fixed inset-0 z-[150] hidden">
+  <div id="accountBackdrop" class="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px] opacity-0 transition-opacity duration-300"></div>
+
+  <div id="accountPanel"
+       class="absolute bottom-0 left-0 right-0 bg-white rounded-t-[28px]
+              translate-y-full transition-transform duration-300 ease-out
+              max-h-[92vh] overflow-y-auto no-scrollbar">
+
+    <!-- handle -->
+    <div class="pt-3 flex justify-center">
+      <div class="w-11 h-1.5 rounded-full bg-slate-200"></div>
+    </div>
+
+    <div class="px-5 pb-8 pt-3">
+
+      <!-- header -->
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-extrabold text-slate-800">Account Settings</h2>
+          <p class="text-[11px] text-slate-400">Personalise your Zemen profile</p>
+        </div>
+        <button id="closeAccountBtn" aria-label="Close"
+                class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 active:scale-90 transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- avatar preview -->
+      <div class="mt-6 flex flex-col items-center">
+        <div id="accountAvatarBig"
+             class="w-24 h-24 rounded-full ring-4 ring-green-100 shadow-lg flex items-center justify-center">
+          <i class="fa-solid fa-user text-white text-4xl"></i>
+        </div>
+        <p id="accountPreviewName" class="mt-3 font-bold text-slate-800">Abebe</p>
+        <p class="text-[11px] text-slate-400">Zemen Member</p>
+      </div>
+
+      <!-- avatar picker -->
+      <div class="mt-6">
+        <p class="text-[12px] font-bold text-slate-500 uppercase tracking-wide mb-3">Choose Avatar</p>
+        <div id="avatarPicker" class="grid grid-cols-4 gap-3"><!-- injected --></div>
+      </div>
+
+      <!-- name input -->
+      <div class="mt-6">
+        <label for="nameInput" class="text-[12px] font-bold text-slate-500 uppercase tracking-wide">
+          Display Name
+        </label>
+        <div class="mt-2 flex items-center gap-2 bg-slate-100 rounded-2xl px-4 py-3 focus-within:ring-2 focus-within:ring-green-400 transition">
+          <i class="fa-solid fa-user-pen text-slate-400 text-sm"></i>
+          <input id="nameInput" type="text" maxlength="24" placeholder="Enter your name"
+                 class="flex-1 bg-transparent outline-none text-[14px] font-semibold text-slate-800 placeholder:text-slate-400" />
+        </div>
+        <p class="text-[10px] text-slate-400 mt-2">Max 24 characters. Saved on this device.</p>
+      </div>
+
+      <!-- save -->
+      <button id="saveProfileBtn"
+              class="mt-6 w-full py-4 rounded-2xl text-white font-extrabold text-[14px]
+                     shadow-lg shadow-green-600/25 active:scale-[.98] transition"
+              style="background:linear-gradient(135deg,#22c55e,#15803d);">
+        <i class="fa-solid fa-floppy-disk mr-2"></i> Save Changes
+      </button>
+
+      <button id="cancelProfileBtn"
+              class="mt-3 w-full py-3.5 rounded-2xl bg-slate-100 text-slate-500 font-bold text-[13px] active:scale-[.98] transition">
+        Cancel
+      </button>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     QR SCANNER MODAL
+============================================================ -->
+<div id="scanModal" class="fixed inset-0 z-[160] hidden">
+  <div id="scanBackdrop" class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm opacity-0 transition-opacity duration-300"></div>
+
+  <div class="relative h-full flex flex-col items-center justify-center px-8 text-white">
+    <p class="text-[13px] font-bold tracking-[0.25em] text-green-400 uppercase mb-6">Zemen Scan</p>
+
+    <div class="relative w-64 h-64 rounded-[28px] border-2 border-white/25 overflow-hidden bg-white/5">
+      <!-- corner marks -->
+      <span class="absolute top-3 left-3 w-8 h-8 border-t-4 border-l-4 border-green-400 rounded-tl-xl"></span>
+      <span class="absolute top-3 right-3 w-8 h-8 border-t-4 border-r-4 border-green-400 rounded-tr-xl"></span>
+      <span class="absolute bottom-3 left-3 w-8 h-8 border-b-4 border-l-4 border-green-400 rounded-bl-xl"></span>
+      <span class="absolute bottom-3 right-3 w-8 h-8 border-b-4 border-r-4 border-green-400 rounded-br-xl"></span>
+
+      <i class="fa-solid fa-qrcode absolute inset-0 flex items-center justify-center text-white/10 text-[110px]"></i>
+
+      <div class="scanline absolute left-3 right-3 h-1 bg-green-400 rounded-full"
+           style="box-shadow:0 0 22px 5px rgba(74,222,128,.75);"></div>
+    </div>
+
+    <p class="mt-7 text-[12px] text-white/70 text-center">
+      Align the QR code inside the frame to pay or receive
+    </p>
+
+    <button id="closeScanBtn"
+            class="mt-9 px-10 py-3.5 rounded-full bg-white text-slate-900 font-extrabold text-[13px] active:scale-95 transition">
+      Cancel
+    </button>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     TOAST
+============================================================ -->
 <div id="toast"
-     class="fixed left-1/2 -translate-x-1/2 bottom-32 z-[90]
-            px-4 py-2.5 rounded-full bg-gray-900/92 text-white text-[12px] font-semibold
-            shadow-xl opacity-0 translate-y-2 pointer-events-none
-            transition-all duration-300 whitespace-nowrap max-w-[90vw] truncate"></div>
+     class="fixed left-1/2 -translate-x-1/2 bottom-[175px] z-[170]
+            bg-slate-900/95 text-white text-[12px] font-semibold
+            px-5 py-3 rounded-2xl shadow-2xl
+            opacity-0 translate-y-3 pointer-events-none
+            transition-all duration-300 max-w-[85vw] text-center">
+</div>
 
 
 <script>
-/* ================================================================
-   ZEMEN SUPER APP — Dashboard Controller
-   ================================================================ */
-(function () {
-  'use strict';
+/* ============================================================
+   0. STORAGE HELPERS
+============================================================ */
+const store = {
+  get(key, fallback){
+    try{
+      const v = localStorage.getItem(key);
+      return (v === null || v === '') ? fallback : v;
+    }catch(e){ return fallback; }
+  },
+  set(key, value){
+    try{ localStorage.setItem(key, value); }catch(e){ /* ignore */ }
+  }
+};
 
-  /* ---------------------------------------------------------------
-     0. CONSTANTS
-     --------------------------------------------------------------- */
-  const SPLASH_KEY   = 'zemen_splash_shown';
-  const WELCOME_KEY  = 'zemen_voice_welcome';
-  const BALANCE_KEY  = 'zemen_wallet_balance';
-  const WELCOME_TEXT = 'Welcome to Zemen Super App. Press and hold the microphone to speak.';
 
-  const $ = (id) => document.getElementById(id);
+/* ============================================================
+   1. SESSION-BASED SPLASH SCREEN
+============================================================ */
+(function initSplash(){
+  const splash = document.getElementById('splash');
 
-  /* ---------------------------------------------------------------
-     1. MINI-APP REGISTRY (micro-frontend hub)
-     --------------------------------------------------------------- */
-  const APPS = [
-    { name: 'Zemen Gebeya',   href: 'gebeya.html', icon: 'fa-store',              bg: 'from-emerald-400 to-green-500'  },
-    { name: 'Zemen Equb',     href: 'ekub.html',   icon: 'fa-people-group',       bg: 'from-teal-400 to-emerald-500'   },
-    { name: 'Ethio P2P',      href: 'p2p.html',    icon: 'fa-right-left',         bg: 'from-green-400 to-teal-600'     },
-    { name: 'Zemen Shield',   href: 'shield.html', icon: 'fa-shield-halved',      bg: 'from-lime-400 to-green-500'     },
-    { name: 'Ride & Ticket',  href: 'ride.html',   icon: 'fa-car-side',           bg: 'from-cyan-400 to-teal-500'      },
-    { name: 'Micro Finance',  href: 'sanduq.html', icon: 'fa-piggy-bank',         bg: 'from-emerald-500 to-green-600'  },
-    { name: 'Food Delivery',  href: 'food.html',   icon: 'fa-utensils',           bg: 'from-amber-400 to-orange-500'   },
-    { name: 'Donate & Charity', href: 'donate.html', icon: 'fa-hand-holding-heart', bg: 'from-rose-400 to-pink-500'    },
-    { name: 'Zemen Work',     href: 'work.html',   icon: 'fa-briefcase',          bg: 'from-sky-400 to-blue-500'       }
-  ];
-
-  function renderGrid() {
-    const grid = $('appGrid');
-    if (!grid) return;
-    grid.innerHTML = APPS.map((a, i) => `
-      <a href="${a.href}"
-         style="animation-delay:${i * 35}ms"
-         class="card-in group flex flex-col items-center justify-start gap-2 pt-3.5 pb-3 px-1.5
-                bg-white rounded-2xl border border-gray-100 shadow-sm shadow-gray-200/60
-                hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all duration-150">
-        <span class="w-12 h-12 rounded-2xl bg-gradient-to-br ${a.bg}
-                     flex items-center justify-center
-                     shadow-md shadow-emerald-500/15">
-          <i class="fa-solid ${a.icon} text-white text-[18px]"></i>
-        </span>
-        <span class="text-[10.5px] font-bold text-gray-700 text-center leading-[1.15] min-h-[24px]
-                     flex items-center">${a.name}</span>
-      </a>
-    `).join('');
+  if (sessionStorage.getItem('splash_shown')) {
+    /* Returning from a mini-app — hide instantly, no annoyance */
+    splash.style.display = 'none';
+    return;
   }
 
-  /* ---------------------------------------------------------------
-     2. TOAST
-     --------------------------------------------------------------- */
-  let toastTimer = null;
-  function toast(message) {
-    const el = $('toast');
-    if (!el) return;
-    el.textContent = message;
-    el.classList.remove('opacity-0', 'translate-y-2');
-    el.classList.add('opacity-100', 'translate-y-0');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => {
-      el.classList.add('opacity-0', 'translate-y-2');
-      el.classList.remove('opacity-100', 'translate-y-0');
-    }, 2200);
-  }
+  sessionStorage.setItem('splash_shown', '1');
 
-  /* ---------------------------------------------------------------
-     3. DEMO WALLET (localStorage)
-     --------------------------------------------------------------- */
-  let balanceHidden = false;
+  setTimeout(() => {
+    splash.style.opacity = '0';
+    splash.style.visibility = 'hidden';
+    setTimeout(() => { splash.style.display = 'none'; }, 600);
+  }, 2000);
+})();
 
-  function getBalance() {
-    let v = parseFloat(localStorage.getItem(BALANCE_KEY));
-    if (!isFinite(v) || v < 0) {
-      v = 12500;
-      try { localStorage.setItem(BALANCE_KEY, String(v)); } catch (e) {}
-    }
-    return v;
-  }
-  function setBalance(v) {
-    try { localStorage.setItem(BALANCE_KEY, String(v)); } catch (e) {}
-    renderBalance();
-  }
-  function renderBalance() {
-    const el = $('balanceValue');
-    if (!el) return;
-    el.textContent = balanceHidden
-      ? '••••••'
-      : getBalance().toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  }
 
-  /* ---------------------------------------------------------------
-     4. VOICE ASSISTANT
-     --------------------------------------------------------------- */
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+/* ============================================================
+   2. TOAST UTILITY
+============================================================ */
+const toastEl = document.getElementById('toast');
+let toastTimer = null;
 
-  let recognition   = null;
-  let isListening   = false;
-  let voiceBusy     = false;   // listening OR speaking → keep panel open
-  let finalText     = '';
-  let handled       = false;
-  let panelTimer    = null;
-  let welcomePending = true;
+function toast(message){
+  toastEl.textContent = message;
+  toastEl.classList.remove('opacity-0', 'translate-y-3', 'pointer-events-none');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toastEl.classList.add('opacity-0', 'translate-y-3', 'pointer-events-none');
+  }, 2300);
+}
 
-  /* ---- Intent map (en-US fuzzy keyword routing) ---- */
-  const INTENTS = [
-    { href: 'food.html',   label: 'Food Delivery',
-      words: ['food', 'hungry', 'eat', 'meal', 'lunch', 'dinner', 'restaurant', 'pizza', 'burger', 'food delivery', 'order food'] },
-    { href: 'gebeya.html', label: 'Zemen Gebeya',
-      words: ['gebeya', 'market', 'marketplace', 'shop', 'shopping', 'store', 'buy', 'grocery', 'groceries', 'products'] },
-    { href: 'ekub.html',   label: 'Zemen Equb',
-      words: ['ekub', 'equb', 'saving circle', 'savings circle', 'circle', 'rotation', 'community saving', 'merry go round'] },
-    { href: 'p2p.html',    label: 'Ethio P2P',
-      words: ['p2p', 'peer to peer', 'peer', 'send money', 'transfer money', 'transfer', 'send cash', 'send to friend'] },
-    { href: 'shield.html', label: 'Zemen Shield',
-      words: ['shield', 'insurance', 'insure', 'protect', 'protection', 'coverage', 'policy', 'health cover'] },
-    { href: 'ride.html',   label: 'Ride & Ticket',
-      words: ['ride', 'taxi', 'car', 'transport', 'ticket', 'bus', 'travel', 'driver', 'book a ride'] },
-    { href: 'sanduq.html', label: 'Micro Finance',
-      words: ['sanduq', 'micro finance', 'microfinance', 'micro', 'loan', 'credit', 'borrow', 'finance', 'financing'] },
-    { href: 'donate.html', label: 'Donate & Charity',
-      words: ['donate', 'donation', 'charity', 'zakat', 'sadaqa', 'give', 'help others', 'contribute'] },
-    { href: 'work.html',   label: 'Zemen Work',
-      words: ['work', 'job', 'jobs', 'freelance', 'employment', 'hire', 'career', 'task', 'gig'] }
-  ];
 
-  /* ---- Panel helpers ---- */
-  function showPanel() {
-    clearTimeout(panelTimer);
-    $('voicePanel').classList.remove('hidden');
-  }
-  function hidePanel(delay) {
-    clearTimeout(panelTimer);
-    panelTimer = setTimeout(() => {
-      if (!voiceBusy) $('voicePanel').classList.add('hidden');
-    }, delay || 0);
-  }
-  function setStatus(title, sub, mode) {
-    $('voiceStatus').textContent = title;
-    $('voiceText').textContent   = sub || '';
-    const pulse = $('voicePulse');
-    const icon  = $('voicePulseIcon');
-    pulse.className = 'w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors duration-200 ';
-    if (mode === 'listening') {
-      pulse.className += 'bg-emerald-100 pulse-ring relative';
-      icon.className = 'fa-solid fa-microphone text-emerald-600 text-[14px]';
-    } else if (mode === 'speaking') {
-      pulse.className += 'bg-emerald-500';
-      icon.className = 'fa-solid fa-volume-high text-white text-[14px]';
-    } else if (mode === 'error') {
-      pulse.className += 'bg-rose-50';
-      icon.className = 'fa-solid fa-triangle-exclamation text-rose-500 text-[14px]';
-    } else {
-      pulse.className += 'bg-emerald-50';
-      icon.className = 'fa-solid fa-microphone text-emerald-600 text-[14px]';
-    }
-  }
+/* ============================================================
+   3. DATA : AVATARS, SUPER APPS, VOICE ROUTES
+============================================================ */
+const AVATARS = [
+  { icon:'fa-user',           from:'#34d399', to:'#059669' },
+  { icon:'fa-user-tie',       from:'#60a5fa', to:'#4338ca' },
+  { icon:'fa-user-astronaut', from:'#c084fc', to:'#a21caf' },
+  { icon:'fa-user-ninja',     from:'#64748b', to:'#0f172a' },
+  { icon:'fa-cat',            from:'#fb923c', to:'#e11d48' },
+  { icon:'fa-dragon',         from:'#f87171', to:'#b91c1c' },
+  { icon:'fa-crown',          from:'#fbbf24', to:'#b45309' },
+  { icon:'fa-ghost',          from:'#5eead4', to:'#0e7490' }
+];
 
-  /* ---- Speech synthesis ---- */
-  let preferredVoice = null;
-  function pickVoice() {
-    if (!('speechSynthesis' in window)) return null;
-    const voices = window.speechSynthesis.getVoices() || [];
-    return voices.find(v => v.lang === 'en-US' && /zira|samantha|aria|jenny|google us english|female/i.test(v.name))
-        || voices.find(v => v.lang === 'en-US')
-        || voices.find(v => (v.lang || '').toLowerCase().startsWith('en'))
-        || null;
-  }
-  if ('speechSynthesis' in window) {
-    preferredVoice = pickVoice();
-    window.speechSynthesis.onvoiceschanged = () => { preferredVoice = pickVoice(); };
-  }
+const APPS = [
+  { name:'Zemen Gebeya',    url:'gebeya.html', icon:'fa-cart-shopping',       from:'#34d399', to:'#059669' },
+  { name:'Zemen Equb',      url:'ekub.html',   icon:'fa-hand-holding-dollar', from:'#fbbf24', to:'#d97706' },
+  { name:'Ethio P2P',       url:'p2p.html',    icon:'fa-right-left',          from:'#38bdf8', to:'#2563eb' },
+  { name:'Zemen Shield',    url:'shield.html', icon:'fa-shield-halved',       from:'#818cf8', to:'#7c3aed' },
+  { name:'Ride & Travel',   url:'ride.html',   icon:'fa-car-side',            from:'#fb7185', to:'#dc2626' },
+  { name:'Micro Finance',   url:'sanduq.html', icon:'fa-sack-dollar',         from:'#2dd4bf', to:'#0891b2' },
+  { name:'Food Delivery',   url:'food.html',   icon:'fa-utensils',            from:'#fb923c', to:'#d97706' },
+  { name:'Donate & Charity',url:'donate.html', icon:'fa-hand-holding-heart',  from:'#f472b6', to:'#e11d48' },
+  { name:'Zemen Work',      url:'work.html',   icon:'fa-briefcase',           from:'#64748b', to:'#1e293b' }
+];
 
-  function stopSpeaking() {
-    if (!('speechSynthesis' in window)) return;
-    try { window.speechSynthesis.cancel(); } catch (e) {}
-    $('stopSpeakBtn').classList.add('hidden');
-  }
+/* fuzzy voice router keyword table */
+const VOICE_ROUTES = [
+  { keys:['gebeya','market','marketplace','shop','shopping','buy','store','groceries','grocery'], url:'gebeya.html', label:'Zemen Gebeya' },
+  { keys:['equb','ekub','saving group','savings group','credit association','committee'],        url:'ekub.html',   label:'Zemen Equb' },
+  { keys:['p2p','peer to peer','peer','transfer','send money','send cash','remit'],              url:'p2p.html',    label:'Ethio P2P' },
+  { keys:['shield','insurance','insure','cover','protection','policy'],                          url:'shield.html', label:'Zemen Shield' },
+  { keys:['ride','travel','taxi','car','transport','trip','driver','bus'],                       url:'ride.html',   label:'Ride and Travel' },
+  { keys:['micro finance','microfinance','sanduq','loan','borrow','credit','finance'],           url:'sanduq.html', label:'Micro Finance' },
+  { keys:['food','eat','eating','restaurant','delivery','hungry','lunch','dinner','pizza'],      url:'food.html',   label:'Food Delivery' },
+  { keys:['donate','charity','give','donation','help others','zakat','sadaqa'],                  url:'donate.html', label:'Donate and Charity' },
+  { keys:['work','job','jobs','employment','hire','career','vacancy'],                           url:'work.html',   label:'Zemen Work' }
+];
 
-  function speak(text) {
-    if (!('speechSynthesis' in window)) return;
-    try { window.speechSynthesis.cancel(); } catch (e) {}
 
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang   = 'en-US';
-    u.rate   = 1.0;
-    u.pitch  = 1.0;
-    u.volume = 1.0;
-    if (preferredVoice) u.voice = preferredVoice;
+/* ============================================================
+   4. RENDER : APP GRID
+============================================================ */
+(function renderApps(){
+  const grid = document.getElementById('appGrid');
+  grid.innerHTML = APPS.map(app => `
+    <a href="${app.url}"
+       class="glass-card rounded-2xl px-2 py-3.5 flex flex-col items-center gap-2
+              active:scale-95 transition-transform duration-150">
+      <span class="w-11 h-11 rounded-2xl flex items-center justify-center shadow-sm"
+            style="background:linear-gradient(135deg,${app.from},${app.to});">
+        <i class="fa-solid ${app.icon} text-white text-[17px]"></i>
+      </span>
+      <span class="text-[10.5px] font-bold text-slate-700 text-center leading-tight">
+        ${app.name}
+      </span>
+    </a>
+  `).join('');
+})();
 
-    u.onstart = () => {
-      voiceBusy = true;
-      showPanel();
-      setStatus('Zemen Assistant', text, 'speaking');
-      $('stopSpeakBtn').classList.remove('hidden');
-    };
-    u.onend = () => {
-      $('stopSpeakBtn').classList.add('hidden');
-      if (!isListening) {
-        voiceBusy = false;
-        hidePanel(500);
-      }
-    };
-    u.onerror = () => {
-      $('stopSpeakBtn').classList.add('hidden');
-      voiceBusy = isListening;
-    };
 
-    try { window.speechSynthesis.speak(u); } catch (e) {}
-  }
+/* ============================================================
+   5. BALANCES
+============================================================ */
+let balancesHidden = false;
 
-  /* ---- Welcome (exactly once per session) ---- */
-  function playWelcome() {
-    if (!welcomePending) return;
-    if (sessionStorage.getItem(WELCOME_KEY) === '1') { welcomePending = false; return; }
-    welcomePending = false;
-    try { sessionStorage.setItem(WELCOME_KEY, '1'); } catch (e) {}
-    speak(WELCOME_TEXT);
+function formatETB(value){
+  const n = Number(value);
+  if (isNaN(n)) return value;
+  return n.toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 });
+}
 
-    // If the browser blocked autoplay speech, allow a gesture-triggered retry.
-    setTimeout(() => {
-      const synth = window.speechSynthesis;
-      if (!synth || !synth.speaking) welcomePending = true;
-    }, 1000);
-  }
+function renderBalances(){
+  const main = store.get('zemen_main_balance', '12450.00');
+  const end  = store.get('zemen_endekise_balance', '3200.00');
+  const rew  = store.get('zemen_reward_balance', '150.00');
 
-  /* ---- Recognition ---- */
-  function startListening() {
-    if (isListening) return;
+  document.getElementById('mainBalance').textContent     = balancesHidden ? '••••••' : formatETB(main);
+  document.getElementById('endekiseBalance').textContent = balancesHidden ? '••••'   : formatETB(end);
+  document.getElementById('rewardBalance').textContent   = balancesHidden ? '••••'   : formatETB(rew);
 
-    if (!SR) {
-      setStatus('Not supported', 'Voice input is unavailable in this browser', 'error');
-      showPanel();
-      voiceBusy = false;
-      hidePanel(2600);
-      toast('Voice input is not supported in this browser');
+  document.getElementById('eyeIcon').className =
+    balancesHidden ? 'fa-solid fa-eye-slash text-[10px]' : 'fa-solid fa-eye text-[10px]';
+}
+
+document.getElementById('eyeBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  balancesHidden = !balancesHidden;
+  renderBalances();
+});
+
+document.getElementById('endekiseCard').addEventListener('click', () => {
+  toast('Endekise pool — ' + (balancesHidden ? 'hidden' : 'ETB ' + formatETB(store.get('zemen_endekise_balance','3200.00'))));
+});
+
+document.getElementById('rewardCard').addEventListener('click', () => {
+  toast('Zemen Rewards — ' + (balancesHidden ? 'hidden' : 'ETB ' + formatETB(store.get('zemen_reward_balance','150.00'))));
+});
+
+
+/* ============================================================
+   6. USER PROFILE RENDER
+============================================================ */
+function currentAvatarIndex(){
+  const i = parseInt(store.get('zemen_avatar', '0'), 10);
+  return (isNaN(i) || i < 0 || i >= AVATARS.length) ? 0 : i;
+}
+
+function paintAvatar(el, avatar, iconSizeClass){
+  el.style.background = `linear-gradient(135deg, ${avatar.from}, ${avatar.to})`;
+  el.innerHTML = `<i class="fa-solid ${avatar.icon} text-white ${iconSizeClass}"></i>`;
+}
+
+function renderUser(){
+  const name = store.get('zemen_user_name', 'Abebe');
+  const avatar = AVATARS[currentAvatarIndex()];
+
+  document.getElementById('greetName').textContent = `Selam, ${name}`;
+  document.getElementById('accountPreviewName').textContent = name;
+  document.getElementById('nameInput').value = name;
+
+  paintAvatar(document.getElementById('headerAvatarBtn'), avatar, 'text-lg');
+  paintAvatar(document.getElementById('accountAvatarBig'), avatar, 'text-4xl');
+
+  /* avatar picker highlighting */
+  document.querySelectorAll('#avatarPicker [data-avatar]').forEach((btn, idx) => {
+    const active = idx === currentAvatarIndex();
+    btn.className =
+      'relative aspect-square rounded-2xl flex items-center justify-center transition active:scale-90 ' +
+      (active ? 'ring-[3px] ring-green-500 ring-offset-2' : 'ring-1 ring-slate-200');
+  });
+}
+
+
+/* ============================================================
+   7. AVATAR PICKER BUILD
+============================================================ */
+(function buildAvatarPicker(){
+  const picker = document.getElementById('avatarPicker');
+  picker.innerHTML = AVATARS.map((a, i) => `
+    <button type="button" data-avatar="${i}"
+            class="relative aspect-square rounded-2xl flex items-center justify-center transition active:scale-90"
+            style="background:linear-gradient(135deg,${a.from},${a.to});">
+      <i class="fa-solid ${a.icon} text-white text-xl"></i>
+    </button>
+  `).join('');
+
+  picker.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-avatar]');
+    if (!btn) return;
+    const idx = parseInt(btn.dataset.avatar, 10);
+
+    /* live preview (not saved until Save is pressed) */
+    paintAvatar(document.getElementById('accountAvatarBig'), AVATARS[idx], 'text-4xl');
+    picker.dataset.pendingAvatar = String(idx);
+
+    document.querySelectorAll('#avatarPicker [data-avatar]').forEach((b, i) => {
+      b.className =
+        'relative aspect-square rounded-2xl flex items-center justify-center transition active:scale-90 ' +
+        (i === idx ? 'ring-[3px] ring-green-500 ring-offset-2' : 'ring-1 ring-slate-200');
+    });
+  });
+})();
+
+
+/* ============================================================
+   8. ACCOUNT MODAL
+============================================================ */
+const accountModal    = document.getElementById('accountModal');
+const accountBackdrop = document.getElementById('accountBackdrop');
+const accountPanel    = document.getElementById('accountPanel');
+const avatarPicker    = document.getElementById('avatarPicker');
+
+function openAccount(){
+  renderUser();
+  avatarPicker.dataset.pendingAvatar = String(currentAvatarIndex());
+  accountModal.classList.remove('hidden');
+  requestAnimationFrame(() => {
+    accountBackdrop.classList.add('opacity-100');
+    accountPanel.classList.remove('translate-y-full');
+  });
+}
+
+function closeAccount(){
+  accountBackdrop.classList.remove('opacity-100');
+  accountPanel.classList.add('translate-y-full');
+  setTimeout(() => accountModal.classList.add('hidden'), 320);
+}
+
+document.getElementById('closeAccountBtn').addEventListener('click', closeAccount);
+document.getElementById('cancelProfileBtn').addEventListener('click', closeAccount);
+accountBackdrop.addEventListener('click', closeAccount);
+
+document.getElementById('saveProfileBtn').addEventListener('click', () => {
+  const raw = document.getElementById('nameInput').value.trim();
+  const name = raw === '' ? 'Zemen User' : raw.slice(0, 24);
+  const avatarIdx = parseInt(avatarPicker.dataset.pendingAvatar || '0', 10);
+
+  store.set('zemen_user_name', name);
+  store.set('zemen_avatar', String(isNaN(avatarIdx) ? 0 : avatarIdx));
+
+  renderUser();
+  closeAccount();
+  toast(`Profile updated — Selam, ${name}!`);
+});
+
+
+/* ============================================================
+   9. HEADER BUTTONS
+============================================================ */
+document.getElementById('headerAvatarBtn').addEventListener('click', openAccount);
+
+document.getElementById('searchBtn').addEventListener('click', () => {
+  toast('Search is opening…');
+});
+
+document.getElementById('bellBtn').addEventListener('click', () => {
+  toast('You have 3 new notifications');
+});
+
+document.getElementById('seeAllApps').addEventListener('click', () => {
+  document.getElementById('appsSection').scrollIntoView({ behavior:'smooth', block:'start' });
+});
+
+document.getElementById('promoBanner').addEventListener('click', () => {
+  toast('Opening Zemen Gebeya…');
+  setTimeout(() => { window.location.href = 'gebeya.html'; }, 500);
+});
+
+document.querySelectorAll('.quick-btn').forEach(btn => {
+  btn.addEventListener('click', () => toast(btn.dataset.quick + ' — coming soon'));
+});
+
+
+/* ============================================================
+   10. BOTTOM NAVIGATION
+============================================================ */
+const NAV_LABELS = { home:'Home', payment:'Payment', apps:'Apps', engage:'Engage', account:'Account' };
+
+document.querySelectorAll('[data-nav]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.nav;
+
+    if (key === 'account') {
+      openAccount();
       return;
     }
 
-    stopSpeaking();
-    voiceBusy = true;
-    finalText = '';
-    handled   = false;
-
-    const r = new SR();
-    r.lang            = 'en-US';
-    r.continuous      = true;
-    r.interimResults  = true;
-    r.maxAlternatives = 3;
-
-    recognition = r;
-
-    r.onstart = () => {
-      isListening = true;
-      showPanel();
-      setStatus('Listening…', 'Speak now, release to send', 'listening');
-      $('micRipple').classList.remove('hidden');
-      $('micIcon').className = 'fa-solid fa-microphone text-white text-[20px] relative z-10';
-      if (navigator.vibrate) { try { navigator.vibrate(12); } catch (e) {} }
-    };
-
-    r.onresult = (event) => {
-      let interim = '';
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const chunk = event.results[i][0].transcript;
-        if (event.results[i].isFinal) finalText += chunk + ' ';
-        else interim += chunk;
-      }
-      const live = (finalText + interim).trim();
-      if (live) $('voiceText').textContent = live;
-    };
-
-    r.onerror = (event) => {
-      isListening = false;
-      $('micRipple').classList.add('hidden');
-
-      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-        handled = true;
-        voiceBusy = false;
-        setStatus('Microphone blocked', 'Allow mic access to use voice commands', 'error');
-        hidePanel(3000);
-        return;
-      }
-      if (event.error === 'no-speech') {
-        handled = true;
-        voiceBusy = false;
-        setStatus('No speech detected', 'Press and hold the mic and try again', 'error');
-        hidePanel(2400);
-        return;
-      }
-      if (event.error === 'aborted') {
-        handled = true;
-        voiceBusy = false;
-        hidePanel(200);
-      }
-    };
-
-    r.onend = () => {
-      isListening = false;
-      $('micRipple').classList.add('hidden');
-      if (handled) return;
-      handled = true;
-      handleTranscript(finalText.trim());
-    };
-
-    try { r.start(); }
-    catch (err) {
-      isListening = false;
-      voiceBusy = false;
-      hidePanel(0);
-    }
-  }
-
-  function stopListening() {
-    if (recognition && isListening) {
-      try { recognition.stop(); } catch (e) {}
-    }
-  }
-
-  /* ---- Intent resolution (fuzzy, weighted) ---- */
-  function resolveIntent(raw) {
-    const text = ' ' + raw.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim() + ' ';
-
-    // Special commands
-    if (/(check|show|what.?s|tell).{0,12}(balance|wallet)|how much money|my balance/.test(text)) {
-      return { type: 'balance' };
-    }
-    if (/(go |back )?home|dashboard|main page/.test(text)) {
-      return { type: 'home' };
-    }
-    if (/(stop|cancel|never mind|nevermind|quiet)/.test(text)) {
-      return { type: 'cancel' };
-    }
-
-    let best = null;
-    let bestScore = 0;
-
-    for (const intent of INTENTS) {
-      let score = 0;
-      for (const w of intent.words) {
-        if (text.includes(' ' + w + ' ') || text.includes(w)) {
-          score += w.split(' ').length * 2 + w.length / 12;
-        }
-      }
-      if (score > bestScore) { bestScore = score; best = intent; }
-    }
-
-    return bestScore > 0 ? { type: 'app', app: best } : { type: 'unknown' };
-  }
-
-  function handleTranscript(text) {
-    if (!text) {
-      voiceBusy = false;
-      setStatus('Didn\'t catch that', 'Press and hold the mic and try again', 'error');
-      hidePanel(2400);
-      speak('I did not catch that. Please press and hold the microphone and try again.');
-      return;
-    }
-
-    const result = resolveIntent(text);
-    voiceBusy = false;
-
-    if (result.type === 'balance') {
-      setStatus('Zemen Assistant', 'Checking your balance…', 'speaking');
-      speak('Your demo wallet balance is ' + getBalance().toFixed(2) + ' birr.');
-      return;
-    }
-
-    if (result.type === 'home') {
+    if (key === 'home') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      setStatus('Zemen Assistant', 'Going to your dashboard', 'speaking');
-      speak('You are on the dashboard.');
+      setActiveNav('home');
       return;
     }
 
-    if (result.type === 'cancel') {
-      setStatus('Cancelled', 'Voice command cancelled', 'speaking');
-      hidePanel(1200);
+    if (key === 'apps') {
+      setActiveNav('home');
+      document.getElementById('appsSection').scrollIntoView({ behavior:'smooth', block:'start' });
       return;
     }
 
-    if (result.type === 'app') {
-      const app = result.app;
-      setStatus('Opening ' + app.label, 'Just a moment…', 'speaking');
-      toast('Opening ' + app.label + '…');
-      speak('Opening ' + app.label);
-      setTimeout(() => { window.location.href = app.href; }, 750);
+    if (key === 'payment') {
+      setActiveNav('home');
+      toast('Payment hub — coming soon');
       return;
     }
 
-    setStatus('Not sure about that', 'Try: "Food", "Equb", "Send money"…', 'error');
-    hidePanel(2600);
-    speak('Sorry, I did not find that service. Try saying food, equb, ride, or send money.');
-  }
-
-  /* ---- Mic bindings: press & hold ---- */
-  function bindMic() {
-    const mic = $('micBtn');
-    if (!mic) return;
-
-    mic.addEventListener('mousedown', (e) => { e.preventDefault(); startListening(); });
-    mic.addEventListener('touchstart', (e) => { e.preventDefault(); startListening(); }, { passive: false });
-    mic.addEventListener('contextmenu', (e) => e.preventDefault());
-
-    document.addEventListener('mouseup', () => { if (isListening) stopListening(); });
-    document.addEventListener('touchend', () => { if (isListening) stopListening(); });
-    document.addEventListener('touchcancel', () => { if (isListening) stopListening(); });
-
-    // Safety: if the tab loses focus mid-hold, release the mic.
-    window.addEventListener('blur', () => { if (isListening) stopListening(); });
-
-    $('stopSpeakBtn').addEventListener('click', (e) => {
-      e.stopPropagation();
-      stopSpeaking();
-      voiceBusy = false;
-      hidePanel(150);
-    });
-  }
-
-  /* ---------------------------------------------------------------
-     5. DASHBOARD INTERACTIONS
-     --------------------------------------------------------------- */
-  function bindDashboard() {
-    // Balance visibility toggle
-    $('toggleBal').addEventListener('click', () => {
-      balanceHidden = !balanceHidden;
-      $('eyeIcon').className = balanceHidden
-        ? 'fa-regular fa-eye-slash text-[13px]'
-        : 'fa-regular fa-eye text-[13px]';
-      renderBalance();
-    });
-
-    // Add Money (demo cash-in)
-    $('btnCashIn').addEventListener('click', () => {
-      const next = getBalance() + 1000;
-      setBalance(next);
-      toast('1,000.00 ETB added to your demo wallet');
-      if (navigator.vibrate) { try { navigator.vibrate(15); } catch (e) {} }
-    });
-
-    // Transfer → P2P mini app
-    $('btnTransfer').addEventListener('click', () => {
-      toast('Opening Ethio P2P…');
-      setTimeout(() => { window.location.href = 'p2p.html'; }, 320);
-    });
-
-    // Scan QR
-    $('btnScan').addEventListener('click', () => {
-      toast('QR Scanner is not available in this demo');
-    });
-
-    // Generic toast triggers
-    document.querySelectorAll('[data-toast]').forEach((el) => {
-      el.addEventListener('click', () => toast(el.getAttribute('data-toast')));
-    });
-
-    // Bottom navigation
-    document.querySelectorAll('.nav-item').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const key = btn.getAttribute('data-nav');
-
-        document.querySelectorAll('.nav-item').forEach((b) => {
-          b.classList.remove('text-emerald-600');
-          b.classList.add('text-gray-400');
-          b.querySelector('span').classList.remove('font-bold');
-          b.querySelector('span').classList.add('font-semibold');
-        });
-        btn.classList.remove('text-gray-400');
-        btn.classList.add('text-emerald-600');
-        btn.querySelector('span').classList.remove('font-semibold');
-        btn.querySelector('span').classList.add('font-bold');
-
-        if (key === 'home') {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else if (key === 'apps') {
-          const section = $('appsSection');
-          if (section) {
-            const y = section.getBoundingClientRect().top + window.pageYOffset - 16;
-            window.scrollTo({ top: y, behavior: 'smooth' });
-          }
-        } else if (key === 'finance') {
-          toast('Finance hub — opening Sanduq Micro Finance…');
-          setTimeout(() => { window.location.href = 'sanduq.html'; }, 380);
-        } else {
-          toast('Profile & KYC coming soon');
-        }
-      });
-    });
-  }
-
-  /* ---------------------------------------------------------------
-     6. BOOT SEQUENCE
-     --------------------------------------------------------------- */
-  function bootApp() {
-    renderGrid();
-    renderBalance();
-    bindMic();
-    bindDashboard();
-
-    // Welcome voice — once per session, after the UI settles.
-    setTimeout(playWelcome, 500);
-
-    // Gesture fallback (covers browsers that block autoplay speech)
-    const gestureRetry = () => {
-      if (welcomePending) playWelcome();
-      document.removeEventListener('pointerdown', gestureRetry);
-      document.removeEventListener('touchstart', gestureRetry);
-    };
-    document.addEventListener('pointerdown', gestureRetry, { once: true });
-    document.addEventListener('touchstart', gestureRetry, { once: true });
-  }
-
-  function runSplashFlow() {
-    const splash = $('splash');
-    const returning = (function () {
-      try { return sessionStorage.getItem(SPLASH_KEY) === '1'; } catch (e) { return false; }
-    })();
-
-    if (returning) {
-      // Returning from a mini-app → skip instantly, no delay, no flash.
-      if (splash) splash.remove();
-      bootApp();
+    if (key === 'engage') {
+      setActiveNav('home');
+      toast('Zemen Engage — coming soon');
       return;
     }
+  });
+});
 
-    // First visit in this session → show splash for 2s, then fade out.
-    try { sessionStorage.setItem(SPLASH_KEY, '1'); } catch (e) {}
+function setActiveNav(key){
+  document.querySelectorAll('[data-nav]').forEach(btn => {
+    const active = btn.dataset.nav === key;
+    btn.classList.toggle('text-green-600', active);
+    btn.classList.toggle('text-slate-400', !active);
+    const label = btn.querySelector('span');
+    if (label){
+      label.classList.toggle('font-bold', active);
+      label.classList.toggle('font-semibold', !active);
+    }
+  });
+}
 
-    document.body.style.overflow = 'hidden';
 
-    setTimeout(() => {
-      if (splash) {
-        splash.classList.add('opacity-0');
-        setTimeout(() => splash.remove(), 500);
-      }
-      document.body.style.overflow = '';
-      bootApp();
-    }, 2000);
-  }
+/* ============================================================
+   11. SCAN QR MODAL
+============================================================ */
+const scanModal    = document.getElementById('scanModal');
+const scanBackdrop = document.getElementById('scanBackdrop');
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', runSplashFlow);
+function openScan(){
+  scanModal.classList.remove('hidden');
+  requestAnimationFrame(() => scanBackdrop.classList.add('opacity-100'));
+}
+
+function closeScan(){
+  scanBackdrop.classList.remove('opacity-100');
+  setTimeout(() => scanModal.classList.add('hidden'), 300);
+}
+
+document.getElementById('scanBtn').addEventListener('click', openScan);
+document.getElementById('closeScanBtn').addEventListener('click', closeScan);
+scanBackdrop.addEventListener('click', closeScan);
+
+
+/* ============================================================
+   12. SMART COLLAPSING HEADER
+============================================================ */
+const topBar = document.getElementById('topBar');
+const mainEl = document.getElementById('main');
+
+let lastScrollY = window.scrollY || 0;
+let barHidden = false;
+
+function headerHeight(){ return topBar.offsetHeight; }
+
+/* Keep the page content clear of the fixed header */
+function layout(){
+  mainEl.style.paddingTop = headerHeight() + 'px';
+}
+
+function handleScroll(){
+  const y = Math.max(0, window.scrollY);
+  const h = headerHeight();
+
+  if (y <= h){
+    /* natural scroll-linked slide (no transition — stays glued to the finger) */
+    topBar.style.transition = 'none';
+    topBar.style.transform = `translateY(${-y}px)`;
+    barHidden = y >= h - 1;
   } else {
-    runSplashFlow();
+    /* smart mode — smooth animated hide / reveal */
+    topBar.style.transition = 'transform .35s cubic-bezier(.4,0,.2,1)';
+
+    if (y > lastScrollY + 4 && !barHidden){
+      topBar.style.transform = `translateY(${-h}px)`;
+      barHidden = true;
+    } else if (y < lastScrollY - 4 && barHidden){
+      topBar.style.transform = 'translateY(0)';
+      barHidden = false;
+    }
   }
+
+  lastScrollY = y;
+}
+
+window.addEventListener('scroll', handleScroll, { passive:true });
+window.addEventListener('resize', () => { layout(); handleScroll(); });
+window.addEventListener('orientationchange', () => setTimeout(() => { layout(); handleScroll(); }, 250));
+
+if (document.fonts && document.fonts.ready){
+  document.fonts.ready.then(() => { layout(); handleScroll(); });
+}
+
+layout();
+handleScroll();
+
+
+/* ============================================================
+   13. VOICE ASSISTANT  (en-US, press & hold)
+============================================================ */
+const micBtn        = document.getElementById('micBtn');
+const micIcon       = document.getElementById('micIcon');
+const voiceBar      = document.getElementById('voiceBar');
+const voiceBarIcon  = document.getElementById('voiceBarIcon');
+const voiceBarText  = document.getElementById('voiceBarText');
+const ttsStopBtn    = document.getElementById('ttsStopBtn');
+
+const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+let recognition   = null;
+let isListening   = false;
+let isStarting    = false;
+let transcript    = '';
+let barHideTimer  = null;
+
+/* ---------- voice bar helpers ---------- */
+function showVoiceBar(text, iconClass = 'fa-solid fa-microphone', iconColor = 'text-green-400'){
+  clearTimeout(barHideTimer);
+  voiceBarText.textContent = text;
+  voiceBarIcon.className = `${iconClass} ${iconColor}`;
+  voiceBar.classList.remove('hidden');
+}
+
+function hideVoiceBar(delay = 0){
+  clearTimeout(barHideTimer);
+  barHideTimer = setTimeout(() => voiceBar.classList.add('hidden'), delay);
+}
+
+/* ---------- text to speech ---------- */
+function speak(text){
+  if (!('speechSynthesis' in window)) return;
+
+  window.speechSynthesis.cancel();
+
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'en-US';
+  utter.rate = 1;
+  utter.pitch = 1;
+
+  utter.onstart = () => showVoiceBar(text, 'fa-solid fa-volume-high', 'text-blue-400');
+  utter.onend   = () => hideVoiceBar(400);
+  utter.onerror = () => hideVoiceBar(400);
+
+  window.speechSynthesis.speak(utter);
+}
+
+/* ---------- mic visual state ---------- */
+function setMicState(listening){
+  if (listening){
+    micBtn.classList.add('mic-listening');
+    micIcon.className = 'fa-solid fa-microphone text-lg pointer-events-none';
+  } else {
+    micBtn.classList.remove('mic-listening');
+    micIcon.className = 'fa-solid fa-microphone text-lg pointer-events-none';
+  }
+}
+
+/* ---------- recognition setup ---------- */
+function getRecognition(){
+  if (recognition) return recognition;
+
+  recognition = new SpeechRecognitionAPI();
+  recognition.lang = 'en-US';
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  recognition.onstart = () => {
+    isListening = true;
+    isStarting = false;
+    transcript = '';
+    setMicState(true);
+    showVoiceBar('Listening… speak now', 'fa-solid fa-microphone', 'text-green-400');
+  };
+
+  recognition.onresult = (event) => {
+    try {
+      transcript = event.results[0][0].transcript || '';
+    } catch(e){ transcript = ''; }
+  };
+
+  recognition.onerror = (event) => {
+    isStarting = false;
+    isListening = false;
+    setMicState(false);
+
+    if (event.error === 'not-allowed' || event.error === 'service-not-allowed'){
+      showVoiceBar('Microphone permission denied', 'fa-solid fa-microphone-slash', 'text-red-400');
+    } else if (event.error === 'no-speech'){
+      showVoiceBar('I did not catch that — try again', 'fa-solid fa-circle-exclamation', 'text-amber-400');
+    } else {
+      showVoiceBar('Voice error: ' + event.error, 'fa-solid fa-triangle-exclamation', 'text-amber-400');
+    }
+    hideVoiceBar(2200);
+  };
+
+  recognition.onend = () => {
+    isListening = false;
+    isStarting = false;
+    setMicState(false);
+
+    if (transcript && transcript.trim() !== ''){
+      routeVoiceCommand(transcript.trim());
+    } else {
+      hideVoiceBar(900);
+    }
+  };
+
+  return recognition;
+}
+
+/* ---------- start / stop on hold ---------- */
+function startListening(e){
+  if (e && e.cancelable) e.preventDefault();
+
+  if (!SpeechRecognitionAPI){
+    toast('Voice assistant is not supported on this browser');
+    return;
+  }
+
+  if (isListening || isStarting) return;
+
+  /* stop any ongoing speech so the mic doesn't hear the app */
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+
+  transcript = '';
+  isStarting = true;
+  setMicState(true);
+
+  try {
+    getRecognition().start();
+  } catch(err){
+    isStarting = false;
+    setMicState(false);
+    /* recognition may already be running — restart it cleanly */
+    try { recognition.abort(); } catch(e2){}
+  }
+}
+
+function stopListening(e){
+  if (e && e.cancelable) e.preventDefault();
+  if (!recognition) return;
+  if (isListening || isStarting){
+    try { recognition.stop(); } catch(err){ /* noop */ }
+  }
+}
+
+micBtn.addEventListener('mousedown', startListening);
+micBtn.addEventListener('touchstart', startListening, { passive:false });
+
+micBtn.addEventListener('mouseup', stopListening);
+micBtn.addEventListener('mouseleave', stopListening);
+micBtn.addEventListener('touchend', stopListening);
+micBtn.addEventListener('touchcancel', stopListening);
+
+/* keyboard accessibility */
+micBtn.addEventListener('keydown', (e) => {
+  if (e.key === ' ' || e.key === 'Enter') startListening(e);
+});
+micBtn.addEventListener('keyup', (e) => {
+  if (e.key === ' ' || e.key === 'Enter') stopListening(e);
+});
+
+/* ---------- TTS stop ---------- */
+ttsStopBtn.addEventListener('click', () => {
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  hideVoiceBar(0);
+  toast('Voice stopped');
+});
+
+/* ---------- the fuzzy router ---------- */
+function routeVoiceCommand(rawText){
+  const text = rawText.toLowerCase();
+  showVoiceBar(`"${rawText}"`, 'fa-solid fa-quote-left', 'text-slate-300');
+
+  /* --- system intents --- */
+  if (/\b(balance|how much|my money|account balance|wallet)\b/.test(text)){
+    const bal = balancesHidden ? 'hidden' : 'ETB ' + formatETB(store.get('zemen_main_balance','12450.00'));
+    speak(`Your main balance is ${balancesHidden ? 'currently hidden' : formatETB(store.get('zemen_main_balance','12450.00')) + ' birr'}.`);
+    toast('Main balance: ' + bal);
+    return;
+  }
+
+  if (/\b(account|profile|settings|my name|avatar)\b/.test(text)){
+    speak('Opening your account settings.');
+    setTimeout(openAccount, 700);
+    return;
+  }
+
+  if (/\b(scan|qr|scan qr|pay with qr)\b/.test(text)){
+    speak('Opening the QR scanner.');
+    setTimeout(openScan, 700);
+    return;
+  }
+
+  if (/\b(home|go back|dashboard)\b/.test(text)){
+    speak('Going home.');
+    window.scrollTo({ top:0, behavior:'smooth' });
+    setActiveNav('home');
+    hideVoiceBar(1500);
+    return;
+  }
+
+  if (/\b(stop|cancel|quiet|silence)\b/.test(text)){
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    hideVoiceBar(0);
+    return;
+  }
+
+  /* --- fuzzy app routing --- */
+  let best = null;
+  let bestScore = 0;
+
+  VOICE_ROUTES.forEach(route => {
+    let score = 0;
+    route.keys.forEach(keyword => {
+      if (text.includes(keyword)) score += keyword.length + 2;
+    });
+    if (score > bestScore){
+      bestScore = score;
+      best = route;
+    }
+  });
+
+  if (best && bestScore > 0){
+    speak(`Opening ${best.label}.`);
+    toast(`Voice → ${best.label}`);
+    setTimeout(() => { window.location.href = best.url; }, 1100);
+    return;
+  }
+
+  /* --- nothing matched --- */
+  speak("Sorry, I could not find that. Try saying food, ride, gebeya, or equb.");
+  toast('No matching app found');
+  hideVoiceBar(2600);
+}
+
+
+/* ============================================================
+   14. BOOT
+============================================================ */
+(function boot(){
+  renderBalances();
+  renderUser();
+  setActiveNav('home');
+
+  /* prevent iOS double-tap zoom on the mic & scan buttons */
+  ['micBtn','scanBtn'].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener('touchend', (e) => {
+      if (e.cancelable) e.preventDefault();
+      el.click();
+    }, { passive:false });
+  });
 })();
 </script>
 </body>
-                                         </html>
+</html>
