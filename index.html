@@ -35,7 +35,7 @@
     padding-right:2.5rem;
     font-weight:800;
     letter-spacing:.06em;
-    font-size:11px;
+    font-size:10px;
     color:#713f12;
   }
 
@@ -91,7 +91,7 @@
 <body class="h-screen overflow-hidden flex flex-col bg-slate-50 text-slate-800 antialiased selection:bg-green-200">
 
 <!-- ============================================================
-     SPLASH SCREEN (session based) — overlays everything, z-200
+     SPLASH SCREEN (session based) — overlays everything
 ============================================================ -->
 <div id="splash"
      class="fixed inset-0 z-[200] flex flex-col items-center justify-center
@@ -111,87 +111,89 @@
 
 
 <!-- ============================================================
-     PINNED TOP HEADER (flex-shrink-0) — NEVER MOVES
-     Contains: Green balance header + Yellow scrolling ribbon
+     COMPACT PINNED TOP HEADER (flex-shrink-0, z-20)
+     Green balance header + Yellow ribbon — NEVER MOVES
 ============================================================ -->
 <header id="topBar" class="flex-shrink-0 z-20 shadow-md relative">
 
-  <!-- ---- GREEN HEADER ---- -->
-  <div class="bg-gradient-to-b from-green-400 to-green-500 text-white px-5 pt-4 pb-6 relative overflow-hidden">
+  <!-- ---- COMPACT GREEN HEADER ---- -->
+  <div class="bg-gradient-to-b from-green-400 to-green-500 text-white px-4 pt-2.5 pb-3 relative overflow-hidden">
     <!-- decorative blobs -->
-    <div class="pointer-events-none absolute -right-10 -top-12 w-40 h-40 rounded-full bg-white/10"></div>
-    <div class="pointer-events-none absolute -left-12 top-10 w-32 h-32 rounded-full bg-white/5"></div>
+    <div class="pointer-events-none absolute -right-10 -top-12 w-32 h-32 rounded-full bg-white/10"></div>
+    <div class="pointer-events-none absolute -left-12 top-8 w-24 h-24 rounded-full bg-white/5"></div>
 
     <!-- Row 1 : avatar + greeting + icons -->
-    <div class="relative flex items-center gap-3">
+    <div class="relative flex items-center gap-2.5">
       <button id="headerAvatarBtn"
-              class="w-11 h-11 rounded-full ring-2 ring-white/60 shadow-md flex items-center justify-center active:scale-95 transition shrink-0"
+              class="w-9 h-9 rounded-full ring-2 ring-white/60 shadow flex items-center justify-center active:scale-95 transition shrink-0"
               aria-label="Open account settings">
-        <i id="headerAvatarIcon" class="fa-solid fa-user text-white text-lg"></i>
+        <i id="headerAvatarIcon" class="fa-solid fa-user text-white text-sm"></i>
       </button>
 
       <div class="flex-1 min-w-0">
-        <p id="greetName" class="text-[15px] font-bold leading-tight truncate">Selam, Abebe</p>
-        <p class="text-[11px] text-white/80 leading-tight">Welcome back to Zemen</p>
+        <p id="greetName" class="text-[13px] font-bold leading-tight truncate">Selam, Abebe</p>
+        <p class="text-[10px] text-white/80 leading-tight">Welcome back to Zemen</p>
       </div>
 
       <button id="searchBtn" aria-label="Search"
-              class="w-9 h-9 rounded-full bg-white/20 backdrop-blur flex items-center justify-center active:scale-90 transition">
-        <i class="fa-solid fa-magnifying-glass text-[13px]"></i>
+              class="w-8 h-8 rounded-full bg-white/20 backdrop-blur flex items-center justify-center active:scale-90 transition">
+        <i class="fa-solid fa-magnifying-glass text-[11px]"></i>
       </button>
       <button id="bellBtn" aria-label="Notifications"
-              class="relative w-9 h-9 rounded-full bg-white/20 backdrop-blur flex items-center justify-center active:scale-90 transition">
-        <i class="fa-solid fa-bell text-[13px]"></i>
-        <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full ring-2 ring-green-500"></span>
+              class="relative w-8 h-8 rounded-full bg-white/20 backdrop-blur flex items-center justify-center active:scale-90 transition">
+        <i class="fa-solid fa-bell text-[11px]"></i>
+        <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full ring-2 ring-green-500"></span>
       </button>
     </div>
 
-    <!-- Row 2 : main balance -->
-    <div class="relative mt-5">
-      <div class="flex items-center gap-2">
-        <span class="text-[11px] uppercase tracking-wider text-white/85 font-semibold">Main Balance</span>
-        <button id="eyeBtn" aria-label="Toggle balance visibility"
-                class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center active:scale-90 transition">
-          <i id="eyeIcon" class="fa-solid fa-eye text-[10px]"></i>
-        </button>
-      </div>
-      <div class="flex items-end gap-2 mt-0.5">
-        <span class="text-[13px] font-semibold text-white/90 mb-1">ETB</span>
-        <span id="mainBalance" class="text-[32px] leading-none font-extrabold tracking-tight">12,450.00</span>
+    <!-- Row 2 : main balance (compact) -->
+    <div class="relative mt-2.5 flex items-end gap-2">
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-1.5">
+          <span class="text-[9px] uppercase tracking-wider text-white/85 font-bold">Main Balance</span>
+          <button id="eyeBtn" aria-label="Toggle balance visibility"
+                  class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center active:scale-90 transition">
+            <i id="eyeIcon" class="fa-solid fa-eye text-[8px]"></i>
+          </button>
+        </div>
+        <div class="flex items-baseline gap-1.5 mt-0.5">
+          <span class="text-[11px] font-semibold text-white/90">ETB</span>
+          <span id="mainBalance" class="text-[22px] leading-none font-extrabold tracking-tight">12,450.00</span>
+        </div>
       </div>
     </div>
 
-    <!-- Row 3 : secondary balances -->
-    <div class="relative mt-4 grid grid-cols-2 gap-3">
+    <!-- Row 3 : secondary balances (slimmer) -->
+    <div class="relative mt-2 grid grid-cols-2 gap-2">
       <button id="endekiseCard"
-              class="text-left bg-white/15 backdrop-blur border border-white/20 rounded-2xl px-3 py-2 active:scale-[.97] transition">
-        <div class="flex items-center gap-1.5">
-          <i class="fa-solid fa-people-group text-[10px] text-white/90"></i>
-          <span class="text-[10px] uppercase tracking-wide text-white/85 font-semibold">Endekise</span>
+              class="text-left bg-white/15 backdrop-blur border border-white/20 rounded-xl px-2.5 py-1.5 active:scale-[.97] transition">
+        <div class="flex items-center gap-1">
+          <i class="fa-solid fa-people-group text-[9px] text-white/90"></i>
+          <span class="text-[9px] uppercase tracking-wide text-white/85 font-bold">Endekise</span>
         </div>
-        <p class="mt-1 text-[15px] font-bold leading-none">
-          <span class="text-[10px] font-medium text-white/80">ETB</span>
+        <p class="mt-0.5 text-[12px] font-bold leading-none">
+          <span class="text-[9px] font-medium text-white/80">ETB</span>
           <span id="endekiseBalance">3,200.00</span>
         </p>
       </button>
 
       <button id="rewardCard"
-              class="text-left bg-white/15 backdrop-blur border border-white/20 rounded-2xl px-3 py-2 active:scale-[.97] transition">
-        <div class="flex items-center gap-1.5">
-          <i class="fa-solid fa-gift text-[10px] text-white/90"></i>
-          <span class="text-[10px] uppercase tracking-wide text-white/85 font-semibold">Reward</span>
+              class="text-left bg-white/15 backdrop-blur border border-white/20 rounded-xl px-2.5 py-1.5 active:scale-[.97] transition">
+        <div class="flex items-center gap-1">
+          <i class="fa-solid fa-gift text-[9px] text-white/90"></i>
+          <span class="text-[9px] uppercase tracking-wide text-white/85 font-bold">Reward</span>
         </div>
-        <p class="mt-1 text-[15px] font-bold leading-none">
-          <span class="text-[10px] font-medium text-white/80">ETB</span>
+        <p class="mt-0.5 text-[12px] font-bold leading-none">
+          <span class="text-[9px] font-medium text-white/80">ETB</span>
           <span id="rewardBalance">150.00</span>
         </p>
       </button>
     </div>
   </div>
 
-  <!-- ---- YELLOW SCROLLING RIBBON ---- -->
+  <!-- ---- YELLOW SCROLLING RIBBON (slim) ---- -->
   <div class="bg-yellow-400 overflow-hidden border-b border-yellow-500/40">
-    <div class="marquee-track py-[6px]">
+    <div class="marquee-track py-[4px]">
       <span class="marquee-item">⭐ ONE APP FOR ALL YOUR NEEDS!</span>
       <span class="marquee-item">⭐ ONE APP FOR ALL YOUR NEEDS!</span>
     </div>
@@ -201,14 +203,14 @@
 
 <!-- ============================================================
      SCROLLABLE CONTENT BODY — ONLY scrollable area (flex-1)
-     Slides UNDERNEATH the pinned header (z-10 below header's z-20)
+     pb-32 keeps the last cards clear of the fixed bottom nav
 ============================================================ -->
 <main id="main" class="flex-1 min-h-0 overflow-y-auto z-10 px-4 pb-32 no-scrollbar">
 
   <!-- ---------- 9 SUPER APP MODULES ---------- -->
-  <section id="appsSection" class="pt-5">
-    <div class="flex items-center justify-between mb-3">
-      <h2 class="text-[15px] font-extrabold text-slate-800">Super Apps</h2>
+  <section id="appsSection" class="pt-4">
+    <div class="flex items-center justify-between mb-2.5">
+      <h2 class="text-[14px] font-extrabold text-slate-800">Super Apps</h2>
       <button id="seeAllApps" class="text-[11px] font-semibold text-green-600 active:opacity-60">
         See all <i class="fa-solid fa-chevron-right text-[9px]"></i>
       </button>
@@ -220,7 +222,7 @@
   </section>
 
   <!-- ---------- PROMO BANNER ---------- -->
-  <section class="mt-6">
+  <section class="mt-5">
     <button id="promoBanner"
             class="w-full text-left rounded-3xl p-4 relative overflow-hidden shadow-lg shadow-emerald-900/10 active:scale-[.98] transition"
             style="background:linear-gradient(120deg,#059669 0%,#10b981 45%,#34d399 100%);">
@@ -245,8 +247,8 @@
   </section>
 
   <!-- ---------- QUICK STRIP ---------- -->
-  <section class="mt-6">
-    <h2 class="text-[15px] font-extrabold text-slate-800 mb-3">Quick Actions</h2>
+  <section class="mt-5">
+    <h2 class="text-[14px] font-extrabold text-slate-800 mb-2.5">Quick Actions</h2>
     <div class="grid grid-cols-4 gap-3">
       <button data-quick="Top Up" class="quick-btn glass-card rounded-2xl py-3 flex flex-col items-center gap-1.5 active:scale-95 transition">
         <i class="fa-solid fa-plus text-green-600"></i>
@@ -267,19 +269,20 @@
     </div>
   </section>
 
-  <!-- extra breathing room so last items clear the floating QR button -->
-  <div class="h-24"></div>
+  <!-- extra breathing room for scroll clearance -->
+  <div class="h-8"></div>
 
-  <p class="text-center text-[10px] text-slate-400 pb-2">
+  <p class="text-center text-[10px] text-slate-400 pb-4">
     Zemen Super App • v1.0.0
   </p>
 </main>
 
 
 <!-- ============================================================
-     BOTTOM NAVIGATION (flex-shrink-0, z-30) — pinned via flex column
+     STRICTLY FIXED BOTTOM NAVIGATION (z-50)
+     Always visible at the very bottom of every mobile viewport
 ============================================================ -->
-<nav class="flex-shrink-0 z-30 bg-white border-t border-slate-100 shadow-[0_-6px_24px_-12px_rgba(15,23,42,.25)]"
+<nav class="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg"
      style="padding-bottom: env(safe-area-inset-bottom);">
   <div class="grid grid-cols-5 h-16">
 
@@ -313,25 +316,25 @@
 
 
 <!-- ============================================================
-     FLOATING SCAN QR BUTTON (fixed above bottom nav)
+     FLOATING SCAN QR BUTTON — sits above the fixed nav (z-50)
 ============================================================ -->
 <button id="scanBtn" aria-label="Scan QR code"
-        class="fixed left-1/2 -translate-x-1/2 bottom-[84px] z-30
-               w-[72px] h-[72px] rounded-full text-white
-               flex flex-col items-center justify-center gap-[2px]
+        class="fixed left-1/2 -translate-x-1/2 bottom-[78px] z-50
+               w-[68px] h-[68px] rounded-full text-white
+               flex flex-col items-center justify-center gap-[1px]
                border-4 border-white shadow-2xl shadow-blue-600/40
                active:scale-90 transition"
         style="background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 60%,#1e40af 100%);">
-  <i class="fa-solid fa-qrcode text-[22px] leading-none"></i>
+  <i class="fa-solid fa-qrcode text-[20px] leading-none"></i>
   <span class="text-[8px] font-extrabold tracking-wider">SCAN QR</span>
 </button>
 
 
 <!-- ============================================================
-     FLOATING MIC BUTTON (Voice Assistant) — fixed above nav
+     FLOATING MIC BUTTON (Voice Assistant) — above fixed nav (z-50)
 ============================================================ -->
 <button id="micBtn" aria-label="Voice assistant — press and hold"
-        class="fixed right-4 bottom-[96px] z-30
+        class="fixed right-4 bottom-[86px] z-50
                w-14 h-14 rounded-full text-white
                flex items-center justify-center
                border-4 border-white shadow-xl shadow-green-900/20
@@ -342,9 +345,9 @@
 
 
 <!-- ============================================================
-     VOICE STATUS BAR (with TTS Stop)
+     VOICE STATUS BAR (with TTS Stop) — above nav & floating buttons
 ============================================================ -->
-<div id="voiceBar" class="fixed left-4 right-4 bottom-[168px] z-40 hidden">
+<div id="voiceBar" class="fixed left-4 right-4 bottom-[160px] z-50 hidden">
   <div class="bg-slate-900/95 backdrop-blur text-white rounded-2xl px-4 py-3
               flex items-center gap-3 shadow-2xl border border-white/10">
     <i id="voiceBarIcon" class="fa-solid fa-microphone text-green-400"></i>
@@ -617,7 +620,7 @@ function renderBalances(){
   document.getElementById('rewardBalance').textContent   = balancesHidden ? '••••'   : formatETB(rew);
 
   document.getElementById('eyeIcon').className =
-    balancesHidden ? 'fa-solid fa-eye-slash text-[10px]' : 'fa-solid fa-eye text-[10px]';
+    balancesHidden ? 'fa-solid fa-eye-slash text-[8px]' : 'fa-solid fa-eye text-[8px]';
 }
 
 document.getElementById('eyeBtn').addEventListener('click', (e) => {
@@ -656,7 +659,7 @@ function renderUser(){
   document.getElementById('accountPreviewName').textContent = name;
   document.getElementById('nameInput').value = name;
 
-  paintAvatar(document.getElementById('headerAvatarBtn'), avatar, 'text-lg');
+  paintAvatar(document.getElementById('headerAvatarBtn'), avatar, 'text-sm');
   paintAvatar(document.getElementById('accountAvatarBig'), avatar, 'text-4xl');
 
   /* avatar picker highlighting */
@@ -843,12 +846,13 @@ scanBackdrop.addEventListener('click', closeScan);
 
 
 /* ============================================================
-   12. LAYOUT — Header is now permanently pinned via flex column.
-   The previous translate-based "smart collapse" is intentionally
-   removed so the green header + yellow ribbon NEVER move. The
-   only scrollable region is #main (flex-1 overflow-y-auto).
+   12. LAYOUT NOTES
+   - Header is pinned via flex-column (`flex-shrink-0`).
+   - Main content is the only scrollable region (`flex-1 overflow-y-auto`).
+   - Bottom nav is `fixed bottom-0` with z-50, always visible.
+   - Floating QR + Mic buttons use z-50 and sit just above the nav.
+   - Main content uses `pb-32` so last cards clear the fixed nav.
 ============================================================ */
-/* No scroll-driven header transforms are applied. */
 
 
 /* ============================================================
